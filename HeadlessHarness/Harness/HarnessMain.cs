@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Brutal.Numerics;
 using HeadlessHarness.Core;
 using KSA;
@@ -10,19 +11,63 @@ namespace HeadlessHarness.Harness;
 // plus consumer tests). Returns a process exit code; the process exits before KSA Program.Main.
 //
 // Exit codes: 0 = all tests passed; 1 = at least one test failed; 2 = infrastructure failure
-// (bring-up broke, the session did not validate, or a consumer assembly failed to load), meaning
-// the test results are not trustworthy.
+// (bring-up broke, the session did not validate, a consumer assembly failed to load, or the run
+// mutex could not be acquired), meaning the test results are not trustworthy.
+//
+// Runs are serialized machine-wide through a named mutex, so several sessions can invoke the
+// harness concurrently and simply queue: cross-run state (the determinism signatures in
+// HarnessLog.DataDirectory) is never accessed by two runs at once, regardless of how the game was
+// launched. The run script holds its own, differently named mutex around the manifest swap; the two
+// must not share a name or a scripted run would deadlock against its own game process.
 internal static class HarnessMain
 {
     public const int ExitPass = 0;
     public const int ExitTestFailure = 1;
     public const int ExitInfrastructureFailure = 2;
 
+    private const string RunMutexName = @"Global\KSA-HeadlessHarness";
+
+    // Must stay below the run script's game timeout (120s): a scripted game queued behind a direct
+    // launch then reports a loud "could not acquire the run mutex" exit 2 instead of being killed
+    // by the script and mislabeled a timeout.
+    private static readonly TimeSpan RunMutexTimeout = TimeSpan.FromSeconds(90);
+
     public static int Run()
     {
-        HarnessLog.Reset();
-        HarnessLog.Line("[harness] start");
+        HarnessLog.Prepare();
+        HarnessLog.Line($"[harness] start (log: {HarnessLog.FilePath})");
 
+        using Mutex runMutex = new Mutex(false, RunMutexName);
+        bool acquired;
+        try
+        {
+            HarnessLog.Line("[harness] acquiring the machine-wide run mutex (another harness run may be in progress)...");
+            acquired = runMutex.WaitOne(RunMutexTimeout);
+        }
+        catch (AbandonedMutexException)
+        {
+            // The previous holder died mid-run; the mutex is ours. The only cross-run state is the
+            // signature files, and a truncated one from a dead writer just logs a one-time spurious
+            // DIFFER and self-heals on the next write.
+            acquired = true;
+        }
+        if (!acquired)
+        {
+            HarnessLog.Line($"[harness] INFRA FAIL: could not acquire the run mutex within {RunMutexTimeout.TotalSeconds:F0}s (another harness run is holding it).");
+            return ExitInfrastructureFailure;
+        }
+        try
+        {
+            return RunLocked();
+        }
+        finally
+        {
+            runMutex.ReleaseMutex();
+        }
+    }
+
+    private static int RunLocked()
+    {
         HeadlessSession session = new HeadlessSession();
         try
         {

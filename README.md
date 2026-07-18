@@ -45,12 +45,21 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 | `KSA_HEADLESS_HARNESS=1` | Run the harness and exit before the GPU game starts. Anything else: the mod stays idle. |
 | `KSA_HEADLESS_VEHICLE` | Name of a save under `Documents\My Games\Kitten Space Agency\Vehicles` for the flight test. Unset: the flight test skips. |
 | `KSA_HEADLESS_TESTS` | Comma-separated test names; only matching discovered tests run. A name matching nothing is an infrastructure failure (a typo must not silently skip a test). |
+| `KSA_HEADLESS_LOG` | Exact path for this run's log file. Unset: a timestamp+pid file under `%TEMP%\ksa-headless-harness\`. |
 
 ## Exit codes
 
 - `0` - all tests passed.
 - `1` - at least one test failed.
-- `2` - infrastructure failure: bring-up broke, the session did not validate, or a consumer assembly failed to load. Test results are not trustworthy.
+- `2` - infrastructure failure: bring-up broke, the session did not validate, a consumer assembly failed to load, or the run mutex could not be acquired. Test results are not trustworthy.
+
+## Concurrent runs
+
+Multiple sessions can invoke the harness on one machine at the same time; they queue instead of conflicting:
+
+- `scripts/run-headless.ps1` serializes the whole swap -> launch -> restore sequence through a machine-wide named mutex (`Global\KSA-HeadlessHarness-Script`), because the game manifest belongs to exactly one run at a time. A queued invocation says so on the console and waits (up to 10 minutes, then exit `4`).
+- The harness itself holds a second named mutex (`Global\KSA-HeadlessHarness`) around the run, so even game processes launched directly (e.g. from the IDE) serialize. The two names are distinct on purpose: the script holds its mutex while the game runs, so a shared name would deadlock the game against its own launcher.
+- Logs are never overwritten: every run writes its own `run-<timestamp>-pid<pid>.log` under `%TEMP%\ksa-headless-harness\` (the determinism baselines live there too). The directory is not auto-pruned; delete old run logs as needed.
 
 ## Writing a consumer test
 
@@ -61,8 +70,8 @@ A consumer DLL or test type that fails to load counts as an infrastructure failu
 
 ## Running the self-tests
 
-`scripts/run-headless.ps1` runs the suite headless: it backs up the game manifest, swaps to a minimal `Core + HeadlessHarness` manifest, launches StarMap with `KSA_HEADLESS_HARNESS=1`, then ALWAYS restores the manifest, prints the harness log (`%TEMP%\ksa-headless-harness.log`), and exits with the harness exit code (`3` = timeout).
-`-Vehicle <save name>` selects the flight-test vehicle (the default `Test Vehicle 1` is used only if that save exists, otherwise the flight test skips); `-Tests a,b` filters tests.
+`scripts/run-headless.ps1` runs the suite headless: it backs up the game manifest, swaps to a minimal `Core + HeadlessHarness` manifest, launches StarMap with `KSA_HEADLESS_HARNESS=1`, then ALWAYS restores the manifest, prints this run's log, and exits with the harness exit code (`3` = timeout, `4` = run-queue timeout, `5` = build failure). On a failed run it also archives the game's own log next to the run log.
+`-Vehicle <save name>` selects the flight-test vehicle (the default `Test Vehicle 1` is used only if that save exists, otherwise the flight test skips); `-Tests a,b` filters tests; `-Build` builds and deploys harness + example inside the queue first, so a build never races another session's running game.
 The flight test wants a working staged vehicle: build one in-game (e.g. two stages: engines in sequence 1, the decoupler in sequence 2, the upper engine in sequence 3) and save it in the Vehicles window.
 With the flag unset the mod stays idle and never disrupts a normal launch.
 

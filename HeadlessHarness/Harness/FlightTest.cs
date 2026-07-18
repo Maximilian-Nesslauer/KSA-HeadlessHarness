@@ -289,8 +289,10 @@ public sealed class FlightTest : IHarnessTest
     private static void LogDeterminismSignature(Vehicle vehicle, string saveId)
     {
         string vehicleKey = string.Join("_", saveId.Split(Path.GetInvalidFileNameChars()));
-        string sigFile = Path.Combine(Path.GetTempPath(),
-            $"ksa-headless-harness.{VersionInfo.Current.VersionString}.{vehicleKey}.sig");
+        // Lives in the shared data directory (not the per-run log dir naming) because the baseline
+        // must persist across runs; cross-run access is serialized by the run mutex in HarnessMain.
+        string sigFile = Path.Combine(HarnessLog.DataDirectory,
+            $"{VersionInfo.Current.VersionString}.{vehicleKey}.sig");
 
         StateVectors f = vehicle.Orbit.StateVectors;
         string sig = string.Join(",", new[]
