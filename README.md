@@ -36,6 +36,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 - `HeadlessHarness/Harness/FlightTest.cs` - flies a player-built save like a player (burn, stage, repeat) and asserts real physics.
 - `HeadlessHarness/Harness/SpawnTest.cs` / `OrbitMathTest.cs` - `IHarnessTest` self-tests that double as worked examples.
 - `HeadlessHarness/Core/HarnessLog.cs` - self-contained result log (file plus console).
+- `examples/HarnessConsumerExample/` - a complete consumer mod carrying one `IHarnessTest`.
 
 ## Environment variables
 
@@ -56,7 +57,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 Reference `HeadlessHarness.dll`, implement `IHarnessTest` on a public class with a parameterless constructor, deploy the DLL to a game mod folder, and declare a `HeadlessHarness` dependency in its `mod.toml`.
 Once the harness is up it loads consumer DLLs into its own load context and runs every discovered `IHarnessTest`, ordered by `Name` (return 0 on pass, non-zero on failure).
 A consumer DLL or test type that fails to load counts as an infrastructure failure, not a pass - that failure mode usually means the consumer references a game type that moved in an update, which is exactly what the harness exists to catch. Native (non-managed) DLLs a consumer ships alongside its assemblies are ignored.
-The `HarnessConsumerExample` mod, maintained alongside the harness, is a complete worked example.
+[`examples/HarnessConsumerExample`](examples/HarnessConsumerExample) is a complete worked example.
 
 ## Running the self-tests
 
@@ -72,6 +73,8 @@ Targets **.NET 10**. `dotnet build`, or open `HeadlessHarness.slnx` in Visual St
 Game DLLs are provided at runtime by StarMap's load context, so every game reference is `Private=false` (not copied into the output). The built `HeadlessHarness.dll` therefore contains no game code. Building from source needs a local KSA install; the `.csproj` HintPaths point at `refs/game` in this tree, so adjust them to your own install.
 
 The `CopyToMods` target deploys the DLL and `mod.toml` to `Documents\My Games\Kitten Space Agency\mods\HeadlessHarness\` so StarMap discovers it.
+
+The example consumer builds separately (`dotnet build examples/HarnessConsumerExample`) and expects the harness to be built first, since it references the harness build output the way a real consumer references the deployed DLL.
 
 | Package | Source | Tested version |
 | --- | --- | --- |

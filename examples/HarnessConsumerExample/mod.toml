@@ -1,0 +1,10 @@
+name = "HarnessConsumerExample"
+
+[StarMap]
+EntryAssembly = "HarnessConsumerExample"
+
+# Declaring HeadlessHarness as a dependency both documents the relationship and marks this folder as
+# a harness consumer, so HeadlessHarness loads this assembly and discovers its IHarnessTest classes.
+[[StarMap.ModDependencies]]
+ModId = "HeadlessHarness"
+Optional = false

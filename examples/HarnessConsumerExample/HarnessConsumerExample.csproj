@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StarMap.API" Version="0.3.6" />
+  </ItemGroup>
+
+  <!--
+    Example consumer of the HeadlessHarness test dependency. This is the template a real consumer
+    test project follows: reference HeadlessHarness (and the mod under test), implement IHarnessTest,
+    and let the harness discover and run it. Game DLLs and HeadlessHarness resolve at runtime via
+    StarMap's shared ALC, so every reference is Private=false.
+  -->
+  <ItemGroup>
+    <Reference Include="HeadlessHarness">
+      <HintPath>..\..\HeadlessHarness\bin\$(Configuration)\net10.0\HeadlessHarness.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="KSA">
+      <HintPath>..\..\..\..\refs\game\KSA.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Brutal.Core.Numerics">
+      <HintPath>..\..\..\..\refs\game\Brutal.Core.Numerics.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="mod.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="CopyToMods" AfterTargets="Build">
+    <PropertyGroup>
+      <ModDir>$(USERPROFILE)\Documents\My Games\Kitten Space Agency\mods\HarnessConsumerExample\</ModDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(ModDir)" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ModDir)" />
+    <Copy SourceFiles="mod.toml" DestinationFolder="$(ModDir)" />
+  </Target>
+
+</Project>
