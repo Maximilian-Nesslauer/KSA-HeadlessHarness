@@ -124,7 +124,16 @@ try {
         if ($Tests) { $env:KSA_HEADLESS_TESTS = $Tests }
 
         Write-Host "Launching StarMap headless (timeout ${timeoutSec}s, log $log)..."
-        $p = Start-Process -FilePath $starmap -WorkingDirectory (Split-Path $starmap) -PassThru
+        # StarMap.exe is a console-subsystem app, so Start-Process would give it its own console
+        # window that pops to the foreground and steals focus. CreateNoWindow keeps it windowless;
+        # UseShellExecute=false lets it inherit this shell's environment (the KSA_HEADLESS_* vars set
+        # above) and reuses the current console for output instead of allocating a new one.
+        $psi = New-Object System.Diagnostics.ProcessStartInfo
+        $psi.FileName = $starmap
+        $psi.WorkingDirectory = Split-Path $starmap
+        $psi.UseShellExecute = $false
+        $psi.CreateNoWindow = $true
+        $p = [System.Diagnostics.Process]::Start($psi)
         if (-not $p.WaitForExit($timeoutSec * 1000)) {
             Write-Host "Timeout reached - killing StarMap."
             try { $p.Kill() } catch {}
