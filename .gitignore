@@ -1,0 +1,24 @@
+## .NET / Visual Studio
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+.vs/
+
+## NuGet
+*.nupkg
+packages/
+
+## Build results
+*.dll
+*.exe
+*.pdb
+
+## IDE
+**/Properties/launchSettings.json
+
+## OS
+Thumbs.db
+Desktop.ini
+.DS_Store

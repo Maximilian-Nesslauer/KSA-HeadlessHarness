@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.4.2" />
+    <PackageReference Include="StarMap.API" Version="0.3.6" />
+  </ItemGroup>
+
+  <!-- Game DLLs are provided at runtime by StarMap's GameAssemblyLoadContext, so every reference is
+       Private=false (do not copy into the output). -->
+  <ItemGroup>
+    <Reference Include="KSA">
+      <HintPath>..\..\..\refs\game\KSA.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Brutal.Core.Numerics">
+      <HintPath>..\..\..\refs\game\Brutal.Core.Numerics.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Brutal.Core.Logging">
+      <HintPath>..\..\..\refs\game\Brutal.Core.Logging.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Brutal.Core.Memory">
+      <HintPath>..\..\..\refs\game\Brutal.Core.Memory.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Brutal.Concurrency">
+      <HintPath>..\..\..\refs\game\Brutal.Concurrency.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="mod.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!--
+    Deploy the built DLL and mod.toml so StarMap discovers the harness. There is no
+    SpaceDock/release packaging: this is a developer test tool, installed from source.
+  -->
+  <Target Name="CopyToMods" AfterTargets="Build">
+    <PropertyGroup>
+      <ModDir>$(USERPROFILE)\Documents\My Games\Kitten Space Agency\mods\HeadlessHarness\</ModDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(ModDir)" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ModDir)" />
+    <Copy SourceFiles="mod.toml" DestinationFolder="$(ModDir)" />
+  </Target>
+
+</Project>

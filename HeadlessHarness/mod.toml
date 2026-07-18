@@ -1,0 +1,4 @@
+name = "HeadlessHarness"
+
+[StarMap]
+EntryAssembly = "HeadlessHarness"
