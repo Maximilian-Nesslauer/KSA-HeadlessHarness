@@ -40,7 +40,7 @@ public sealed class ExampleConsumerTest : IHarnessTest
         Orbit circular = Orbit.CreateFromStateCci(home, peTime, sv.PositionCci, sv.VelocityCci + dv, OrbitColor);
 
         bool ok = circular.Eccentricity < EccentricityTol && Math.Abs(circular.SemiMajorAxis - pe) / pe < RadiusTol;
-        HarnessLog.Line($"[example-consumer] circularize @Pe around '{homeBody.Id}': dv={dv.Length():F3}m/s -> ecc={circular.Eccentricity:F5} SMA={circular.SemiMajorAxis:E4} (target {pe:E4}) => {(ok ? "PASS" : "FAIL")}");
+        HarnessLog.Line($"[example-consumer] circularize @Pe around '{homeBody.Id}': dv={dv.Length():F3}m/s -> ecc={circular.Eccentricity:F5} SMA={circular.SemiMajorAxis:E4} (target {pe:E4}) => {TestSupport.Verdict(ok)}");
         return ok ? 0 : 1;
     }
 }

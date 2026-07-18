@@ -41,7 +41,7 @@ public sealed class OrbitMathTest : IHarnessTest
         bool eccOk = circular.Eccentricity < EccentricityTol;
         bool radiusOk = Math.Abs(circular.SemiMajorAxis - ap) / ap < RadiusTol;
         bool ok = eccOk && radiusOk;
-        HarnessLog.Line($"[orbit-math] circularize @Ap around '{homeBody.Id}': dv={dv.Length():F3}m/s -> ecc={circular.Eccentricity:F5} SMA={circular.SemiMajorAxis:E4} (target {ap:E4}) => {(ok ? "PASS" : "FAIL")}");
+        HarnessLog.Line($"[orbit-math] circularize @Ap around '{homeBody.Id}': dv={dv.Length():F3}m/s -> ecc={circular.Eccentricity:F5} SMA={circular.SemiMajorAxis:E4} (target {ap:E4}) => {TestSupport.Verdict(ok)}");
         return ok ? 0 : 1;
     }
 }

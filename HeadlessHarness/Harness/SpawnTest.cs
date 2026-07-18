@@ -44,7 +44,7 @@ public sealed class SpawnTest : IHarnessTest
             bool eccOk = o.Eccentricity < EccentricityTol;
             bool ok = smaOk && eccOk;
             HarnessLog.Line($"[spawn] '{spawned.Id}' (copy of '{source.Id}') mass={spawned.TotalMass:F0}kg " +
-                            $"SMA={o.SemiMajorAxis:E4} (target {radius:E4}) ecc={o.Eccentricity:F5} => {(ok ? "PASS" : "FAIL")}");
+                            $"SMA={o.SemiMajorAxis:E4} (target {radius:E4}) ecc={o.Eccentricity:F5} => {TestSupport.Verdict(ok)}");
             return ok ? 0 : 1;
         }
         finally

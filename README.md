@@ -31,6 +31,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 - `HeadlessHarness/Harness/SimDriver.cs` - deterministic fixed-step solver ticking plus input-event drain.
 - `HeadlessHarness/Harness/VehicleSpawner.cs` - save/copy vehicle spawning plus orbit helpers.
 - `HeadlessHarness/Harness/IHarnessTest.cs` - the plug-in test interface.
+- `HeadlessHarness/Harness/TestSupport.cs` - shared helpers for tests (manual control input, propellant checks, spawn cleanup).
 - `HeadlessHarness/Harness/HarnessRunner.cs` - loads consumer DLLs and discovers/runs `IHarnessTest`s.
 - `HeadlessHarness/Harness/HarnessMain.cs` - the entry: bring-up, content-agnostic smoke checks, test dispatch, exit code.
 - `HeadlessHarness/Harness/FlightTest.cs` - flies a player-built save like a player (burn, stage, repeat) and asserts real physics.
@@ -66,6 +67,7 @@ Multiple sessions can invoke the harness on one machine at the same time; they q
 Reference `HeadlessHarness.dll`, implement `IHarnessTest` on a public class with a parameterless constructor, deploy the DLL to a game mod folder, and declare a `HeadlessHarness` dependency in its `mod.toml`.
 Once the harness is up it loads consumer DLLs into its own load context and runs every discovered `IHarnessTest`, ordered by `Name` (return 0 on pass, non-zero on failure).
 A consumer DLL or test type that fails to load counts as an infrastructure failure, not a pass - that failure mode usually means the consumer references a game type that moved in an update, which is exactly what the harness exists to catch. Native (non-managed) DLLs a consumer ships alongside its assemblies are ignored.
+`TestSupport` carries the helpers most vehicle tests need (manual throttle input, engine propellant checks, spawn snapshot and cleanup), so a consumer does not have to duplicate the underlying game couplings; `HarnessLog` and `VehicleSpawner` are public for the same reason.
 [`examples/HarnessConsumerExample`](examples/HarnessConsumerExample) is a complete worked example.
 
 ## Running the self-tests

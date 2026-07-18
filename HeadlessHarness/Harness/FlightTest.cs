@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Reflection;
-using HarmonyLib;
 using HeadlessHarness.Core;
 using KSA;
 
@@ -21,13 +19,6 @@ namespace HeadlessHarness.Harness;
 // Unset, the test skips: which saves exist is machine-specific, so there is no meaningful default.
 public sealed class FlightTest : IHarnessTest
 {
-    public const string VehicleEnvVar = "KSA_HEADLESS_VEHICLE";
-
-    private static readonly FieldInfo ManualInputsField =
-        AccessTools.Field(typeof(Vehicle), "_manualControlInputs")
-        ?? throw new InvalidOperationException(
-            "[HeadlessHarness] Vehicle._manualControlInputs not found - game version may have changed.");
-
     private const double SpawnAltitudeM = 500_000.0;  // above the home body's mean radius; near-vacuum, so VacuumData is the right expectation
     private const double EnergyDriftTol = 1e-3;       // relative; integrator drift over the coast
     private const double MassFlowTol = 0.02;          // relative; burned mass vs firing engines' rated flow
@@ -40,10 +31,10 @@ public sealed class FlightTest : IHarnessTest
 
     public int Run(HeadlessSession session)
     {
-        string? saveId = Environment.GetEnvironmentVariable(VehicleEnvVar);
+        string? saveId = Environment.GetEnvironmentVariable(TestSupport.VehicleEnvVar);
         if (string.IsNullOrEmpty(saveId))
         {
-            HarnessLog.Line($"[flight] SKIP: {VehicleEnvVar} not set (name a save in the game's Vehicles folder to run this test).");
+            HarnessLog.Line($"[flight] SKIP: {TestSupport.VehicleEnvVar} not set (name a save in the game's Vehicles folder to run this test).");
             return 0;
         }
 
@@ -57,7 +48,7 @@ public sealed class FlightTest : IHarnessTest
         SimTime now = Universe.GetElapsedSimTime();
         Orbit orbit = VehicleSpawner.CircularCci(home, homeBody.MeanRadius + SpawnAltitudeM, now);
 
-        HashSet<string> preexisting = CollectVehicleIds(system);
+        HashSet<string> preexisting = TestSupport.CollectVehicleIds(system);
         Vehicle vehicle;
         try
         {
@@ -85,12 +76,12 @@ public sealed class FlightTest : IHarnessTest
             VehicleUpdateTask._forceOffRails = false;
             // Tear down the flown vehicle and every stage it shed (staging splits register new
             // vehicles under the same parent), so later tests do not keep ticking them.
-            DespawnNew(system, preexisting);
+            TestSupport.DespawnNewVehicles(system, preexisting);
         }
 
         LogDeterminismSignature(vehicle, saveId);
 
-        HarnessLog.Line($"[flight] {Verdict(ok)} (staged flight).");
+        HarnessLog.Line($"[flight] {TestSupport.Verdict(ok)} (staged flight).");
         return ok ? 0 : 1;
     }
 
@@ -107,7 +98,7 @@ public sealed class FlightTest : IHarnessTest
     private static bool RunCoastTest(Vehicle vehicle, SimDriver driver)
     {
         double mu = vehicle.Orbit.Parent.Mu;
-        SetManual(vehicle, 0f, engineOn: false);
+        TestSupport.SetManualControlInputs(vehicle, 0f, engineOn: false);
         StateVectors s0 = vehicle.Orbit.StateVectors;
         double e0 = Orbit.GetOrbitalEnergy(in s0, mu);
         driver.Step(1.0, CoastSeconds);
@@ -115,7 +106,7 @@ public sealed class FlightTest : IHarnessTest
         double e1 = Orbit.GetOrbitalEnergy(in s1, mu);
         double drift = e0 != 0.0 ? Math.Abs((e1 - e0) / e0) : double.NaN;
         bool ok = drift < EnergyDriftTol;
-        HarnessLog.Line($"[flight] TEST coast energy: drift={drift:E3} (tol {EnergyDriftTol:E0}) => {Verdict(ok)}");
+        HarnessLog.Line($"[flight] TEST coast energy: drift={drift:E3} (tol {EnergyDriftTol:E0}) => {TestSupport.Verdict(ok)}");
         return ok;
     }
 
@@ -125,7 +116,7 @@ public sealed class FlightTest : IHarnessTest
     // running game).
     private static bool RunStagedFlight(Vehicle vehicle, SimDriver driver)
     {
-        SetManual(vehicle, 1f, engineOn: true);
+        TestSupport.SetManualControlInputs(vehicle, 1f, engineOn: true);
         SequenceList sequences = vehicle.Parts.SequenceList;
 
         // No special liftoff step: when nothing is firing, the loop presses the staging key, which
@@ -139,7 +130,7 @@ public sealed class FlightTest : IHarnessTest
         bool measuredThisPhase = false;
         while (elapsed < MaxFlightSeconds)
         {
-            if (AnyActiveEngineFed(vehicle))
+            if (TestSupport.AnyActiveEngineFed(vehicle))
             {
                 if (!measuredThisPhase)
                 {
@@ -200,7 +191,7 @@ public sealed class FlightTest : IHarnessTest
         int firing = 0;
         foreach (EngineController engine in vehicle.Parts.Modules.Get<EngineController>())
         {
-            if (engine.IsActive && EngineHasPropellant(vehicle, engine))
+            if (engine.IsActive && TestSupport.EngineHasPropellant(vehicle, engine))
             {
                 expectedMdot += engine.VacuumData.MassFlowRateMax;
                 firingThrust += engine.VacuumData.ThrustMax.Length();
@@ -217,7 +208,7 @@ public sealed class FlightTest : IHarnessTest
         double m1 = vehicle.TotalMass;
         double dm = m0 - m1;
 
-        if (!AnyActiveEngineFed(vehicle))
+        if (!TestSupport.AnyActiveEngineFed(vehicle))
         {
             // The stage ran dry inside the window, so dm covers only part of it; the mass-flow
             // assertion would be meaningless. The next phase (after staging) still gets measured.
@@ -232,54 +223,8 @@ public sealed class FlightTest : IHarnessTest
         double idealDv = (m1 > 0 && dm > 0) ? firingVe * Math.Log(m0 / m1) : 0.0;
         bool ok = dm > 0 && err < MassFlowTol;
         HarnessLog.Line($"[flight] TEST burn mass-flow: {firing} engine(s) firing, dm={dm:F3}kg expect={expectedDm:F3}kg " +
-                        $"err={err:E3} (tol {MassFlowTol:P0}) windowDv={idealDv:F2}m/s => {Verdict(ok)}");
+                        $"err={err:E3} (tol {MassFlowTol:P0}) windowDv={idealDv:F2}m/s => {TestSupport.Verdict(ok)}");
         return ok;
-    }
-
-    private static bool AnyActiveEngineFed(Vehicle vehicle)
-    {
-        foreach (EngineController engine in vehicle.Parts.Modules.Get<EngineController>())
-        {
-            if (engine.IsActive && EngineHasPropellant(vehicle, engine))
-                return true;
-        }
-        return false;
-    }
-
-    // An engine fires only if fed propellant; the game tracks that per rocket core (RocketCoreState),
-    // read here through the vehicle's core state list the same way the in-game engine debug view does.
-    private static bool EngineHasPropellant(Vehicle vehicle, EngineController engine)
-    {
-        var cores = vehicle.Parts.RocketCores.GetModulesAndStates(engine.Cores.AsSpan()).GetEnumerator();
-        while (cores.MoveNext())
-        {
-            if (cores.Current.State.IsPropellantAvailable)
-                return true;
-        }
-        return false;
-    }
-
-    private static HashSet<string> CollectVehicleIds(CelestialSystem system)
-    {
-        HashSet<string> ids = new();
-        for (int i = 0; i < system.Count; i++)
-        {
-            if (system.GetIndex(i) is Vehicle v)
-                ids.Add(v.Id);
-        }
-        return ids;
-    }
-
-    private static void DespawnNew(CelestialSystem system, HashSet<string> preexisting)
-    {
-        List<Vehicle> spawned = new();
-        for (int i = 0; i < system.Count; i++)
-        {
-            if (system.GetIndex(i) is Vehicle v && !preexisting.Contains(v.Id))
-                spawned.Add(v);
-        }
-        foreach (Vehicle v in spawned)
-            VehicleSpawner.Despawn(v);
     }
 
     // Compare an exact-bits signature of the final state against the previous run's (persisted).
@@ -327,13 +272,6 @@ public sealed class FlightTest : IHarnessTest
             HarnessLog.Line($"[flight] determinism: could not write signature ({e.Message}); next run will not compare.");
         }
     }
-
-    private static void SetManual(Vehicle vehicle, float throttle, bool engineOn)
-    {
-        ManualInputsField.SetValue(vehicle, new ManualControlInputs { EngineThrottle = throttle, EngineOn = engineOn });
-    }
-
-    private static string Verdict(bool pass) => pass ? "PASS" : "FAIL";
 
     private static long Bits(double d) => BitConverter.DoubleToInt64Bits(d);
 }
