@@ -45,7 +45,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 | --- | --- |
 | `KSA_HEADLESS_HARNESS=1` | Run the harness and exit before the GPU game starts. Anything else: the mod stays idle. |
 | `KSA_HEADLESS_VEHICLE` | Name of a save under `Documents\My Games\Kitten Space Agency\Vehicles` for the flight test. Unset: the flight test skips. |
-| `KSA_HEADLESS_TESTS` | Comma-separated test names; only matching discovered tests run. A name matching nothing is an infrastructure failure (a typo must not silently skip a test). |
+| `KSA_HEADLESS_TESTS` | Comma-separated test names; only matching discovered tests run, and naming an opt-in test is what runs it. A name matching nothing is an infrastructure failure (a typo must not silently skip a test). |
 | `KSA_HEADLESS_LOG` | Exact path for this run's log file. Unset: a timestamp+pid file under `%TEMP%\ksa-headless-harness\`. |
 
 ## Exit codes
@@ -65,8 +65,11 @@ Multiple sessions can invoke the harness on one machine at the same time; they q
 ## Writing a consumer test
 
 Reference `HeadlessHarness.dll`, implement `IHarnessTest` on a public class with a parameterless constructor, deploy the DLL to a game mod folder, and declare a `HeadlessHarness` dependency in its `mod.toml`.
-Once the harness is up it loads consumer DLLs into its own load context and runs every discovered `IHarnessTest`, ordered by `Name` (return 0 on pass, non-zero on failure).
+Once the harness is up it loads consumer DLLs into its own load context and runs each discovered `IHarnessTest` that is not opt-in, ordered by `Name` (return 0 on pass, non-zero on failure).
 A consumer DLL or test type that fails to load counts as an infrastructure failure, not a pass - that failure mode usually means the consumer references a game type that moved in an update, which is exactly what the harness exists to catch. Native (non-managed) DLLs a consumer ships alongside its assemblies are ignored.
+
+A test that is too expensive for the normal suite (a parameter sweep, a soak run) can override `bool OptIn => true`. It then stays deployed and discoverable but runs only when `KSA_HEADLESS_TESTS` names it, so the default suite keeps its usual runtime. Every default run logs which opt-in tests it skipped, by name.
+
 `TestSupport` carries the helpers most vehicle tests need (manual throttle input, engine propellant checks, spawn snapshot and cleanup), so a consumer does not have to duplicate the underlying game couplings; `HarnessLog` and `VehicleSpawner` are public for the same reason.
 [`examples/HarnessConsumerExample`](examples/HarnessConsumerExample) is a complete worked example.
 

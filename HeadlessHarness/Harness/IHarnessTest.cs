@@ -8,5 +8,10 @@ public interface IHarnessTest
 {
     string Name { get; }
 
+    // Opt-in tests are skipped by a default run and execute only when KSA_HEADLESS_TESTS names them.
+    // Set it on tests too expensive for the normal suite (parameter sweeps, soak runs), so they can
+    // stay deployed without lengthening every run.
+    bool OptIn => false;
+
     int Run(HeadlessSession session);
 }

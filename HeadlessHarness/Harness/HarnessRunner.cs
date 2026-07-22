@@ -7,8 +7,8 @@ using HeadlessHarness.Core;
 
 namespace HeadlessHarness.Harness;
 
-// Loads consumer mod assemblies and runs every IHarnessTest they (and the harness itself) expose
-// against the live session, ordered by Name.
+// Loads consumer mod assemblies and runs the IHarnessTests they (and the harness itself) expose
+// against the live session, ordered by Name. Opt-in tests sit out a default run; see SkipOptInTests.
 //
 // Consumers cannot be loaded by StarMap the normal way: a consumer references HeadlessHarness, but
 // StarMap loads mods top-to-bottom and the harness's [StarMapBeforeMain] runs the suite and exits, so
@@ -23,8 +23,9 @@ namespace HeadlessHarness.Harness;
 // as a test failure.
 internal static class HarnessRunner
 {
-    // Comma-separated list of test names to run; unset runs everything. A filter entry that matches
-    // no discovered test is an infrastructure failure (a typo must not silently skip a test).
+    // Comma-separated list of test names to run; unset runs every test that is not opt-in. A filter
+    // entry that matches no discovered test is an infrastructure failure, as is a filter that names
+    // nothing at all (a typo must not silently skip a test).
     public const string TestFilterEnvVar = "KSA_HEADLESS_TESTS";
 
     public readonly record struct RunResult(int TestFailures, int InfrastructureFailures);
@@ -34,10 +35,15 @@ internal static class HarnessRunner
         int infrastructureFailures = LoadConsumerAssemblies();
 
         List<IHarnessTest> tests = Discover(ref infrastructureFailures);
-        infrastructureFailures += ApplyTestFilter(tests);
+        HashSet<string>? wanted = ParseTestFilter();
+        infrastructureFailures += ApplyTestFilter(tests, wanted);
+        // A filter is the only way to run an opt-in test, so a filtered run has already kept exactly
+        // what was named and nothing is left to skip.
+        if (wanted == null)
+            SkipOptInTests(tests);
         if (tests.Count == 0)
         {
-            HarnessLog.Line("[harness] no discovered tests.");
+            HarnessLog.Line("[harness] no tests left to run.");
             return new RunResult(0, infrastructureFailures);
         }
 
@@ -207,15 +213,31 @@ internal static class HarnessRunner
         return tests;
     }
 
-    // Returns the number of filter entries that matched no discovered test.
-    private static int ApplyTestFilter(List<IHarnessTest> tests)
+    // Null when no filter is set. A set-but-separator-only value ("," or " , ") parses to an empty
+    // set, which is kept distinct from null: it names no test, so ApplyTestFilter reports it rather
+    // than letting a malformed invocation quietly run the whole suite (or none of it).
+    private static HashSet<string>? ParseTestFilter()
     {
         string? filter = Environment.GetEnvironmentVariable(TestFilterEnvVar);
         if (string.IsNullOrWhiteSpace(filter))
-            return 0;
-
-        HashSet<string> wanted = new(filter.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+            return null;
+        return new HashSet<string>(
+            filter.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
             StringComparer.Ordinal);
+    }
+
+    // Returns the number of filter entries that matched no discovered test.
+    private static int ApplyTestFilter(List<IHarnessTest> tests, HashSet<string>? wanted)
+    {
+        if (wanted == null)
+            return 0;
+        if (wanted.Count == 0)
+        {
+            HarnessLog.Line($"[harness] FAIL: {TestFilterEnvVar} is set but names no test.");
+            tests.Clear();
+            return 1;
+        }
+
         int unmatched = 0;
         foreach (string name in wanted)
         {
@@ -227,8 +249,27 @@ internal static class HarnessRunner
         }
         int skipped = tests.RemoveAll(t => !wanted.Contains(t.Name));
         if (skipped > 0)
-            HarnessLog.Line($"[harness] test filter active ({TestFilterEnvVar}={filter}): skipping {skipped} test(s).");
+            HarnessLog.Line($"[harness] test filter active ({wanted.Count} name(s) from {TestFilterEnvVar}: " +
+                            $"{string.Join(", ", wanted)}): skipping {skipped} test(s).");
         return unmatched;
+    }
+
+    // Opt-in tests are too expensive for the default suite; naming one in the filter is what runs it,
+    // consistent with a named test always running. The skip is logged by name so a deployed opt-in
+    // test stays visible instead of silently never running.
+    private static void SkipOptInTests(List<IHarnessTest> tests)
+    {
+        List<string> skipped = new();
+        tests.RemoveAll(test =>
+        {
+            if (!test.OptIn)
+                return false;
+            skipped.Add(test.Name);
+            return true;
+        });
+        if (skipped.Count > 0)
+            HarnessLog.Line($"[harness] skipping {skipped.Count} opt-in test(s): {string.Join(", ", skipped)} " +
+                            $"(name one in {TestFilterEnvVar} to run it).");
     }
 
     // GetFiles/GetDirectories walk eagerly, so a mid-walk failure (e.g. a subdir deleted during the
