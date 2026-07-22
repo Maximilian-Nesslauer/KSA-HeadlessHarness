@@ -27,19 +27,19 @@ public sealed class ExampleSweepTest : IHarnessTest
 
     public int Run(HeadlessSession session)
     {
-        if (session.System.HomeBody is not IParentBody home || home is not Astronomical homeBody)
+        if (session.System.HomeBody is not IParentBody home)
         {
             HarnessLog.Line("[example-sweep] FAIL: the loaded system has no home body.");
             return 1;
         }
 
         SimTime now = Universe.GetElapsedSimTime();
-        double pe = homeBody.MeanRadius + PeriapsisAltitudeM;
+        double pe = home.MeanRadius + PeriapsisAltitudeM;
         int failures = 0;
         for (int i = 0; i < Samples; i++)
         {
             double apAltitude = FirstApoapsisAltitudeM + i * ApoapsisStepM;
-            double ap = homeBody.MeanRadius + apAltitude;
+            double ap = home.MeanRadius + apAltitude;
             Orbit orbit = VehicleSpawner.EllipticalCci(home, pe, ap, now);
             SimTime apoTime = orbit.GetNextApoapsisTime(now);
             double3 dv = OrbitalTransfers.DvCciToCircularize(orbit, apoTime);
@@ -50,7 +50,7 @@ public sealed class ExampleSweepTest : IHarnessTest
             bool ok = circular.Eccentricity < EccentricityTol && Math.Abs(circular.SemiMajorAxis - ap) / ap < RadiusTol;
             if (!ok)
                 failures++;
-            HarnessLog.Line($"[example-sweep] '{homeBody.Id}' apAlt={apAltitude:E3}m: dv={dv.Length():F3}m/s -> " +
+            HarnessLog.Line($"[example-sweep] '{home.Id}' apAlt={apAltitude:E3}m: dv={dv.Length():F3}m/s -> " +
                             $"ecc={circular.Eccentricity:F5} SMA={circular.SemiMajorAxis:E4} (target {ap:E4}) => {TestSupport.Verdict(ok)}");
         }
 

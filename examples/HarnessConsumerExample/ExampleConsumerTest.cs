@@ -23,15 +23,15 @@ public sealed class ExampleConsumerTest : IHarnessTest
 
     public int Run(HeadlessSession session)
     {
-        if (session.System.HomeBody is not IParentBody home || home is not Astronomical homeBody)
+        if (session.System.HomeBody is not IParentBody home)
         {
             HarnessLog.Line("[example-consumer] FAIL: the loaded system has no home body.");
             return 1;
         }
 
         SimTime now = Universe.GetElapsedSimTime();
-        double pe = homeBody.MeanRadius + PeriapsisAltitudeM;
-        double ap = homeBody.MeanRadius + ApoapsisAltitudeM;
+        double pe = home.MeanRadius + PeriapsisAltitudeM;
+        double ap = home.MeanRadius + ApoapsisAltitudeM;
         Orbit orbit = VehicleSpawner.EllipticalCci(home, pe, ap, now);
 
         SimTime peTime = orbit.GetNextPeriapsisTime(now);
@@ -40,7 +40,7 @@ public sealed class ExampleConsumerTest : IHarnessTest
         Orbit circular = Orbit.CreateFromStateCci(home, peTime, sv.PositionCci, sv.VelocityCci + dv, OrbitColor);
 
         bool ok = circular.Eccentricity < EccentricityTol && Math.Abs(circular.SemiMajorAxis - pe) / pe < RadiusTol;
-        HarnessLog.Line($"[example-consumer] circularize @Pe around '{homeBody.Id}': dv={dv.Length():F3}m/s -> ecc={circular.Eccentricity:F5} SMA={circular.SemiMajorAxis:E4} (target {pe:E4}) => {TestSupport.Verdict(ok)}");
+        HarnessLog.Line($"[example-consumer] circularize @Pe around '{home.Id}': dv={dv.Length():F3}m/s -> ecc={circular.Eccentricity:F5} SMA={circular.SemiMajorAxis:E4} (target {pe:E4}) => {TestSupport.Verdict(ok)}");
         return ok ? 0 : 1;
     }
 }

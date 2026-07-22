@@ -51,20 +51,39 @@ internal static class HarnessRunner
         int testFailures = 0;
         foreach (IHarnessTest test in tests)
         {
-            int result;
             try
             {
-                result = test.Run(session);
+                if (test.Run(session) != 0)
+                    testFailures++;
+            }
+            catch (Exception e) when (IsGameApiDrift(e))
+            {
+                // A renamed or removed game member surfaces here, not at Discover's GetTypes call: the
+                // type loaded, but .NET resolves member references when the calling method JITs, so a
+                // game API rename throws inside test.Run. That is exactly the drift the harness exists
+                // to catch, so it is an infrastructure failure (results untrustworthy), not a test bug.
+                HarnessLog.Line($"[{test.Name}] INFRA FAIL: game API drift:\n{e}");
+                infrastructureFailures++;
             }
             catch (Exception e)
             {
                 HarnessLog.Line($"[{test.Name}] FAIL: exception:\n{e}");
-                result = 1;
-            }
-            if (result != 0)
                 testFailures++;
+            }
         }
         return new RunResult(testFailures, infrastructureFailures);
+    }
+
+    // Member-resolution drift can arrive wrapped, e.g. a TypeInitializationException around a
+    // MissingMethodException when a static initializer references a renamed member, so walk the chain.
+    private static bool IsGameApiDrift(Exception e)
+    {
+        for (Exception? cur = e; cur != null; cur = cur.InnerException)
+        {
+            if (cur is MissingMemberException or TypeLoadException)
+                return true;
+        }
+        return false;
     }
 
     // Returns the number of load failures (counted as infrastructure failures by the caller).

@@ -39,14 +39,14 @@ public sealed class FlightTest : IHarnessTest
         }
 
         CelestialSystem system = session.System;
-        if (system.HomeBody is not IParentBody home || home is not Astronomical homeBody)
+        if (system.HomeBody is not IParentBody home)
         {
             HarnessLog.Line("[flight] FAIL: the loaded system has no home body to orbit.");
             return 1;
         }
 
         SimTime now = Universe.GetElapsedSimTime();
-        Orbit orbit = VehicleSpawner.CircularCci(home, homeBody.MeanRadius + SpawnAltitudeM, now);
+        Orbit orbit = VehicleSpawner.CircularCci(home, home.MeanRadius + SpawnAltitudeM, now);
 
         HashSet<string> preexisting = TestSupport.CollectVehicleIds(system);
         Vehicle vehicle;
