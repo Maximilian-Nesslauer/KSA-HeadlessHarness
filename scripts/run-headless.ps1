@@ -12,11 +12,14 @@
 # (nothing is overwritten); on a failed run the game's own log is archived next to it.
 #
 # Parameters:
-#   -Vehicle  name of a save in Documents\My Games\Kitten Space Agency\Vehicles for the flight test
-#             (default "Test Vehicle 1"; pass '' to skip the flight test)
-#   -Tests    optional comma-separated test-name filter (KSA_HEADLESS_TESTS)
-#   -Build    build and deploy the harness (and the example consumer) inside the queue first, so a
-#             build never races another session's running game holding the deployed DLL
+#   -Vehicle     name of a save in Documents\My Games\Kitten Space Agency\Vehicles for the flight
+#                test (default "Test Vehicle 1"; pass '' to skip the flight test)
+#   -Tests       optional comma-separated test-name filter (KSA_HEADLESS_TESTS)
+#   -Build       build and deploy the harness (and the example consumer) inside the queue first, so a
+#                build never races another session's running game holding the deployed DLL
+#   -TimeoutSec  seconds before this script kills StarMap and reports a timeout (default 120). Raise
+#                it for a long run such as an opt-in sweep. The run-queue wait scales with it, so a
+#                run queued behind a long run does not give up (exit 4) before the run ahead finishes.
 #
 # Exit codes: 0 = all tests passed, 1 = test failure(s), 2 = harness infrastructure failure,
 # 3 = timeout (StarMap killed by this script), 4 = run-queue timeout, 5 = build failure.
@@ -26,7 +29,10 @@
 param(
     [string]$Vehicle = 'Test Vehicle 1',
     [string]$Tests = '',
-    [switch]$Build
+    [switch]$Build,
+    # Reject 0/negative up front: WaitForExit(0) would return at once and report a spurious timeout.
+    [ValidateRange(1, [int]::MaxValue)]
+    [int]$TimeoutSec = 120
 )
 
 $ErrorActionPreference = 'Stop'
@@ -40,8 +46,11 @@ $logDir   = Join-Path $env:TEMP 'ksa-headless-harness'
 $runId    = "run-{0}-pid{1}" -f (Get-Date -Format 'yyyyMMdd-HHmmss'), $PID
 $log      = Join-Path $logDir "$runId.log"
 $gameLog  = Join-Path $docs 'logs\KittenSpaceAgency.log'
-$timeoutSec = 120
-$queueTimeoutSec = 600
+# Wait for the run queue at least the base 10 minutes, but scale it with the run's own kill timeout
+# so a run queued behind an equally long run does not give up before the run ahead can finish. Keeps
+# the default (120s -> 600s) unchanged; the wait ceiling is 5x this run's own kill timeout (a
+# -TimeoutSec 3600 run waits up to 18000s for the run ahead).
+$queueTimeoutSec = [Math]::Max(600, $TimeoutSec * 5)
 
 # Only Core + HeadlessHarness are enabled. Consumer mods (deployed to the mods folder with a
 # HeadlessHarness dependency in their mod.toml) are loaded by the harness itself, not StarMap.
@@ -123,7 +132,7 @@ try {
         if ($Vehicle) { $env:KSA_HEADLESS_VEHICLE = $Vehicle }
         if ($Tests) { $env:KSA_HEADLESS_TESTS = $Tests }
 
-        Write-Host "Launching StarMap headless (timeout ${timeoutSec}s, log $log)..."
+        Write-Host "Launching StarMap headless (timeout ${TimeoutSec}s, log $log)..."
         # StarMap.exe is a console-subsystem app, so Start-Process would give it its own console
         # window that pops to the foreground and steals focus. CreateNoWindow keeps it windowless;
         # UseShellExecute=false lets it inherit this shell's environment (the KSA_HEADLESS_* vars set
@@ -134,7 +143,7 @@ try {
         $psi.UseShellExecute = $false
         $psi.CreateNoWindow = $true
         $p = [System.Diagnostics.Process]::Start($psi)
-        if (-not $p.WaitForExit($timeoutSec * 1000)) {
+        if (-not $p.WaitForExit($TimeoutSec * 1000)) {
             Write-Host "Timeout reached - killing StarMap."
             try { $p.Kill() } catch {}
             $harnessExit = 3

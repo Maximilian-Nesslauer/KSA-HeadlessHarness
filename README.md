@@ -76,7 +76,7 @@ A test that is too expensive for the normal suite (a parameter sweep, a soak run
 ## Running the self-tests
 
 `scripts/run-headless.ps1` runs the suite headless: it backs up the game manifest, swaps to a minimal `Core + HeadlessHarness` manifest, launches StarMap with `KSA_HEADLESS_HARNESS=1`, then ALWAYS restores the manifest, prints this run's log, and exits with the harness exit code (`3` = timeout, `4` = run-queue timeout, `5` = build failure). On a failed run it also archives the game's own log next to the run log.
-`-Vehicle <save name>` selects the flight-test vehicle (the default `Test Vehicle 1` is used only if that save exists, otherwise the flight test skips); `-Tests a,b` filters tests; `-Build` builds and deploys harness + example inside the queue first, so a build never races another session's running game.
+`-Vehicle <save name>` selects the flight-test vehicle (the default `Test Vehicle 1` is used only if that save exists, otherwise the flight test skips); `-Tests a,b` filters tests; `-Build` builds and deploys harness + example inside the queue first, so a build never races another session's running game; `-TimeoutSec <n>` raises the kill timeout (default 120) for a long run such as an opt-in sweep, and the run-queue wait scales with it so a run queued behind a long run does not give up early.
 The flight test wants a working staged vehicle: build one in-game (e.g. two stages: engines in sequence 1, the decoupler in sequence 2, the upper engine in sequence 3) and save it in the Vehicles window.
 With the flag unset the mod stays idle and never disrupts a normal launch.
 
