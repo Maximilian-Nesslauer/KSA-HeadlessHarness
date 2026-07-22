@@ -37,6 +37,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 - `HeadlessHarness/Harness/FlightTest.cs` - flies a player-built save like a player (burn, stage, repeat) and asserts real physics.
 - `HeadlessHarness/Harness/SpawnTest.cs` / `OrbitMathTest.cs` - `IHarnessTest` self-tests that double as worked examples.
 - `HeadlessHarness/Core/HarnessLog.cs` - self-contained result log (file plus console).
+- `HeadlessHarness/Core/HarnessData.cs` - machine-readable CSV output beside the log, for measuring tests.
 - `examples/HarnessConsumerExample/` - a complete consumer mod carrying one `IHarnessTest`.
 
 ## Environment variables
@@ -71,6 +72,8 @@ A consumer DLL or test type that fails to load counts as an infrastructure failu
 A test that is too expensive for the normal suite (a parameter sweep, a soak run) can override `bool OptIn => true`. It then stays deployed and discoverable but runs only when `KSA_HEADLESS_TESTS` names it, so the default suite keeps its usual runtime. Every default run logs which opt-in tests it skipped, by name.
 
 `TestSupport` carries the helpers most vehicle tests need (manual throttle input, engine propellant checks, spawn snapshot and cleanup), so a consumer does not have to duplicate the underlying game couplings; `HarnessLog` and `VehicleSpawner` are public for the same reason.
+
+A measuring test (a calibration sweep, a benchmark) can write machine-readable output with `HarnessData`: `HarnessData.Create("<tag>", "col1,col2")` makes a CSV next to the run log (named for the run so the run script lists it), then `data.AppendRow(cell1, cell2, ...)` appends invariant-culture, CSV-escaped rows. No schema is imposed; the columns are the consumer's. `ExampleSweepTest` in the example consumer writes one.
 [`examples/HarnessConsumerExample`](examples/HarnessConsumerExample) is a complete worked example.
 
 ## Running the self-tests

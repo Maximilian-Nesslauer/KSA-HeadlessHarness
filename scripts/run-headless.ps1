@@ -183,4 +183,13 @@ Write-Host ""
 Write-Host "===== harness log: $log ====="
 if (Test-Path $log) { Get-Content $log } else { Write-Host "(no harness log - Mod.OnBeforeMain may not have run)" }
 Write-Host "(all run logs are kept in $logDir)"
+
+# HarnessData writes each CSV as <run-log-basename>-<tag>.csv, i.e. sharing this run's id prefix, so
+# the run's data files are exactly the CSVs whose name starts with $runId.
+$dataFiles = @(Get-ChildItem -Path $logDir -Filter "$runId-*.csv" -ErrorAction SilentlyContinue)
+if ($dataFiles.Count -gt 0) {
+    Write-Host ""
+    Write-Host "===== data files produced by this run ====="
+    foreach ($f in $dataFiles) { Write-Host $f.FullName }
+}
 exit $harnessExit
