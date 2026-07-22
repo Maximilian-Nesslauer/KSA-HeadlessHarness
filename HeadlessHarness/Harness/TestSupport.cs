@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
+using HeadlessHarness.Core;
 using KSA;
 
 namespace HeadlessHarness.Harness;
@@ -15,7 +16,46 @@ public static class TestSupport
     // own flight test and consumer flight tests share it. Unset: those tests skip.
     public const string VehicleEnvVar = "KSA_HEADLESS_VEHICLE";
 
+    // Plural counterpart for a test that runs several saves (a sweep, a cross-vehicle check):
+    // ResolveVehicleSaves reads it. Deliberately separate from the singular VehicleEnvVar, which
+    // run-headless.ps1 always exports for the flight test, so overriding the multi-vehicle set does
+    // not collapse a consumer's list onto that one pin.
+    public const string VehiclesEnvVar = "KSA_HEADLESS_VEHICLES";
+
     private static FieldInfo? _manualInputsField;
+
+    // Resolves which Vehicles-folder saves a multi-vehicle test should run: the comma-separated
+    // KSA_HEADLESS_VEHICLES if set, otherwise the given candidates. Only saves that actually exist
+    // are returned (which saves a machine has is machine-specific), and a requested-but-missing save
+    // is logged so a run that dropped one is not silent. The caller iterates the result and adds its
+    // own per-save skips for saves that exist but are unsuitable (e.g. lacking the parts it needs).
+    public static IReadOnlyList<string> ResolveVehicleSaves(params string[] candidates)
+    {
+        string? overrideList = Environment.GetEnvironmentVariable(VehiclesEnvVar);
+        IEnumerable<string> requested = !string.IsNullOrWhiteSpace(overrideList)
+            ? overrideList.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            : candidates;
+
+        List<string> resolved = new();
+        foreach (string id in requested)
+        {
+            if (VehicleSaveExists(id))
+                resolved.Add(id);
+            else
+                HarnessLog.Line($"[harness] vehicle save '{id}' not found in {VehicleSaves.SaveFolderPath}; skipping it.");
+        }
+        return resolved;
+    }
+
+    private static bool VehicleSaveExists(string saveId)
+    {
+        foreach (VehicleSave save in VehicleSaves.AsSpan())
+        {
+            if (string.Equals(save.Id, saveId, StringComparison.Ordinal))
+                return true;
+        }
+        return false;
+    }
 
     // The game reads manual throttle/engine state from this private per-vehicle struct and exposes
     // no setter outside its input pipeline; writing the field directly is the headless equivalent

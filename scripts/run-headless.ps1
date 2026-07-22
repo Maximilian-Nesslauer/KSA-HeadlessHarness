@@ -14,6 +14,8 @@
 # Parameters:
 #   -Vehicle     name of a save in Documents\My Games\Kitten Space Agency\Vehicles for the flight
 #                test (default "Test Vehicle 1"; pass '' to skip the flight test)
+#   -Vehicles    optional comma-separated save list (KSA_HEADLESS_VEHICLES) overriding the candidate
+#                set a multi-vehicle consumer test would otherwise resolve; separate from -Vehicle
 #   -Tests       optional comma-separated test-name filter (KSA_HEADLESS_TESTS)
 #   -Build       build and deploy the harness (and the example consumer) inside the queue first, so a
 #                build never races another session's running game holding the deployed DLL
@@ -28,6 +30,7 @@
 
 param(
     [string]$Vehicle = 'Test Vehicle 1',
+    [string]$Vehicles = '',
     [string]$Tests = '',
     [switch]$Build,
     # Reject 0/negative up front: WaitForExit(0) would return at once and report a spurious timeout.
@@ -126,10 +129,12 @@ try {
         # Clear stale values from the parent shell first, so an empty parameter means "unset", not
         # "whatever happened to be in the environment".
         Remove-Item Env:\KSA_HEADLESS_VEHICLE -ErrorAction SilentlyContinue
+        Remove-Item Env:\KSA_HEADLESS_VEHICLES -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_TESTS -ErrorAction SilentlyContinue
         $env:KSA_HEADLESS_HARNESS = '1'
         $env:KSA_HEADLESS_LOG = $log
         if ($Vehicle) { $env:KSA_HEADLESS_VEHICLE = $Vehicle }
+        if ($Vehicles) { $env:KSA_HEADLESS_VEHICLES = $Vehicles }
         if ($Tests) { $env:KSA_HEADLESS_TESTS = $Tests }
 
         Write-Host "Launching StarMap headless (timeout ${TimeoutSec}s, log $log)..."
@@ -170,6 +175,7 @@ try {
         Remove-Item Env:\KSA_HEADLESS_HARNESS -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_LOG -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_VEHICLE -ErrorAction SilentlyContinue
+        Remove-Item Env:\KSA_HEADLESS_VEHICLES -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_TESTS -ErrorAction SilentlyContinue
         Write-Host "Manifest restored."
     }

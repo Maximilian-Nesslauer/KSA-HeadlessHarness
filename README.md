@@ -31,7 +31,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 - `HeadlessHarness/Harness/SimDriver.cs` - deterministic fixed-step solver ticking plus input-event drain.
 - `HeadlessHarness/Harness/VehicleSpawner.cs` - save/copy vehicle spawning plus orbit helpers.
 - `HeadlessHarness/Harness/IHarnessTest.cs` - the plug-in test interface.
-- `HeadlessHarness/Harness/TestSupport.cs` - shared helpers for tests (manual control input, propellant checks, spawn cleanup).
+- `HeadlessHarness/Harness/TestSupport.cs` - shared helpers for tests (manual control input, propellant checks, spawn cleanup, multi-vehicle save resolution).
 - `HeadlessHarness/Harness/HarnessRunner.cs` - loads consumer DLLs and discovers/runs `IHarnessTest`s.
 - `HeadlessHarness/Harness/HarnessMain.cs` - the entry: bring-up, content-agnostic smoke checks, test dispatch, exit code.
 - `HeadlessHarness/Harness/FlightTest.cs` - flies a player-built save like a player (burn, stage, repeat) and asserts real physics.
@@ -46,6 +46,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 | --- | --- |
 | `KSA_HEADLESS_HARNESS=1` | Run the harness and exit before the GPU game starts. Anything else: the mod stays idle. |
 | `KSA_HEADLESS_VEHICLE` | Name of a save under `Documents\My Games\Kitten Space Agency\Vehicles` for the flight test. Unset: the flight test skips. |
+| `KSA_HEADLESS_VEHICLES` | Comma-separated save list a multi-vehicle test resolves via `TestSupport.ResolveVehicleSaves`, overriding its candidate set. Separate from the singular pin above. Unset: the test uses its own candidates. |
 | `KSA_HEADLESS_TESTS` | Comma-separated test names; only matching discovered tests run, and naming an opt-in test is what runs it. A name matching nothing is an infrastructure failure (a typo must not silently skip a test). |
 | `KSA_HEADLESS_LOG` | Exact path for this run's log file. Unset: a timestamp+pid file under `%TEMP%\ksa-headless-harness\`. |
 
@@ -74,6 +75,8 @@ A test that is too expensive for the normal suite (a parameter sweep, a soak run
 `TestSupport` carries the helpers most vehicle tests need (manual throttle input, engine propellant checks, spawn snapshot and cleanup), so a consumer does not have to duplicate the underlying game couplings; `HarnessLog` and `VehicleSpawner` are public for the same reason.
 
 A measuring test (a calibration sweep, a benchmark) can write machine-readable output with `HarnessData`: `HarnessData.Create("<tag>", "col1,col2")` makes a CSV next to the run log (named for the run so the run script lists it), then `data.AppendRow(cell1, cell2, ...)` appends invariant-culture, CSV-escaped rows. No schema is imposed; the columns are the consumer's. `ExampleSweepTest` in the example consumer writes one.
+
+A test that runs several saves calls `TestSupport.ResolveVehicleSaves("A", "B", ...)`: it returns the candidates that exist in the Vehicles folder (logging a note for any that do not), or the comma-separated `KSA_HEADLESS_VEHICLES` / `run-headless.ps1 -Vehicles` list if set. Iterate the result, spawn each with a per-save log prefix, and add your own SKIP for a save that exists but is unsuitable (missing the parts the test needs). `ExampleMultiVehicleTest` in the example consumer is the worked pattern; because it flies more than one save it is opt-in (`OptIn => true`).
 [`examples/HarnessConsumerExample`](examples/HarnessConsumerExample) is a complete worked example.
 
 ## Running the self-tests
