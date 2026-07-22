@@ -54,6 +54,7 @@ public sealed class HeadlessSession
         Languages.OnApplicationStart();
         VehicleSaves.OnApplicationStart();
         DefaultVehicleSaves.OnApplicationStart();
+        LayoutSaves.OnApplicationStart();
         GameAudio.OnApplicationStart();
 
         HarnessLog.Line("[bringup] cpu asset load");
