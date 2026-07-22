@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using HeadlessHarness.Core;
+using KSA;
 
 namespace HeadlessHarness.Harness;
 
@@ -51,9 +53,17 @@ internal static class HarnessRunner
         int testFailures = 0;
         foreach (IHarnessTest test in tests)
         {
+            // Sim seconds is read as the delta of the universe's sim clock across the test: every
+            // SimDriver.Step advances Universe.GetElapsedSimTime by its dt, so a stepping test reports
+            // its flown time and a non-stepping test reports 0, with no IHarnessTest surface.
+            SimTime simBefore = Universe.GetElapsedSimTime();
+            long startTicks = Stopwatch.GetTimestamp();
+            string outcome;
             try
             {
-                if (test.Run(session) != 0)
+                bool pass = test.Run(session) == 0;
+                outcome = pass ? "PASS" : "FAIL";
+                if (!pass)
                     testFailures++;
             }
             catch (Exception e) when (IsGameApiDrift(e))
@@ -64,12 +74,17 @@ internal static class HarnessRunner
                 // to catch, so it is an infrastructure failure (results untrustworthy), not a test bug.
                 HarnessLog.Line($"[{test.Name}] INFRA FAIL: game API drift:\n{e}");
                 infrastructureFailures++;
+                outcome = "INFRA FAIL";
             }
             catch (Exception e)
             {
                 HarnessLog.Line($"[{test.Name}] FAIL: exception:\n{e}");
                 testFailures++;
+                outcome = "FAIL";
             }
+            double wallMs = Stopwatch.GetElapsedTime(startTicks).TotalMilliseconds;
+            double simSeconds = (Universe.GetElapsedSimTime() - simBefore).Seconds();
+            HarnessLog.Line($"[harness] {test.Name}: {outcome} in {wallMs:F0}ms wall, {simSeconds:F1}s sim");
         }
         return new RunResult(testFailures, infrastructureFailures);
     }
