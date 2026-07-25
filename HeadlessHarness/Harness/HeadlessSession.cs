@@ -78,6 +78,10 @@ public sealed class HeadlessSession
         ModLibrary.AttachGameData();
         ModLibrary.PopulateSounds();
         SubstanceLibrary.LoadAll();
+        // Paired with SubstanceLibrary.LoadAll in the game's own bring-up. Without it any part
+        // carrying a SolidGrainSegment throws "No grain geometries loaded" out of its constructor,
+        // so a save with a solid motor cannot be deserialized at all.
+        GrainGeometryLibrary.LoadAll();
 
         string id = systemId ?? SystemLibrary.Default?.Id ?? SystemLibrary.First().Id;
         HarnessLog.Line($"[bringup] load system '{id}'");
