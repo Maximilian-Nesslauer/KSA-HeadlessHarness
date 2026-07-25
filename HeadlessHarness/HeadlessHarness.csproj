@@ -44,16 +44,10 @@
   </ItemGroup>
 
   <!--
-    Deploy the built DLL and mod.toml so StarMap discovers the harness. There is no
-    SpaceDock/release packaging: this is a developer test tool, installed from source.
+    Deploy the built DLL and mod.toml so StarMap discovers the harness, with the worktree-safety
+    and game-is-running guards. There is no SpaceDock/release packaging: this is a developer test
+    tool, installed from source.
   -->
-  <Target Name="CopyToMods" AfterTargets="Build">
-    <PropertyGroup>
-      <ModDir>$(USERPROFILE)\Documents\My Games\Kitten Space Agency\mods\HeadlessHarness\</ModDir>
-    </PropertyGroup>
-    <MakeDir Directories="$(ModDir)" />
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ModDir)" />
-    <Copy SourceFiles="mod.toml" DestinationFolder="$(ModDir)" />
-  </Target>
+  <Import Project="..\build\ModDeploy.targets" />
 
 </Project>

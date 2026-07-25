@@ -38,13 +38,13 @@
     </None>
   </ItemGroup>
 
-  <Target Name="CopyToMods" AfterTargets="Build">
-    <PropertyGroup>
-      <ModDir>$(USERPROFILE)\Documents\My Games\Kitten Space Agency\mods\HarnessConsumerExample\</ModDir>
-    </PropertyGroup>
-    <MakeDir Directories="$(ModDir)" />
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ModDir)" />
-    <Copy SourceFiles="mod.toml" DestinationFolder="$(ModDir)" />
-  </Target>
+  <!-- The example suite is run by scripts/run-headless.ps1, not from Visual Studio, so it needs
+       the deploy plumbing but no StarMap launch profile of its own. This project sits two levels
+       under the repo root, hence the longer import path. -->
+  <PropertyGroup>
+    <GenerateLaunchProfile>false</GenerateLaunchProfile>
+  </PropertyGroup>
+
+  <Import Project="..\..\build\ModDeploy.targets" />
 
 </Project>
