@@ -204,9 +204,15 @@ public sealed class HeadlessSession
 
     // The split half of Decoupler.Decouple, minus its audio/particle presentation (see the patch
     // comment above). Connector and Force are public fields on Decoupler.
+    //
+    // The vehicle to split comes from the part tree, not from the oldVehicle argument, mirroring
+    // stock. When two decouplers fire in the same sequence the upstream one splits first, so by the
+    // time the downstream one runs its part already belongs to the shed vehicle and oldVehicle no
+    // longer owns the connector, which makes its Split find nothing to detach.
     private static bool HeadlessDecouple(Decoupler __instance, Vehicle oldVehicle, ref Vehicle? __result)
     {
-        __result = oldVehicle.Split(__instance.Connector, __instance.Force);
+        Vehicle owner = __instance.Parent.FullPart.Tree.OwningVehicle ?? oldVehicle;
+        __result = owner.Split(__instance.Connector, __instance.Force);
         return false;
     }
 

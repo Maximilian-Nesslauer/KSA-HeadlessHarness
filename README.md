@@ -6,7 +6,7 @@ A mod references it as a test dependency and asserts against the real `FlightCom
 
 This is a developer tool, not a gameplay mod. It is env-var gated and does nothing on a normal launch.
 
-Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.7.9.5018 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
+Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.7.10.5056 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
 
 ## How it works
 
@@ -107,6 +107,7 @@ The bring-up mirrors the game's own load sequence and patches a handful of rende
 
 - The load calls in `HeadlessSession.BringUp` (all public static in the verified build).
 - The Harmony patch targets: `Universe.OnLoaded`, the `Loading` screen stand-in, the `DistantSphereRenderer` and `KittenRenderable` constructors, `Program.GetOceanRenderer`, `Program.GetMainCamera`, and `Decoupler.Decouple` (headless split without audio/particles).
+- The body of the `Decoupler.Decouple` stand-in, which replaces the stock method outright: it must keep resolving the vehicle to split the same way stock does. Stock changes here are invisible to the compiler and show up only as wrong staging results.
 - The reflection keys: `Vehicle._manualControlInputs` and `Loading._tasks`.
 - The input-queue drain: `InputEvents.ApplyInputEvents` in `SimDriver.Step` mirrors its position in `Program.PrepareFrame` (after the solvers apply, before the next execute).
 
