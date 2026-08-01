@@ -1,4 +1,5 @@
 using Brutal.Numerics;
+using HeadlessHarness.Core;
 using KSA;
 
 namespace HeadlessHarness.Harness;
@@ -45,7 +46,50 @@ public static class VehicleSpawner
         vehicle.Parts.SequenceList.ApplyEnvironments(save.VehicleSaveData.SequenceEnvironments);
         vehicle.Parts.FuelLinks.ApplySaveData(save.VehicleSaveData.FuelLinks, design);
         parent.Children.Add(vehicle);
+        SeatRandomCrew(vehicle);
         return vehicle;
+    }
+
+    // Fills every free seat from the universe roster, mirroring Universe.AssignStartingCrew: mark the
+    // vehicle launched, then take an unassigned, non-KIA kitten, seat it and start its mission. A
+    // headless run never creates a save, so Universe.KittenRoster starts empty and
+    // KittenRosterData.EnsureAvailableKitten generates kittens on demand.
+    //
+    // Seats the save already assigned are left alone. Their hashes name kittens of the save's own
+    // roster, which this run does not have, so the count below reports fewer crewed seats than the
+    // vehicle has rather than silently reseating an occupied seat.
+    public static int SeatRandomCrew(Vehicle vehicle)
+    {
+        int seats = vehicle.SeatCount;
+        if (seats <= 0)
+            return 0;
+
+        vehicle.MarkLaunched();
+        int seated = 0;
+        for (int i = 0; i < seats; i++)
+        {
+            Universe.KittenRoster.EnsureAvailableKitten();
+            KittenRosterEntryData? free = FindUnassignedKitten();
+            if (free == null)
+                break;
+            if (!vehicle.AddCrewToFirstAvailableSeat(free.NameHash))
+                break;
+            free.StartMission(vehicle.Id);
+            seated++;
+        }
+
+        HarnessLog.Line($"[harness] '{vehicle.Id}' crewed {seated}/{seats} seat(s) from the kitten roster.");
+        return seated;
+    }
+
+    private static KittenRosterEntryData? FindUnassignedKitten()
+    {
+        foreach (KittenRosterEntryData kitten in Universe.KittenRoster.Kittens)
+        {
+            if (!kitten.AssignedToVehicle && !kitten.Kia)
+                return kitten;
+        }
+        return null;
     }
 
     // Registers the copy the same way the game registers a decoupled stage: into the parent's child
