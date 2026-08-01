@@ -9,7 +9,8 @@
 # Concurrent sessions queue: the whole swap -> launch -> restore sequence runs under a machine-wide
 # named mutex, so parallel invocations wait for each other instead of fighting over the shared game
 # manifest and game process. Each run writes its own log file under %TEMP%\ksa-headless-harness\
-# (nothing is overwritten); on a failed run the game's own log is archived next to it.
+# (nothing is overwritten); on a failed run the game's own log is archived next to it, but only when
+# this run actually wrote it, which a headless run usually does not.
 #
 # Parameters:
 #   -Vehicle     name of a save in Documents\My Games\Kitten Space Agency\Vehicles for the flight
@@ -147,10 +148,16 @@ try {
         $psi.WorkingDirectory = Split-Path $starmap
         $psi.UseShellExecute = $false
         $psi.CreateNoWindow = $true
+        # Stamped before the launch so the archive step below can tell a log this run wrote from the
+        # leftover of the last windowed session.
+        $launchedAt = Get-Date
         $p = [System.Diagnostics.Process]::Start($psi)
         if (-not $p.WaitForExit($TimeoutSec * 1000)) {
             Write-Host "Timeout reached - killing StarMap."
-            try { $p.Kill() } catch {}
+            # Awaited: Kill only signals, and Windows does not flush a file's timestamp while the
+            # process still holds it open, so the game-log freshness check below would misread a log
+            # this run did write.
+            try { $p.Kill(); $p.WaitForExit() } catch {}
             $harnessExit = 3
         } else {
             $harnessExit = $p.ExitCode
@@ -158,12 +165,20 @@ try {
         }
 
         # On failure, keep the game's own log (overwritten by every game start) next to the run log.
+        # Only when this run actually wrote it: KSA wires its file logger up inside Program..ctor,
+        # which a headless run never reaches, so DefaultCategory output usually goes nowhere and the
+        # file still holds the last windowed session. Archiving that unannounced sends whoever reads
+        # it hunting through a log from a different run.
         # Best-effort: a copy failure (e.g. the file still locked by another process) must not
         # replace the meaningful harness exit code with a script error.
         if ($harnessExit -ne 0 -and (Test-Path $gameLog)) {
             try {
-                Copy-Item $gameLog (Join-Path $logDir "$runId.game.log") -Force -ErrorAction Stop
-                Write-Host "Archived game log to $logDir\$runId.game.log"
+                if ((Get-Item $gameLog -ErrorAction Stop).LastWriteTime -lt $launchedAt) {
+                    Write-Host "No game log from this run (KSA's file logger is not wired up headless); $gameLog is from an earlier session and was not archived."
+                } else {
+                    Copy-Item $gameLog (Join-Path $logDir "$runId.game.log") -Force -ErrorAction Stop
+                    Write-Host "Archived game log to $logDir\$runId.game.log"
+                }
             } catch {
                 Write-Host "Could not archive the game log: $($_.Exception.Message)"
             }
