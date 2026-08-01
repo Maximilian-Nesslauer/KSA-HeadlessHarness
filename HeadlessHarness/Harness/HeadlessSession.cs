@@ -212,7 +212,7 @@ public sealed class HeadlessSession
     private static bool HeadlessDecouple(Decoupler __instance, Vehicle oldVehicle, ref Vehicle? __result)
     {
         Vehicle owner = __instance.Parent.FullPart.Tree.OwningVehicle ?? oldVehicle;
-        __result = owner.Split(__instance.Connector, __instance.Force);
+        __result = owner.Split(__instance.Connector, __instance.Force, out _);
         return false;
     }
 
