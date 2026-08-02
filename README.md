@@ -11,7 +11,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 ## How it works
 
 - Packaged as a StarMap mod. The entry is a `[StarMapBeforeMain]` method (`Mod.OnBeforeMain`), which StarMap fires BEFORE it invokes KSA `Program.Main` - so it runs before any GLFW window or Vulkan renderer is created.
-- StarMap loads the mod through its own `GameAssemblyLoadContext`, which resolves `KSA.dll` and the `Brutal.*` native dependencies from the game folder.
+- StarMap loads the mod through its own `CoreAssemblyLoadContext`, which resolves `KSA.dll` and the `Brutal.*` native dependencies from the game folder.
 - `HeadlessSession.BringUp` runs the CPU-only load calls the real `Program` constructor makes, in dependency order, skipping every GPU, window, and ImGui step, and installs a small set of Harmony patches that neutralize the render couplings a few body and vehicle types have (see [Maintenance](#maintenance-on-game-update)).
 - `SimDriver` advances the vehicle (and optionally orbit) solvers with a hand-built fixed `SimStep`, collapsing the game's double-buffered solver pipeline into a synchronous Execute -> Wait -> Apply, and drains the game's input-event queue at the top of each step. The game's activation APIs (`EngineController.SetIsActive`, `Decoupler.SetIsActive`, `SequenceList.ActivateNextSequence`) only enqueue, so a command issued between steps is included in the very next solver pass, with the same one-frame latency as the running game.
 

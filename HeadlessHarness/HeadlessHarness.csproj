@@ -12,7 +12,7 @@
     <PackageReference Include="StarMap.API" Version="0.3.6" />
   </ItemGroup>
 
-  <!-- Game DLLs are provided at runtime by StarMap's GameAssemblyLoadContext, so every reference is
+  <!-- Game DLLs are provided at runtime by StarMap's CoreAssemblyLoadContext, so every reference is
        Private=false (do not copy into the output). -->
   <ItemGroup>
     <Reference Include="KSA">
