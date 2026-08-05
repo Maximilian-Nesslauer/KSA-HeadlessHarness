@@ -103,6 +103,14 @@ public sealed class HeadlessSession
         Harmony harmony = new Harmony(HarmonyId);
         _dummyCamera = new Camera(new int2(DummyViewportWidth, DummyViewportHeight));
 
+        // Vehicle.PrepareWorker reads ImGui.GetIO().WantCaptureKeyboard for the
+        // controlled vehicle while this is true, and headless there is no ImGui
+        // context to read. False is also the honest headless state: no player is
+        // flying. It only costs the held thruster/throttle flags being cleared
+        // each prepare, which no test drives (TestSupport writes EngineOn and
+        // EngineThrottle, which ClearHeldPlayerInput does not touch).
+        Program.IsControlledVehicleActive = false;
+
         // Universe.LoadSystem calls Universe.OnLoaded, which runs follow/control terminal commands
         // through Program.TerminalInterface (the ImGui console). Headless there is no console, so skip
         // OnLoaded; LoadSystem still sets CurrentSystem/WorldSun before calling it.
