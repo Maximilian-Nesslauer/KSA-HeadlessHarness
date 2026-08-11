@@ -28,12 +28,18 @@ public sealed class OrbitMathTest : IHarnessTest
             return 1;
         }
 
-        SimTime now = Universe.GetElapsedSimTime();
+        UniverseTime now = Universe.GetElapsedTime();
         double pe = home.MeanRadius + PeriapsisAltitudeM;
         double ap = home.MeanRadius + ApoapsisAltitudeM;
         Orbit orbit = VehicleSpawner.EllipticalCci(home, pe, ap, now);
 
-        SimTime apoTime = orbit.GetNextApoapsisTime(now);
+        // A bounded ellipse always reaches apoapsis, so a null here means the game's anomaly solver
+        // could not place it: report the drift instead of feeding a substitute time into the maneuver.
+        if (orbit.GetNextApoapsisTime(now) is not UniverseTime apoTime)
+        {
+            HarnessLog.Line($"[orbit-math] FAIL: no next apoapsis for the test orbit around '{home.Id}' (ecc={orbit.Eccentricity:F5}).");
+            return 1;
+        }
         double3 dv = OrbitalTransfers.DvCciToCircularize(orbit, apoTime);
         StateVectors sv = orbit.GetStateVectorsAt(apoTime);
         Orbit circular = Orbit.CreateFromStateCci(home, apoTime, sv.PositionCci, sv.VelocityCci + dv, VehicleSpawner.OrbitLineColor);

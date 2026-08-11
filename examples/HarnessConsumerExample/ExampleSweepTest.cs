@@ -34,7 +34,7 @@ public sealed class ExampleSweepTest : IHarnessTest
             return 1;
         }
 
-        SimTime now = Universe.GetElapsedSimTime();
+        UniverseTime now = Universe.GetElapsedTime();
         double pe = home.MeanRadius + PeriapsisAltitudeM;
         HarnessData data = HarnessData.Create("example-sweep", "ap_altitude_m,dv_mps,eccentricity,sma_m,pass");
         int failures = 0;
@@ -43,7 +43,14 @@ public sealed class ExampleSweepTest : IHarnessTest
             double apAltitude = FirstApoapsisAltitudeM + i * ApoapsisStepM;
             double ap = home.MeanRadius + apAltitude;
             Orbit orbit = VehicleSpawner.EllipticalCci(home, pe, ap, now);
-            SimTime apoTime = orbit.GetNextApoapsisTime(now);
+            // A sample the game cannot solve an apoapsis for fails that sample and keeps sweeping,
+            // so one bad point does not cost the rest of the dataset.
+            if (orbit.GetNextApoapsisTime(now) is not UniverseTime apoTime)
+            {
+                HarnessLog.Line($"[example-sweep] apAlt={apAltitude:E3}m: no next apoapsis => {TestSupport.Verdict(false)}");
+                failures++;
+                continue;
+            }
             double3 dv = OrbitalTransfers.DvCciToCircularize(orbit, apoTime);
             StateVectors sv = orbit.GetStateVectorsAt(apoTime);
             Orbit circular = Orbit.CreateFromStateCci(home, apoTime, sv.PositionCci, sv.VelocityCci + dv,

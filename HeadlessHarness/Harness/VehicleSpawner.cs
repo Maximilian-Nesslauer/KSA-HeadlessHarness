@@ -21,8 +21,8 @@ public static class VehicleSpawner
     // (SetActiveSequence), per-sequence performance environments, and fuel links. Engine active flags
     // round-trip through the part tree itself (EngineController.ApplySaveData), so a properly staged
     // save spawns with the correct engines already active. The vehicle is registered into the
-    // parent's child list; an update task is assigned by the game itself on the next solver step
-    // (Universe.ExecuteNextVehicleSolvers -> AddVehiclesToTasks).
+    // parent's child list; Universe.ExecuteNextVehicleSolvers puts it in a PhysicsBubble on the next
+    // solver step, joining an overlapping vehicle's bubble or renting a fresh one.
     public static Vehicle SpawnFromSave(string saveId, CelestialSystem system, IParentBody parent, string id, Orbit orbit)
     {
         VehicleSave? save = null;
@@ -51,9 +51,10 @@ public static class VehicleSpawner
     }
 
     // Fills every free seat from the universe roster, mirroring Universe.AssignStartingCrew: mark the
-    // vehicle launched, then take an unassigned, non-KIA kitten, seat it and start its mission. A
-    // headless run never creates a save, so Universe.KittenRoster starts empty and
-    // KittenRosterData.EnsureAvailableKitten generates kittens on demand.
+    // vehicle launched, then take an unassigned, non-KIA kitten, seat it and start its mission.
+    // Universe.LoadSystem seeds the roster with 20 kittens, so EnsureAvailableKitten only tops it up
+    // once a run has seated all of them. Which kitten lands in which seat does not affect vehicle
+    // mass or the flight test's determinism signature.
     //
     // Seats the save already assigned are left alone. Their hashes name kittens of the save's own
     // roster, which this run does not have, so the count below reports fewer crewed seats than the
@@ -93,9 +94,10 @@ public static class VehicleSpawner
     }
 
     // Registers the copy the same way the game registers a decoupled stage: into the parent's child
-    // list (so the solvers discover and tick it) and into the source's update task (so it ticks
-    // immediately and satisfies Vehicle.Split's UpdateTask requirement). Vehicle.CreateVehicle alone
-    // leaves the vehicle unregistered - it would neither tick nor be splittable.
+    // list (so the solvers discover and tick it) and into the source's physics bubble (so it ticks
+    // immediately and satisfies Vehicle.Split's PhysicsBubble requirement). Vehicle.CreateVehicle
+    // covers only the CelestialSystem registration, which Astronomical's constructor does; without
+    // these two steps the copy would neither tick nor be splittable.
     public static Vehicle SpawnCopy(Vehicle source, IParentBody parent, string id, Orbit orbit)
     {
         PartInstance design = source.SerializeSave().RootPartInstance
@@ -103,31 +105,33 @@ public static class VehicleSpawner
         PartTree freshTree = PartTree.Deserialize(design);
         Vehicle copy = Vehicle.CreateVehicle(source.System, source.Body2Cce, source.BodyRates, parent, id, freshTree.Root, orbit);
         parent.Children.Add(copy);
-        if (source.UpdateTask != null)
-            copy.AddToTask(source.UpdateTask);
+        if (source.PhysicsBubble != null)
+            copy.AddToBubble(source.PhysicsBubble);
         return copy;
     }
 
-    // Tears a spawned vehicle back out of the simulation: off its update task and out of the celestial
-    // tree plus the parent's child list (CelestialSystem.Deregister drops both). The counterpart to
-    // the spawn helpers - call it on every spawned vehicle and every stage it shed, so throwaway
-    // vehicles stop ticking.
+    // Tears a spawned vehicle back out of the simulation: off its physics bubble and out of the
+    // celestial tree plus the parent's child list (CelestialSystem.Deregister drops both). The
+    // counterpart to the spawn helpers - call it on every spawned vehicle and every stage it shed, so
+    // throwaway vehicles stop ticking. A bubble left with no vehicles is recycled by the game on the
+    // next solver step (Universe.TrimPhysicsBubbles).
     public static void Despawn(Vehicle vehicle)
     {
-        if (vehicle.UpdateTask != null)
-            vehicle.RemoveFromTask(vehicle.UpdateTask);
+        PhysicsBubble? bubble = vehicle.PhysicsBubble;
+        if (bubble != null)
+            vehicle.RemoveFromBubble(bubble);
         vehicle.System.Deregister(vehicle);
     }
 
     // A circular orbit of the given radius (meters from the parent centre), velocity along CCI +Y.
-    public static Orbit CircularCci(IParentBody parent, double radius, SimTime time)
+    public static Orbit CircularCci(IParentBody parent, double radius, UniverseTime time)
     {
         double v = Math.Sqrt(parent.Mu / radius);
         return Orbit.CreateFromStateCci(parent, time, new double3(radius, 0.0, 0.0), new double3(0.0, v, 0.0), OrbitLineColor);
     }
 
     // An elliptical orbit with the given periapsis/apoapsis radii, starting at periapsis (CCI +X).
-    public static Orbit EllipticalCci(IParentBody parent, double periapsisRadius, double apoapsisRadius, SimTime time)
+    public static Orbit EllipticalCci(IParentBody parent, double periapsisRadius, double apoapsisRadius, UniverseTime time)
     {
         double a = (periapsisRadius + apoapsisRadius) / 2.0;
         double vPe = Math.Sqrt(parent.Mu * (2.0 / periapsisRadius - 1.0 / a));

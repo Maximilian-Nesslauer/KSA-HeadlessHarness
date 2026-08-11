@@ -29,12 +29,18 @@ public sealed class ExampleConsumerTest : IHarnessTest
             return 1;
         }
 
-        SimTime now = Universe.GetElapsedSimTime();
+        UniverseTime now = Universe.GetElapsedTime();
         double pe = home.MeanRadius + PeriapsisAltitudeM;
         double ap = home.MeanRadius + ApoapsisAltitudeM;
         Orbit orbit = VehicleSpawner.EllipticalCci(home, pe, ap, now);
 
-        SimTime peTime = orbit.GetNextPeriapsisTime(now);
+        // The apsis getters are nullable: null means the game could not solve the anomaly, which a
+        // bounded ellipse never hits. Guarding it is the pattern a consumer copies.
+        if (orbit.GetNextPeriapsisTime(now) is not UniverseTime peTime)
+        {
+            HarnessLog.Line($"[example-consumer] FAIL: no next periapsis for the test orbit around '{home.Id}' (ecc={orbit.Eccentricity:F5}).");
+            return 1;
+        }
         double3 dv = OrbitalTransfers.DvCciToCircularize(orbit, peTime);
         StateVectors sv = orbit.GetStateVectorsAt(peTime);
         Orbit circular = Orbit.CreateFromStateCci(home, peTime, sv.PositionCci, sv.VelocityCci + dv, OrbitColor);

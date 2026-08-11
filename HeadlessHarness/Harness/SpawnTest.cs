@@ -34,11 +34,15 @@ public sealed class SpawnTest : IHarnessTest
 
         IParentBody parent = source.Orbit.Parent;
         double radius = source.Orbit.SemiMajorAxis + AltitudeOffsetM;
-        SimTime now = Universe.GetElapsedSimTime();
+        UniverseTime now = Universe.GetElapsedTime();
         Orbit target = VehicleSpawner.CircularCci(parent, radius, now);
-        Vehicle spawned = VehicleSpawner.SpawnCopy(source, parent, "HarnessTestSat", target);
+        // Snapshot-and-sweep rather than despawning the returned vehicle: Vehicle.CreateVehicle
+        // registers with the CelestialSystem inside Astronomical's constructor, so a copy that
+        // throws before SpawnCopy returns is already live and there is no handle to tear down.
+        HashSet<string> preexisting = TestSupport.CollectVehicleIds(system);
         try
         {
+            Vehicle spawned = VehicleSpawner.SpawnCopy(source, parent, "HarnessTestSat", target);
             Orbit o = spawned.Orbit;
             bool smaOk = Math.Abs(o.SemiMajorAxis - radius) / radius < SmaTol;
             bool eccOk = o.Eccentricity < EccentricityTol;
@@ -49,7 +53,7 @@ public sealed class SpawnTest : IHarnessTest
         }
         finally
         {
-            VehicleSpawner.Despawn(spawned);
+            TestSupport.DespawnNewVehicles(system, preexisting);
         }
     }
 }

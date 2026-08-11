@@ -36,30 +36,33 @@ public sealed class ExampleMultiVehicleTest : IHarnessTest
 
         HarnessLog.Line($"[example-multi-vehicle] resolved {saves.Count} save(s): {string.Join(", ", saves)}");
         CelestialSystem system = session.System;
-        SimTime now = Universe.GetElapsedSimTime();
+        UniverseTime now = Universe.GetElapsedTime();
         Orbit orbit = VehicleSpawner.CircularCci(home, home.MeanRadius + SpawnAltitudeM, now);
 
         int processed = 0;
         foreach (string saveId in saves)
         {
             // Snapshot per iteration so each save's vehicle (and any stage it sheds) is torn down
-            // before the next spawns, keeping only one test vehicle live at a time.
+            // before the next spawns, keeping only one test vehicle live at a time. The sweep sits
+            // in a finally because Vehicle.CreateVehicle registers with the CelestialSystem inside
+            // Astronomical's constructor: a spawn that throws partway is already live, and skipping
+            // the cleanup would leave it ticking through every later test.
             HashSet<string> preexisting = TestSupport.CollectVehicleIds(system);
-            Vehicle vehicle;
             try
             {
-                vehicle = VehicleSpawner.SpawnFromSave(saveId, system, home, "ExampleMultiVehicle", orbit);
+                Vehicle vehicle = VehicleSpawner.SpawnFromSave(saveId, system, home, "ExampleMultiVehicle", orbit);
+                int engineCount = vehicle.Parts.Modules.Get<EngineController>().Length;
+                HarnessLog.Line($"[example-multi-vehicle] '{saveId}': mass={vehicle.TotalMass:F0}kg, {engineCount} engine(s)");
+                processed++;
             }
             catch (InvalidOperationException e)
             {
                 HarnessLog.Line($"[example-multi-vehicle] SKIP '{saveId}': {e.Message}");
-                continue;
             }
-
-            int engineCount = vehicle.Parts.Modules.Get<EngineController>().Length;
-            HarnessLog.Line($"[example-multi-vehicle] '{saveId}': mass={vehicle.TotalMass:F0}kg, {engineCount} engine(s)");
-            TestSupport.DespawnNewVehicles(system, preexisting);
-            processed++;
+            finally
+            {
+                TestSupport.DespawnNewVehicles(system, preexisting);
+            }
         }
 
         HarnessLog.Line($"[example-multi-vehicle] {processed} save(s) processed => {TestSupport.Verdict(processed > 0)}");

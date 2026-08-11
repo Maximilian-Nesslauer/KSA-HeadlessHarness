@@ -54,9 +54,9 @@ internal static class HarnessRunner
         foreach (IHarnessTest test in tests)
         {
             // Sim seconds is read as the delta of the universe's sim clock across the test: every
-            // SimDriver.Step advances Universe.GetElapsedSimTime by its dt, so a stepping test reports
+            // SimDriver.Step advances Universe.GetElapsedTime by its dt, so a stepping test reports
             // its flown time and a non-stepping test reports 0, with no IHarnessTest surface.
-            SimTime simBefore = Universe.GetElapsedSimTime();
+            UniverseTime simBefore = Universe.GetElapsedTime();
             long startTicks = Stopwatch.GetTimestamp();
             string outcome;
             try
@@ -83,7 +83,7 @@ internal static class HarnessRunner
                 outcome = "FAIL";
             }
             double wallMs = Stopwatch.GetElapsedTime(startTicks).TotalMilliseconds;
-            double simSeconds = (Universe.GetElapsedSimTime() - simBefore).Seconds();
+            double simSeconds = (Universe.GetElapsedTime() - simBefore).Seconds();
             HarnessLog.Line($"[harness] {test.Name}: {outcome} in {wallMs:F0}ms wall, {simSeconds:F1}s sim");
         }
         return new RunResult(testFailures, infrastructureFailures);

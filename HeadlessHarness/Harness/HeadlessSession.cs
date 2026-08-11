@@ -37,8 +37,9 @@ public sealed class HeadlessSession
         Universe.CurrentSystem ?? throw new InvalidOperationException(
             IsBroughtUp ? "No system is loaded." : "BringUp has not run.");
 
-    // systemId null => the game's default system (Universe.LoadDefaultSystem uses
-    // SystemLibrary.Default), falling back to the first loaded template.
+    // systemId null => the first loaded system template. SystemLibrary.Default is only ever assigned
+    // from the game's system-select popup, which no headless run reaches, so it stays null here and
+    // the fallback is what actually decides. Name a system explicitly to pin one.
     public void BringUp(string? systemId = null)
     {
         if (IsBroughtUp)
@@ -95,7 +96,7 @@ public sealed class HeadlessSession
     {
         if (!IsBroughtUp)
             throw new InvalidOperationException("Call BringUp before CreateDriver.");
-        return new SimDriver(Universe.GetElapsedSimTime());
+        return new SimDriver(Universe.GetElapsedTime());
     }
 
     private void InstallHeadlessPatches()

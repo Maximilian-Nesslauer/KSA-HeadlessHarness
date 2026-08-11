@@ -45,27 +45,31 @@ public sealed class FlightTest : IHarnessTest
             return 1;
         }
 
-        SimTime now = Universe.GetElapsedSimTime();
+        UniverseTime now = Universe.GetElapsedTime();
         Orbit orbit = VehicleSpawner.CircularCci(home, home.MeanRadius + SpawnAltitudeM, now);
 
         HashSet<string> preexisting = TestSupport.CollectVehicleIds(system);
-        Vehicle vehicle;
-        try
-        {
-            vehicle = VehicleSpawner.SpawnFromSave(saveId, system, home, "HarnessFlightTest", orbit);
-        }
-        catch (InvalidOperationException e)
-        {
-            HarnessLog.Line($"[flight] FAIL: {e.Message}");
-            return 1;
-        }
-        LogVehicle(vehicle, saveId);
-
         SimDriver driver = session.CreateDriver();
+        Vehicle vehicle;
         bool ok = true;
+        // The spawn runs inside the cleanup scope on purpose: Vehicle.CreateVehicle registers with
+        // the CelestialSystem inside Astronomical's constructor, so a spawn helper that throws after
+        // that point has already put a live vehicle in the system, and it would keep ticking through
+        // every later test.
         try
         {
-            VehicleUpdateTask._forceOffRails = true;
+            try
+            {
+                vehicle = VehicleSpawner.SpawnFromSave(saveId, system, home, "HarnessFlightTest", orbit);
+            }
+            catch (InvalidOperationException e)
+            {
+                HarnessLog.Line($"[flight] FAIL: {e.Message}");
+                return 1;
+            }
+            LogVehicle(vehicle, saveId);
+
+            PhysicsBubble._forceOffRails = true;
             vehicle.FlightComputer.BurnMode = FlightComputerBurnMode.Manual;
 
             ok &= RunCoastTest(vehicle, driver);
@@ -73,7 +77,7 @@ public sealed class FlightTest : IHarnessTest
         }
         finally
         {
-            VehicleUpdateTask._forceOffRails = false;
+            PhysicsBubble._forceOffRails = false;
             // Tear down the flown vehicle and every stage it shed (staging splits register new
             // vehicles under the same parent), so later tests do not keep ticking them.
             TestSupport.DespawnNewVehicles(system, preexisting);
@@ -199,7 +203,13 @@ public sealed class FlightTest : IHarnessTest
             }
         }
         if (firing == 0)
-            return true; // ran dry during the warmup; the caller stages next iteration
+        {
+            // Counted as attempted so the end-of-flight diagnostic says the stage went dry rather
+            // than claiming no engine ever had propellant, which the caller's check disproves.
+            attempted++;
+            HarnessLog.Line($"[flight] burn phase: every active engine ran dry inside the {WarmupSeconds}s warmup; nothing to measure.");
+            return true;
+        }
         attempted++;
 
         double m0 = vehicle.TotalMass;

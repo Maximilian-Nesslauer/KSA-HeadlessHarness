@@ -11,12 +11,12 @@ public sealed class SimDriver
     // effectively frozen, which is fine for short vehicle tests and cheaper.
     public bool StepOrbits { get; set; }
 
-    // Monotonic sim-time cursor. Seeded from Universe.GetElapsedSimTime() at construction.
-    public SimTime Elapsed { get; private set; }
+    // Monotonic sim-time cursor. Seeded from Universe.GetElapsedTime() at construction.
+    public UniverseTime Elapsed { get; private set; }
 
     // Created via HeadlessSession.CreateDriver so the cursor always starts at the universe's
     // current sim time; an arbitrary seed would desync SimStep times from the loaded state.
-    internal SimDriver(SimTime start)
+    internal SimDriver(UniverseTime start)
     {
         Elapsed = start;
     }
@@ -40,8 +40,15 @@ public sealed class SimDriver
         // pass, like a command issued during a frame's input phase is in the running game.
         InputEvents.ApplyInputEvents();
 
+        // Execute queues a single job on JobSystems.VehicleSolver, which is why that is the only
+        // scheduler to wait on. The per-bubble fan-out over JobSystems.VehicleWorkerPool happens
+        // inside that job, and again inside Apply; both batches join themselves.
+        //
+        // PrepareFrame also sizes the pool's spin-before-park window from the player frame time.
+        // Deliberately not mirrored: dt here is SIM seconds with no wall-clock meaning, and the
+        // pool's own default keeps workers hot between back-to-back steps.
         Universe.ExecuteNextVehicleSolvers(dt, step);
-        JobSystems.VehicleSolvers.Wait();
+        JobSystems.VehicleSolver.Wait();
         Universe.ApplyVehicleSolvers();
 
         if (StepOrbits)

@@ -6,7 +6,7 @@ A mod references it as a test dependency and asserts against the real `FlightCom
 
 This is a developer tool, not a gameplay mod. It is env-var gated and does nothing on a normal launch.
 
-Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.8.5.5168 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
+Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.8.19.5261 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
 
 ## How it works
 
@@ -110,7 +110,7 @@ The bring-up mirrors the game's own load sequence and patches a handful of rende
 - The body of the `Decoupler.Decouple` stand-in, which replaces the stock method outright: it must keep resolving the vehicle to split the same way stock does. Stock changes here are invisible to the compiler and show up only as wrong staging results.
 - The reflection keys: `Vehicle._manualControlInputs` and `Loading._tasks`.
 - The `Program.IsControlledVehicleActive = false` stand-in: `Vehicle.PrepareWorker` reads `ImGui.GetIO()` for the controlled vehicle while it is true, and there is no ImGui context headless. Re-check whether the game still guards that read the same way, and whether the `ClearHeldPlayerInput` it runs instead still leaves the manual throttle alone.
-- The input-queue drain: `InputEvents.ApplyInputEvents` in `SimDriver.Step` mirrors its position in `Program.PrepareFrame` (after the solvers apply, before the next execute).
+- The `SimDriver.Step` pipeline, which mirrors `Program.PrepareFrame` call for call: the `InputEvents.ApplyInputEvents` drain sits in the same position (after the solvers apply, before the next execute), and the solver calls plus the scheduler they wait on (`JobSystems.VehicleSolver`, `JobSystems.OrbitSolvers`) must still be the ones the game frame drives. `PrepareFrame` also sizes the vehicle worker pool's spin-before-park window from the player frame time; the driver deliberately leaves that at the pool default, because its `dt` is sim seconds with no wall-clock meaning. Re-check that skipping it is still harmless.
 
 The bring-up throws a clear "game version may have changed" error if a patch target or reflection key is missing, and the diagnostic finalizers on `CelestialSystem.CreateTreeFrom` / `CreateTreeFromRoot` log any body-construction exception. Update `TestedGameVersion` in `Mod.cs` after re-verifying against a new build.
 
