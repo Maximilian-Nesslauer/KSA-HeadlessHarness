@@ -127,16 +127,13 @@ public static class VehicleSpawner
         return copy;
     }
 
-    // Tears a spawned vehicle back out of the simulation: off its physics bubble and out of the
-    // celestial tree plus the parent's child list (CelestialSystem.Deregister drops both). The
-    // counterpart to the spawn helpers - call it on every spawned vehicle and every stage it shed, so
-    // throwaway vehicles stop ticking. A bubble left with no vehicles is recycled by the game on the
-    // next solver step (VehicleUpdateTask.TrimBubbles).
+    // Tears a spawned vehicle back out through the game's own destroy path: ends the crew missions,
+    // clears any target aimed at it, drops it from its bubble and the celestial tree, and disposes its
+    // update state and part tree. Call it on every spawned vehicle and every stage it shed. Doing this
+    // by hand instead leaks the update state, the part tree and the audio registration. Idempotent.
     public static void Despawn(Vehicle vehicle)
     {
-        if (FindPhysicsBubble(vehicle) is PhysicsBubble bubble)
-            vehicle.RemoveFromBubble(bubble);
-        vehicle.System.Deregister(vehicle);
+        Universe.DestroyVehicle(vehicle);
     }
 
     // A circular orbit of the given radius (meters from the parent centre), velocity along CCI +Y.
