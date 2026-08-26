@@ -1,4 +1,6 @@
+using System.Reflection;
 using Brutal.Numerics;
+using HarmonyLib;
 using HeadlessHarness.Core;
 using KSA;
 
@@ -93,6 +95,21 @@ public static class VehicleSpawner
         return null;
     }
 
+    // The bubble a vehicle belongs to. The game exposes only whether there is one
+    // (Vehicle.HasPhysicsBubble), not which, so this reads the private update state that holds it.
+    // Direct cast, not 'as': a retyped field must throw here rather than read as "no bubble" and
+    // leave the caller silently skipping its bubble join. Only Bubble is legitimately null.
+    // Read between solver steps only, because the game writes it from the solver path.
+    private static FieldInfo? _updateStateField;
+
+    private static PhysicsBubble? FindPhysicsBubble(Vehicle vehicle)
+    {
+        _updateStateField ??= AccessTools.Field(typeof(Vehicle), "_threadWorkerUpdateState")
+            ?? throw new InvalidOperationException(
+                "[HeadlessHarness] Vehicle._threadWorkerUpdateState not found - game version may have changed.");
+        return ((VehicleUpdateState?)_updateStateField.GetValue(vehicle))?.Bubble;
+    }
+
     // Registers the copy the same way the game registers a decoupled stage: into the parent's child
     // list (so the solvers discover and tick it) and into the source's physics bubble (so it ticks
     // immediately and satisfies Vehicle.Split's PhysicsBubble requirement). Vehicle.CreateVehicle
@@ -105,8 +122,8 @@ public static class VehicleSpawner
         PartTree freshTree = PartTree.Deserialize(design);
         Vehicle copy = Vehicle.CreateVehicle(source.System, source.Body2Cce, source.BodyRates, parent, id, freshTree.Root, orbit);
         parent.Children.Add(copy);
-        if (source.PhysicsBubble != null)
-            copy.AddToBubble(source.PhysicsBubble);
+        if (FindPhysicsBubble(source) is PhysicsBubble bubble)
+            copy.AddToBubble(bubble);
         return copy;
     }
 
@@ -114,11 +131,10 @@ public static class VehicleSpawner
     // celestial tree plus the parent's child list (CelestialSystem.Deregister drops both). The
     // counterpart to the spawn helpers - call it on every spawned vehicle and every stage it shed, so
     // throwaway vehicles stop ticking. A bubble left with no vehicles is recycled by the game on the
-    // next solver step (Universe.TrimPhysicsBubbles).
+    // next solver step (VehicleUpdateTask.TrimBubbles).
     public static void Despawn(Vehicle vehicle)
     {
-        PhysicsBubble? bubble = vehicle.PhysicsBubble;
-        if (bubble != null)
+        if (FindPhysicsBubble(vehicle) is PhysicsBubble bubble)
             vehicle.RemoveFromBubble(bubble);
         vehicle.System.Deregister(vehicle);
     }

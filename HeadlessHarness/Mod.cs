@@ -11,7 +11,7 @@ namespace HeadlessHarness;
 [StarMapMod]
 public sealed class Mod
 {
-    private const string TestedGameVersion = "v2026.8.19.5261";
+    private const string TestedGameVersion = "v2026.8.22.5348";
 
     [StarMapBeforeMain]
     public void OnBeforeMain()

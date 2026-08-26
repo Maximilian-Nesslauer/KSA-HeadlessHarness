@@ -6,7 +6,7 @@ A mod references it as a test dependency and asserts against the real `FlightCom
 
 This is a developer tool, not a gameplay mod. It is env-var gated and does nothing on a normal launch.
 
-Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.8.19.5261 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
+Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.8.22.5348 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
 
 ## How it works
 
@@ -106,9 +106,9 @@ The example consumer builds separately (`dotnet build examples/HarnessConsumerEx
 The bring-up mirrors the game's own load sequence and patches a handful of render couplings by name, so every game version must be re-verified against the current game code:
 
 - The load calls in `HeadlessSession.BringUp` (all public static in the verified build).
-- The Harmony patch targets: `Universe.OnLoaded`, the `Loading` screen stand-in, the `DistantSphereRenderer` and `KittenRenderable` constructors, `Program.GetOceanRenderer`, `Program.GetMainCamera`, and `Decoupler.Decouple` (headless split without audio/particles).
+- The Harmony patch targets: `Universe.OnLoaded`, the `Loading` screen stand-in, the `DistantSphereRenderer` and `KittenRenderable` constructors, `Program.GetOceanRenderer`, `Program.GetMainCamera`, `Program.GetPlanetRenderer` (the ground clutter collision sync reaches it from the solver path; null headless, so clutter colliders are always cleared and a surface test never sees a clutter collision), and `Decoupler.Decouple` (headless split without audio/particles).
 - The body of the `Decoupler.Decouple` stand-in, which replaces the stock method outright: it must keep resolving the vehicle to split the same way stock does. Stock changes here are invisible to the compiler and show up only as wrong staging results.
-- The reflection keys: `Vehicle._manualControlInputs` and `Loading._tasks`.
+- The reflection keys: `Vehicle._manualControlInputs`, `Loading._tasks`, and `Vehicle._threadWorkerUpdateState` (the vehicle's physics bubble, which the game exposes only as the `Vehicle.HasPhysicsBubble` flag).
 - The `Program.IsControlledVehicleActive = false` stand-in: `Vehicle.PrepareWorker` reads `ImGui.GetIO()` for the controlled vehicle while it is true, and there is no ImGui context headless. Re-check whether the game still guards that read the same way, and whether the `ClearHeldPlayerInput` it runs instead still leaves the manual throttle alone.
 - The `SimDriver.Step` pipeline, which mirrors `Program.PrepareFrame` call for call: the `InputEvents.ApplyInputEvents` drain sits in the same position (after the solvers apply, before the next execute), and the solver calls plus the scheduler they wait on (`JobSystems.VehicleSolver`, `JobSystems.OrbitSolvers`) must still be the ones the game frame drives. `PrepareFrame` also sizes the vehicle worker pool's spin-before-park window from the player frame time; the driver deliberately leaves that at the pool default, because its `dt` is sim seconds with no wall-clock meaning. Re-check that skipping it is still harmless.
 

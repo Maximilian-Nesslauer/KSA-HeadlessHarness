@@ -141,17 +141,23 @@ public sealed class HeadlessSession
         //   Vehicle.PrepareWorker -> Program.GetMainCamera() (Viewports empty). Only used to size the
         //   vehicle on screen for the useHighFidelityOceanPhysics flag; a fixed dummy camera keeps it
         //   deterministic. GetRadarAltitude already null-guards a null ocean renderer.
+        //   Universe.SyncGroundClutter -> Program.GetPlanetRenderer(), on the solver path. Reached
+        //   once a bubble rents a constraint sim, which staging does on the first split. Both call
+        //   sites null-check it, and a null renderer clears the bubble's clutter colliders.
         harmony.Patch(
             AccessTools.Method(typeof(Program), nameof(Program.GetOceanRenderer)),
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(ReturnNullOceanRenderer)));
         harmony.Patch(
             AccessTools.Method(typeof(Program), nameof(Program.GetMainCamera)),
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(ReturnDummyCamera)));
+        harmony.Patch(
+            AccessTools.Method(typeof(Program), nameof(Program.GetPlanetRenderer)),
+            prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(ReturnNullPlanetRenderer)));
 
         // Decoupler.Decouple performs the split (Vehicle.Split, pure sim), then plays a sound and
         // spawns separation particles through Program.Instance.ParticleSystem, which is null headless.
         // Replace it with just the split so the game's real staging path (SequenceList.
-        // ActivateNextSequence -> Part.ActivateInStage -> Decoupler.SetIsActive -> input buffer ->
+        // ActivateNextSequence -> Part.ActivateSubtreeInStage -> Decoupler.SetIsActive -> input buffer ->
         // IActivateInputData.Apply -> Decoupler.Decouple) works without a renderer.
         harmony.Patch(
             AccessTools.Method(typeof(Decoupler), nameof(Decoupler.Decouple)),
@@ -200,6 +206,12 @@ public sealed class HeadlessSession
     private static bool Skip() => false;
 
     private static bool ReturnNullOceanRenderer(ref OceanRenderer? __result)
+    {
+        __result = null;
+        return false;
+    }
+
+    private static bool ReturnNullPlanetRenderer(ref PlanetRenderer? __result)
     {
         __result = null;
         return false;
