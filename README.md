@@ -6,19 +6,19 @@ A mod references it as a test dependency and asserts against the real `FlightCom
 
 This is a developer tool, not a gameplay mod. It is env-var gated and does nothing on a normal launch.
 
-Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.8.22.5348 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
+Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.9.4.5400 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
 
 ## How it works
 
 - Packaged as a StarMap mod. The entry is a `[StarMapBeforeMain]` method (`Mod.OnBeforeMain`), which StarMap fires BEFORE it invokes KSA `Program.Main` - so it runs before any GLFW window or Vulkan renderer is created.
 - StarMap loads the mod through its own `CoreAssemblyLoadContext`, which resolves `KSA.dll` and the `Brutal.*` native dependencies from the game folder.
-- `HeadlessSession.BringUp` runs the CPU-only load calls the real `Program` constructor makes, in dependency order, skipping every GPU, window, and ImGui step, and installs a small set of Harmony patches that neutralize the render couplings a few body and vehicle types have (see [Maintenance](#maintenance-on-game-update)).
-- `SimDriver` advances the vehicle (and optionally orbit) solvers with a hand-built fixed `SimStep`, collapsing the game's double-buffered solver pipeline into a synchronous Execute -> Wait -> Apply, and drains the game's input-event queue at the top of each step. The game's activation APIs (`EngineController.SetIsActive`, `Decoupler.SetIsActive`, `SequenceList.ActivateNextSequence`) only enqueue, so a command issued between steps is included in the very next solver pass, with the same one-frame latency as the running game.
+- `HeadlessSession.BringUp` runs the CPU-only load calls the real `Program` constructor makes, in dependency order, skipping every GPU, window, and ImGui step. Where the game programs against an interface it supplies a CPU-only implementation instead of intercepting callers: `HeadlessViewport` is registered as the game main viewport, which is what makes `Program.MainViewport` and every camera accessor resolve. The remaining render couplings, on a few body and vehicle types and the two renderer accessors, are neutralized by a small set of Harmony patches (see [Maintenance](#maintenance-on-game-update)).
+- `SimDriver` advances the vehicle, cloth, and (optionally) orbit solvers with a hand-built fixed `SimStep`, collapsing the game's double-buffered solver pipeline into a synchronous Execute -> Wait -> Apply, and drains the game's input-event queue at the top of each step. The game's activation APIs (`EngineController.SetIsActive`, `Decoupler.SetIsActive`, `SequenceList.ActivateNextSequence`) only enqueue, so a command issued between steps is included in the very next solver pass, with the same one-frame latency as the running game.
 
 ## What it can do
 
 - Load a full star system GPU-free (all bodies including vehicles), with no window or renderer.
-- Tick the real vehicle and orbit solvers with a deterministic fixed timestep.
+- Tick the real vehicle, cloth, and orbit solvers with a deterministic fixed timestep.
 - Drive a vehicle through the real `FlightComputer` and `PhysicsStates` (manual throttle and engine, forced numerical physics) and read back state, mass, and orbit.
 - Spawn a player-built save from the game's Vehicles folder (staged engine state, sequences, and fuel links restored) or copy a live vehicle into an arbitrary orbit, always in a fresh part tree.
 - Stage a vehicle through the game's own sequence system (`SequenceList.ActivateNextSequence`): ignite engines, fire decouplers, exactly like the in-game staging key.
@@ -27,7 +27,8 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 ## Layout
 
 - `HeadlessHarness/Mod.cs` - StarMap `[StarMapBeforeMain]` entry point (env-var gated).
-- `HeadlessHarness/Harness/HeadlessSession.cs` - GPU-free bring-up plus the render-neutralization patches.
+- `HeadlessHarness/Harness/HeadlessSession.cs` - GPU-free bring-up, headless viewport registration, and the render-neutralization patches.
+- `HeadlessHarness/Harness/HeadlessViewport.cs` - the run's main viewport: a CPU-only `IGameViewport` with real cameras and controllers.
 - `HeadlessHarness/Harness/SimDriver.cs` - deterministic fixed-step solver ticking plus input-event drain.
 - `HeadlessHarness/Harness/VehicleSpawner.cs` - save/copy vehicle spawning plus orbit helpers.
 - `HeadlessHarness/Harness/IHarnessTest.cs` - the plug-in test interface.
@@ -103,14 +104,17 @@ The example consumer builds separately (`dotnet build examples/HarnessConsumerEx
 
 ## Maintenance on game update
 
-The bring-up mirrors the game's own load sequence and patches a handful of render couplings by name, so every game version must be re-verified against the current game code:
+The bring-up mirrors the game's own load sequence, supplies a CPU-only viewport, and patches a handful of render couplings by name, so every game version must be re-verified against the current game code:
 
-- The load calls in `HeadlessSession.BringUp` (all public static in the verified build).
-- The Harmony patch targets: `Universe.OnLoaded`, the `Loading` screen stand-in, the `DistantSphereRenderer` and `KittenRenderable` constructors, `Program.GetOceanRenderer`, `Program.GetMainCamera`, `Program.GetPlanetRenderer` (the ground clutter collision sync reaches it from the solver path; null headless, so clutter colliders are always cleared and a surface test never sees a clutter collision), and `Decoupler.Decouple` (headless split without audio/particles).
+- The load calls in `HeadlessSession.BringUp` (all public static in the verified build), including `Input.OnApplicationStart` ahead of the settings load: it registers the Tomlet mapper for `KeyBindingValue`, which `GameSettings` holds a dictionary of and `LoadFromFile` writes back out.
+- `HeadlessViewport`, which implements the game's `IGameViewport`. A member added to or retyped on `IViewport` / `IGameViewport` breaks the build, which is the intended signal; decide per member whether it is sim state (implement it) or a render surface (throw, like the existing four).
+- The viewport registration seam in `HeadlessSession.RegisterHeadlessViewport`: `ViewportRegistry.Allocate`, `ViewportRegistry.Register(IViewport)`, the `ViewportRegistry._mainViewport` field, and the `Id` / `ShaderSlot` members of the internal `ViewportAllocation`. The run aborts if any is missing, and the smoke check re-asserts that `Program.MainViewport` and `Program.GetMainCamera()` resolve to it.
+- The Harmony patch targets: `Universe.OnLoaded`, the `Loading` screen stand-in, the `DistantSphereRenderer` and `KittenRenderable` constructors, `Program.GetOceanRenderer`, `Program.GetPlanetRenderer` (the ground clutter collision sync reaches it from the solver path; null headless, so clutter colliders are always cleared and a surface test never sees a clutter collision), and `Decoupler.Decouple` (headless split without audio/particles).
 - The body of the `Decoupler.Decouple` stand-in, which replaces the stock method outright: it must keep resolving the vehicle to split the same way stock does. Stock changes here are invisible to the compiler and show up only as wrong staging results.
 - The reflection keys: `Vehicle._manualControlInputs`, `Loading._tasks`, and `Vehicle._threadWorkerUpdateState` (the vehicle's physics bubble, which the game exposes only as the `Vehicle.HasPhysicsBubble` flag).
 - The `Program.IsControlledVehicleActive = false` stand-in: `Vehicle.PrepareWorker` reads `ImGui.GetIO()` for the controlled vehicle while it is true, and there is no ImGui context headless. Re-check whether the game still guards that read the same way, and whether the `ClearHeldPlayerInput` it runs instead still leaves the manual throttle alone.
-- The `SimDriver.Step` pipeline, which mirrors `Program.PrepareFrame` call for call: the `InputEvents.ApplyInputEvents` drain sits in the same position (after the solvers apply, before the next execute), and the solver calls plus the scheduler they wait on (`JobSystems.VehicleSolver`, `JobSystems.OrbitSolvers`) must still be the ones the game frame drives. `PrepareFrame` also sizes the vehicle worker pool's spin-before-park window from the player frame time; the driver deliberately leaves that at the pool default, because its `dt` is sim seconds with no wall-clock meaning. Re-check that skipping it is still harmless.
+- The `SimDriver.Step` pipeline, which mirrors `Program.PrepareFrame`: the `InputEvents.ApplyInputEvents` drain sits in the same position (after the solvers apply, before the next execute), and the three solver stages plus the schedulers they wait on (`JobSystems.VehicleSolver`, `JobSystems.OrbitSolvers`, `JobSystems.ClothSolvers`) must still be the ones the game frame drives. A stage the game adds belongs here too. The stage ORDER deliberately differs: stock kicks cloth first, off the state the previous frame applied, while `Step` runs vehicle, then orbits, then cloth, so each step poses the canopies from the vehicle state it just produced. `PrepareFrame` also sizes the vehicle worker pool's spin-before-park window from the player frame time; the driver deliberately leaves that at the pool default, because its `dt` is sim seconds with no wall-clock meaning. Re-check that skipping it is still harmless.
+- Whether the game grew a sim path that needs a render object the harness does not supply. The rule is to hand the game a CPU-only implementation where it programs against an interface (as `HeadlessViewport` does), and to patch the accessor only where it does not.
 
 The bring-up throws a clear "game version may have changed" error if a patch target or reflection key is missing, and the diagnostic finalizers on `CelestialSystem.CreateTreeFrom` / `CreateTreeFromRoot` log any body-construction exception. Update `TestedGameVersion` in `Mod.cs` after re-verifying against a new build.
 

@@ -11,7 +11,7 @@ namespace HeadlessHarness.Harness;
 //      the sequence list is spent. Each burn phase must consume propellant at the firing engines'
 //      rated vacuum mass-flow rate.
 //   3. The final state is fingerprinted and compared bit-for-bit against the previous run with the
-//      same build and vehicle (reported in the log, not asserted).
+//      same build, vehicle and spawn epoch (reported in the log, not asserted).
 // Numbers come from the real FlightComputer/PhysicsStates, so the assertions track genuine game
 // behaviour with no separate re-implementation to drift.
 //
@@ -50,14 +50,18 @@ public sealed class FlightTest : IHarnessTest
 
         HashSet<string> preexisting = TestSupport.CollectVehicleIds(system);
         SimDriver driver = session.CreateDriver();
-        Vehicle vehicle;
         bool ok = true;
+        // Read while the vehicle is live. The cleanup below disposes it, and Vehicle.Dispose only
+        // happens to leave the orbit chain and mass props readable.
+        StateVectors finalState = default;
+        double finalMass = 0.0;
         // The spawn runs inside the cleanup scope on purpose: Vehicle.CreateVehicle registers with
         // the CelestialSystem inside Astronomical's constructor, so a spawn helper that throws after
         // that point has already put a live vehicle in the system, and it would keep ticking through
         // every later test.
         try
         {
+            Vehicle vehicle;
             try
             {
                 vehicle = VehicleSpawner.SpawnFromSave(saveId, system, home, "HarnessFlightTest", orbit);
@@ -74,6 +78,9 @@ public sealed class FlightTest : IHarnessTest
 
             ok &= RunCoastTest(vehicle, driver);
             ok &= RunStagedFlight(vehicle, driver);
+
+            finalState = vehicle.Orbit.StateVectors;
+            finalMass = vehicle.TotalMass;
         }
         finally
         {
@@ -83,7 +90,7 @@ public sealed class FlightTest : IHarnessTest
             TestSupport.DespawnNewVehicles(system, preexisting);
         }
 
-        LogDeterminismSignature(vehicle, saveId);
+        LogDeterminismSignature(saveId, now, in finalState, finalMass);
 
         HarnessLog.Line($"[flight] {TestSupport.Verdict(ok)} (staged flight).");
         return ok ? 0 : 1;
@@ -237,11 +244,12 @@ public sealed class FlightTest : IHarnessTest
         return ok;
     }
 
-    // Compare an exact-bits signature of the final state against the previous run's (persisted).
-    // First run establishes the baseline; a later run with the same build and vehicle must reproduce
-    // it bit-for-bit. Keyed per game build (physics legitimately change across builds) and per
-    // vehicle save (different vehicles legitimately end in different states).
-    private static void LogDeterminismSignature(Vehicle vehicle, string saveId)
+    // Exact-bits comparison against the previous run, keyed per game build and vehicle save because
+    // both legitimately change the outcome. So does the spawn epoch, which every SimDriver.Step in
+    // the whole run moves: it leads the signature and is compared separately, so filtering the suite
+    // or adding a consumer test reads as NOT COMPARABLE rather than a DIFFER that means nothing.
+    private static void LogDeterminismSignature(string saveId, UniverseTime spawnTime,
+        in StateVectors finalState, double finalMass)
     {
         string vehicleKey = string.Join("_", saveId.Split(Path.GetInvalidFileNameChars()));
         // Lives in the shared data directory (not the per-run log dir naming) because the baseline
@@ -249,13 +257,14 @@ public sealed class FlightTest : IHarnessTest
         string sigFile = Path.Combine(HarnessLog.DataDirectory,
             $"{VersionInfo.Current.VersionString}.{vehicleKey}.sig");
 
-        StateVectors f = vehicle.Orbit.StateVectors;
-        string sig = string.Join(",", new[]
+        string epoch = Bits(spawnTime.Seconds()).ToString();
+        string state = string.Join(",", new[]
         {
-            Bits(f.PositionCci.X), Bits(f.PositionCci.Y), Bits(f.PositionCci.Z),
-            Bits(f.VelocityCci.X), Bits(f.VelocityCci.Y), Bits(f.VelocityCci.Z),
-            Bits(vehicle.TotalMass),
+            Bits(finalState.PositionCci.X), Bits(finalState.PositionCci.Y), Bits(finalState.PositionCci.Z),
+            Bits(finalState.VelocityCci.X), Bits(finalState.VelocityCci.Y), Bits(finalState.VelocityCci.Z),
+            Bits(finalMass),
         });
+        string sig = $"{epoch};{state}";
 
         string? prev = null;
         try
@@ -270,11 +279,16 @@ public sealed class FlightTest : IHarnessTest
         }
 
         if (prev == null)
-            HarnessLog.Line("[flight] determinism: baseline established (run again with the same build to compare).");
+            HarnessLog.Line("[flight] determinism: baseline established (run again with the same build and test selection to compare).");
         else if (prev == sig)
             HarnessLog.Line("[flight] determinism: MATCH previous run (bit-for-bit).");
+        else if (prev.IndexOf(';') < 0)
+            HarnessLog.Line("[flight] determinism: baseline replaced (the stored one predates the spawn-epoch field and cannot be compared).");
+        else if (prev[..prev.IndexOf(';')] != epoch)
+            HarnessLog.Line("[flight] determinism: NOT COMPARABLE - the previous run spawned at a different sim time, " +
+                            "so a different set of tests ran before this one. Re-run with the same test selection to compare.");
         else
-            HarnessLog.Line($"[flight] determinism: DIFFER from previous run\n  prev={prev}\n  now ={sig}");
+            HarnessLog.Line($"[flight] determinism: DIFFER from previous run at the same spawn epoch\n  prev={prev}\n  now ={sig}");
 
         try { File.WriteAllText(sigFile, sig); }
         catch (Exception e)

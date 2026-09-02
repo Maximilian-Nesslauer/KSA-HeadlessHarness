@@ -31,6 +31,16 @@
       <HintPath>..\..\..\refs\game\Brutal.Core.Memory.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <!-- Named only by HeadlessViewport's render-surface members: Brutal.ImGuiApi.ImTextureRef and
+         RenderCore.IRenderPassInfo are part of the IViewport contract it implements. -->
+    <Reference Include="Brutal.ImGui">
+      <HintPath>..\..\..\refs\game\Brutal.ImGui.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Planet.Render.Core">
+      <HintPath>..\..\..\refs\game\Planet.Render.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Brutal.Concurrency">
       <HintPath>..\..\..\refs\game\Brutal.Concurrency.dll</HintPath>
       <Private>false</Private>

@@ -4,12 +4,19 @@ namespace HeadlessHarness.Harness;
 
 // Deterministic fixed-step driver. Bypasses the wall-clock loop (App.Run / Program.PrepareFrame)
 // by hand-building each SimStep, so stepping is reproducible on a fixed machine. Collapses the
-// game's double-buffered solver pipeline into a synchronous Execute -> Wait -> Apply per step.
+// game's double-buffered solver pipeline into a synchronous Execute -> Wait -> Apply per stage.
+//
+// Not Universe.GetJobSimStep, which scales the frame delta by simulation speed and the fraction the
+// solvers achieved; both would make a step depend on how fast the machine ran the previous one.
 public sealed class SimDriver
 {
-    // Also advance celestial motion (orbit solvers) each step. Off by default: celestials are
-    // effectively frozen, which is fine for short vehicle tests and cheaper.
+    // Off by default: frozen celestials are fine for short vehicle tests, and cheaper.
     public bool StepOrbits { get; set; }
+
+    // On by default, unlike StepOrbits: it costs an empty-list check without a deployed canopy, and
+    // it drains the cloth acquire queue a parachute fills on deploy or deserialize. Cloth is visual
+    // only, so skipping it changes the canopy pose a test can read, not the trajectory.
+    public bool StepCloth { get; set; } = true;
 
     // Monotonic sim-time cursor. Seeded from Universe.GetElapsedTime() at construction.
     public UniverseTime Elapsed { get; private set; }
@@ -56,6 +63,15 @@ public sealed class SimDriver
             Universe.ExecuteNextOrbitSolvers(dt, step);
             JobSystems.OrbitSolvers.Wait();
             Universe.ApplyOrbitSolvers();
+        }
+
+        // Last, so canopies are posed from the vehicle state this step just produced. PrepareFrame
+        // puts cloth first for the same reason: it kicks off the previous frame's applied state.
+        if (StepCloth)
+        {
+            Universe.ExecuteNextClothSolvers(dt, step);
+            JobSystems.ClothSolvers.Wait();
+            Universe.ApplyClothSolvers();
         }
 
         Elapsed = step.NextTime;

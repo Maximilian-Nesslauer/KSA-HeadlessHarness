@@ -127,13 +127,18 @@ public static class VehicleSpawner
         return copy;
     }
 
-    // Tears a spawned vehicle back out through the game's own destroy path: ends the crew missions,
-    // clears any target aimed at it, drops it from its bubble and the celestial tree, and disposes its
-    // update state and part tree. Call it on every spawned vehicle and every stage it shed. Doing this
-    // by hand instead leaks the update state, the part tree and the audio registration. Idempotent.
+    // Tears a spawned vehicle back out through the game's own destroy path: settles the crew, hands
+    // off any camera following it, clears any target aimed at it, drops it from its bubble and the
+    // celestial tree, and disposes its update state and part tree. Call it on every spawned vehicle,
+    // every stage it shed and every piece of debris a breakup left. Doing this by hand instead leaks
+    // the update state, the part tree and the audio registration. Idempotent.
+    //
+    // EndMission is spelled out so a change to the parameter default cannot silently start killing
+    // this run's crew: Kill marks the kittens KIA for the rest of the process, starving later
+    // spawns of seatable crew.
     public static void Despawn(Vehicle vehicle)
     {
-        Universe.DestroyVehicle(vehicle);
+        Universe.DestroyVehicle(vehicle, CrewDisposition.EndMission);
     }
 
     // A circular orbit of the given radius (meters from the parent centre), velocity along CCI +Y.

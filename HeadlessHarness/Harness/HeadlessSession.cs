@@ -17,6 +17,11 @@ namespace HeadlessHarness.Harness;
 // (or a headless stand-in) installed before the load runs. Every patch target and reflection key is
 // re-checked on game update.
 //
+// Where the game holds a render object behind an interface, the bring-up supplies a CPU-only
+// implementation rather than intercepting callers: RegisterHeadlessViewport is what makes
+// Program.MainViewport and the camera accessors resolve. Only the two renderer accessors, which
+// have no such seam, are still patched.
+//
 // One-shot per process: the game globals initialized here are never torn down, a second BringUp is
 // not supported, and the patches stay installed until the process exits (which the harness does
 // right after the suite).
@@ -24,14 +29,17 @@ public sealed class HeadlessSession
 {
     private const string HarmonyId = "com.maxi.headlessharness.session";
 
-    // A dummy camera stands in for Program.GetMainCamera() headless (see InstallHeadlessPatches).
-    // Static because the Harmony prefix that returns it must be static.
-    private const int DummyViewportWidth = 1920;
-    private const int DummyViewportHeight = 1080;
-    private static Camera? _dummyCamera;
     private static Exception? _lastLoggedBodyException;
 
+    // The one-shot rule is per process, not per instance: a second bring-up would re-run the
+    // application-start calls, take another of the registry's eight shader slots and overwrite the
+    // main-viewport field. Enforced, because this class is public.
+    private static HeadlessSession? _broughtUpSession;
+
     public bool IsBroughtUp { get; private set; }
+
+    // Null until BringUp has run. Public so a test can reach the cameras the game itself uses.
+    public HeadlessViewport? MainViewport { get; private set; }
 
     public CelestialSystem System =>
         Universe.CurrentSystem ?? throw new InvalidOperationException(
@@ -44,10 +52,19 @@ public sealed class HeadlessSession
     {
         if (IsBroughtUp)
             return;
+        if (_broughtUpSession != null && !ReferenceEquals(_broughtUpSession, this))
+            throw new InvalidOperationException(
+                "[HeadlessHarness] another HeadlessSession has already been brought up in this " +
+                "process, and the game globals it initialized are never torn down. Reuse that one.");
+        _broughtUpSession = this;
 
         InstallHeadlessPatches();
 
         HarnessLog.Line("[bringup] application-start");
+        // Registers the Tomlet mapper for KeyBindingValue, which GameSettings holds a dictionary of
+        // and cannot round-trip without it (no parameterless constructor, get-only properties).
+        // LoadFromFile writes the settings file back out.
+        Input.OnApplicationStart();
         GameSettings.OnApplicationStart();
         GameSettings.LoadFromFile();
         GameSaves.OnApplicationStart();
@@ -66,7 +83,12 @@ public sealed class HeadlessSession
         ModLibrary.LoadAll();
         ModLibrary.AssignDefaults();
 
-        // Program..ctor initializes the job systems here, after AssignDefaults and before the populate
+        // Program..ctor builds its viewports here, and the registry must hold one before anything
+        // loads a system or ticks a solver.
+        HarnessLog.Line("[bringup] headless viewport");
+        MainViewport = RegisterHeadlessViewport();
+
+        // Program..ctor initializes the job systems here, after the viewports and before the populate
         // calls. Match that position: if a future game version made any populate/substance call
         // dispatch parallel work, running Initialize later would leave a null scheduler.
         HarnessLog.Line("[bringup] job systems");
@@ -99,10 +121,57 @@ public sealed class HeadlessSession
         return new SimDriver(Universe.GetElapsedTime());
     }
 
+    // An empty registry makes MainViewport throw and every GameViews loop silently do nothing. The
+    // registry's creation entry points all take a Renderer, so its three internal steps are reached
+    // directly instead: Allocate, Register, and the main-viewport field. Each is a drift key.
+    private static HeadlessViewport RegisterHeadlessViewport()
+    {
+        MethodInfo allocate = AccessTools.Method(typeof(ViewportRegistry), "Allocate")
+            ?? throw Drift("ViewportRegistry.Allocate");
+        MethodInfo register = AccessTools.Method(typeof(ViewportRegistry), "Register", new[] { typeof(IViewport) })
+            ?? throw Drift("ViewportRegistry.Register(IViewport)");
+        FieldInfo mainViewportField = AccessTools.Field(typeof(ViewportRegistry), "_mainViewport")
+            ?? throw Drift("ViewportRegistry._mainViewport");
+
+        // ViewportAllocation is internal, so its values are read off the boxed struct by name. A
+        // struct return never boxes to null.
+        object allocation = allocate.Invoke(null, null)
+            ?? throw Drift("ViewportRegistry.Allocate no longer returns a ViewportAllocation");
+        ViewportId id = ReadAllocationMember<ViewportId>(allocation, "Id");
+        int shaderSlot = ReadAllocationMember<int>(allocation, "ShaderSlot");
+
+        HeadlessViewport viewport = new HeadlessViewport(
+            id, shaderSlot, new int2(HeadlessViewport.DefaultWidth, HeadlessViewport.DefaultHeight));
+        register.Invoke(null, new object[] { viewport });
+        mainViewportField.SetValue(null, viewport);
+
+        // The game marks its own main viewport visible right after building it.
+        viewport.SetVisible(true);
+
+        if (!ReferenceEquals(Program.MainViewport, viewport))
+            throw new InvalidOperationException(
+                "[HeadlessHarness] the headless viewport did not become Program.MainViewport - " +
+                "game version may have changed.");
+
+        HarnessLog.Line($"[bringup] registered headless main viewport id={id.Value} slot={shaderSlot} " +
+                        $"{viewport.Width}x{viewport.Height}.");
+        return viewport;
+    }
+
+    // A hard cast would surface a retyped member as an InvalidCastException, reading as a harness
+    // bug rather than as game drift.
+    private static T ReadAllocationMember<T>(object allocation, string member)
+    {
+        object? value = (AccessTools.Property(allocation.GetType(), member)
+            ?? throw Drift($"ViewportAllocation.{member}")).GetValue(allocation);
+        if (value is not T typed)
+            throw Drift($"ViewportAllocation.{member} is {value?.GetType().Name ?? "null"}, expected {typeof(T).Name}");
+        return typed;
+    }
+
     private void InstallHeadlessPatches()
     {
         Harmony harmony = new Harmony(HarmonyId);
-        _dummyCamera = new Camera(new int2(DummyViewportWidth, DummyViewportHeight));
 
         // Vehicle.PrepareWorker reads ImGui.GetIO().WantCaptureKeyboard for the
         // controlled vehicle while this is true, and headless there is no ImGui
@@ -135,21 +204,16 @@ public sealed class HeadlessSession
         harmony.Patch(SoleConstructor(typeof(KittenRenderable)),
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(Skip)));
 
-        // The Vehicle path mixes sim with presentation and NREs headless because Program.Instance /
-        // Program.Viewports are never set up:
-        //   Vehicle.UpdateNavballData -> GetRadarAltitude -> Program.GetOceanRenderer() (null Instance)
-        //   Vehicle.PrepareWorker -> Program.GetMainCamera() (Viewports empty). Only used to size the
-        //   vehicle on screen for the useHighFidelityOceanPhysics flag; a fixed dummy camera keeps it
-        //   deterministic. GetRadarAltitude already null-guards a null ocean renderer.
-        //   Universe.SyncGroundClutter -> Program.GetPlanetRenderer(), on the solver path. Reached
-        //   once a bubble rents a constraint sim, which staging does on the first split. Both call
-        //   sites null-check it, and a null renderer clears the bubble's clutter colliders.
+        // The renderers hang off a null Program.Instance, so the two accessors the sim path reaches
+        // answer null, which both call sites already handle:
+        //   Vehicle.UpdateNavballData -> GetRadarAltitude -> Program.GetOceanRenderer(), no ocean height.
+        //   PhysicsBubble.SyncGroundClutterStatics -> Program.GetPlanetRenderer(), on the solver path
+        //   once a bubble rents a constraint sim; a null one clears the bubble's clutter colliders,
+        //   so a surface test never sees a clutter collision.
+        // The cameras need no patch, RegisterHeadlessViewport gives them a real viewport.
         harmony.Patch(
             AccessTools.Method(typeof(Program), nameof(Program.GetOceanRenderer)),
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(ReturnNullOceanRenderer)));
-        harmony.Patch(
-            AccessTools.Method(typeof(Program), nameof(Program.GetMainCamera)),
-            prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(ReturnDummyCamera)));
         harmony.Patch(
             AccessTools.Method(typeof(Program), nameof(Program.GetPlanetRenderer)),
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(ReturnNullPlanetRenderer)));
@@ -214,12 +278,6 @@ public sealed class HeadlessSession
     private static bool ReturnNullPlanetRenderer(ref PlanetRenderer? __result)
     {
         __result = null;
-        return false;
-    }
-
-    private static bool ReturnDummyCamera(ref Camera __result)
-    {
-        __result = _dummyCamera!;
         return false;
     }
 

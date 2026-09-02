@@ -101,11 +101,15 @@ internal static class HarnessMain
         }
     }
 
-    // Content-agnostic checks that the GPU-free session is genuinely alive: bodies loaded, a world
-    // sun resolved, and the solvers tick (an orbiting body moves). No stock entity names, so this
-    // holds for any star system a mod setup loads.
+    // Content-agnostic checks that the GPU-free session is genuinely alive: the game's viewport
+    // registry answers with the headless viewport, bodies loaded, a world sun resolved, and the
+    // solvers tick (an orbiting body moves). No stock entity names, so this holds for any star
+    // system a mod setup loads.
     private static bool ValidateSession(HeadlessSession session)
     {
+        if (!ValidateViewport(session))
+            return false;
+
         CelestialSystem system = session.System;
         if (system.Count <= 0)
         {
@@ -140,6 +144,28 @@ internal static class HarnessMain
         }
 
         HarnessLog.Line("[smoke] PASS (GPU-free system load + solver tick).");
+        return true;
+    }
+
+    // RegisterHeadlessViewport already asserts Program.MainViewport, so what is left is the accessor
+    // the sim path calls: Vehicle.PrepareWorker reaches Program.GetMainCamera, and an empty registry
+    // throws there rather than returning null, deep inside whichever test hits it first.
+    private static bool ValidateViewport(HeadlessSession session)
+    {
+        HeadlessViewport? viewport = session.MainViewport;
+        if (viewport == null)
+        {
+            HarnessLog.Line("[smoke] INFRA FAIL: bring-up registered no headless viewport.");
+            return false;
+        }
+        if (!ReferenceEquals(Program.GetMainCamera(), viewport.BaseCamera))
+        {
+            HarnessLog.Line("[smoke] INFRA FAIL: Program.GetMainCamera() is not the headless viewport's base camera.");
+            return false;
+        }
+
+        HarnessLog.Line($"[smoke] headless viewport live: '{viewport.Name}' {viewport.Width}x{viewport.Height}, " +
+                        $"mode {viewport.Mode}, {ViewportRegistry.GameViews.Length} game view(s) registered.");
         return true;
     }
 
