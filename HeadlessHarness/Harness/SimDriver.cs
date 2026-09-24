@@ -1,3 +1,4 @@
+using HarmonyLib;
 using KSA;
 
 namespace HeadlessHarness.Harness;
@@ -8,8 +9,16 @@ namespace HeadlessHarness.Harness;
 //
 // Not Universe.GetJobSimStep, which scales the frame delta by simulation speed and the fraction the
 // solvers achieved; both would make a step depend on how fast the machine ran the previous one.
+//
+// PrepareFrame also waits on JobSystems.NearestOrbitAndPerformanceWorker and on the renderer's
+// previous present. Neither is mirrored, because only Program queues UI and editor jobs on that
+// worker and headless there is nothing to present.
 public sealed class SimDriver
 {
+    // Internal in the game, so it is bound by name. HarnessMain.ValidateSession creates a driver right
+    // after bring-up, which makes a rename fail the run before any test starts.
+    private static Action? _flushDirtyResourceManagers;
+
     // Off by default: frozen celestials are fine for short vehicle tests, and cheaper.
     public bool StepOrbits { get; set; }
 
@@ -25,6 +34,10 @@ public sealed class SimDriver
     // current sim time; an arbitrary seed would desync SimStep times from the loaded state.
     internal SimDriver(UniverseTime start)
     {
+        _flushDirtyResourceManagers ??=
+            AccessTools.Method(typeof(PartTree), "FlushDirtyResourceManagers", Type.EmptyTypes)?.CreateDelegate<Action>()
+            ?? throw new InvalidOperationException(
+                "[HeadlessHarness] PartTree.FlushDirtyResourceManagers not found - game version may have changed.");
         Elapsed = start;
     }
 
@@ -47,9 +60,15 @@ public sealed class SimDriver
         // pass, like a command issued during a frame's input phase is in the running game.
         InputEvents.ApplyInputEvents();
 
+        // A split, merge or part change only marks the part tree's derived data dirty, and rebuilding
+        // that data marks its resource managers dirty. PrepareFrame flushes both here, in that order,
+        // so the staging split the drain just made reaches Execute with both already built.
+        FlushDirtyPartTrees();
+
         // Execute queues a single job on JobSystems.VehicleSolver, which is why that is the only
-        // scheduler to wait on. The per-bubble fan-out over JobSystems.VehicleWorkerPool happens
-        // inside that job, and again inside Apply; both batches join themselves.
+        // scheduler to wait on. The fan-out over contact islands and bubbles on
+        // JobSystems.VehicleWorkerPool happens inside that job, and again inside Apply; every
+        // batch joins itself.
         //
         // PrepareFrame also sizes the pool's spin-before-park window from the player frame time.
         // Deliberately not mirrored: dt here is SIM seconds with no wall-clock meaning, and the
@@ -74,6 +93,10 @@ public sealed class SimDriver
             Universe.ApplyClothSolvers();
         }
 
+        // The game UI reads only after the flush that follows Apply. A test reads between Steps, so
+        // the tree changes Apply made (a docking or a part failure) are flushed here too.
+        FlushDirtyPartTrees();
+
         Elapsed = step.NextTime;
     }
 
@@ -81,5 +104,11 @@ public sealed class SimDriver
     {
         for (int i = 0; i < count; i++)
             Step(dt);
+    }
+
+    private static void FlushDirtyPartTrees()
+    {
+        PartTree.FlushDirtyDerived();
+        _flushDirtyResourceManagers!();
     }
 }
