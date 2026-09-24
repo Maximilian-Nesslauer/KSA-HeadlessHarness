@@ -18,13 +18,14 @@ public static class VehicleSpawner
     public static readonly byte4 OrbitLineColor = new byte4(255, 255, 255, 255);
 
     // Spawns a vehicle from a save in the game's Vehicles folder (the saves VehicleSaves.
-    // OnApplicationStart indexed during bring-up), the same way VehicleTemplate.CreateInto builds a
-    // vehicle from a default save: deserialize the part tree, then restore the staged state
-    // (SetActiveSequence), per-sequence performance environments, and fuel links. Engine active flags
-    // round-trip through the part tree itself (EngineController.ApplySaveData), so a properly staged
-    // save spawns with the correct engines already active. The vehicle is registered into the
-    // parent's child list; Universe.ExecuteNextVehicleSolvers puts it in a PhysicsBubble on the next
-    // solver step, joining an overlapping vehicle's bubble or renting a fresh one.
+    // OnApplicationStart indexed during bring-up; the game reads a save's vehicle file on first use),
+    // the same way VehicleTemplate.CreateInto builds a vehicle from a default save: deserialize the
+    // part tree, then restore the staged state (SetActiveSequence), per-sequence performance
+    // environments, and fuel links. Engine active flags round-trip through the part tree itself
+    // (EngineController.ApplySaveData), so a properly staged save spawns with the correct engines
+    // already active. The vehicle is registered into the parent's child list;
+    // Universe.ExecuteNextVehicleSolvers puts it in a PhysicsBubble on the next solver step, joining
+    // an overlapping vehicle's bubble or renting a fresh one.
     public static Vehicle SpawnFromSave(string saveId, CelestialSystem system, IParentBody parent, string id, Orbit orbit)
     {
         VehicleSave? save = null;
@@ -40,13 +41,30 @@ public static class VehicleSpawner
             throw new InvalidOperationException(
                 $"vehicle save '{saveId}' not found in the game's Vehicles folder ({VehicleSaves.SaveFolderPath}).");
 
-        PartInstance design = save.VehicleSaveData.RootPartInstance
+        // The game catches a broken vehicle file only in its own load UI. The rethrow names the save,
+        // so a caller can skip or fail that one save instead of aborting the run.
+        VehicleSaveData data;
+        try
+        {
+            data = save.VehicleSaveData;
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException($"vehicle save '{saveId}' could not be read: {e.Message}", e);
+        }
+
+        PartInstance design = data.RootPartInstance
             ?? throw new InvalidOperationException($"vehicle save '{saveId}' has no root part instance.");
         PartTree tree = PartTree.Deserialize(design);
         Vehicle vehicle = Vehicle.CreateVehicle(system, doubleQuat.Identity, double3.Zero, parent, id, tree.Root, orbit);
-        vehicle.Parts.SequenceList.SetActiveSequence(save.VehicleSaveData.ActiveSequence);
-        vehicle.Parts.SequenceList.ApplyEnvironments(save.VehicleSaveData.SequenceEnvironments);
-        vehicle.Parts.FuelLinks.ApplySaveData(save.VehicleSaveData.FuelLinks, design);
+
+        // The sequence list is built lazily. SetActiveSequence on a list that is not built yet
+        // advances the active sequence once more for every sequence the build then adds at or below
+        // it, so the list is built first, while the active sequence is still 0.
+        vehicle.Parts.EnsureDerived(DerivedData.Sequences);
+        vehicle.Parts.SequenceList.SetActiveSequence(data.ActiveSequence);
+        vehicle.Parts.SequenceList.ApplyEnvironments(data.SequenceEnvironments);
+        vehicle.Parts.FuelLinks.ApplySaveData(data.FuelLinks, design);
         parent.Children.Add(vehicle);
         SeatRandomCrew(vehicle);
         return vehicle;
