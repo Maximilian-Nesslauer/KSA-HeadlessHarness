@@ -287,10 +287,11 @@ public sealed class HeadlessSession
     // The vehicle to split comes from the part tree, not from the oldVehicle argument, mirroring
     // stock. When two decouplers fire in the same sequence the upstream one splits first, so by the
     // time the downstream one runs its part already belongs to the shed vehicle and oldVehicle no
-    // longer owns the connector, which makes its Split find nothing to detach.
+    // longer owns the connector, which makes its Split find nothing to detach. A decoupler that
+    // fires is part of its vehicle's tree, so Tree is dereferenced the way stock does.
     private static bool HeadlessDecouple(Decoupler __instance, Vehicle oldVehicle, ref Vehicle? __result)
     {
-        Vehicle owner = __instance.Parent.FullPart.Tree.OwningVehicle ?? oldVehicle;
+        Vehicle owner = __instance.Parent.FullPart.Tree!.OwningVehicle ?? oldVehicle;
         __result = owner.Split(__instance.Connector, __instance.Force, out _);
         return false;
     }
