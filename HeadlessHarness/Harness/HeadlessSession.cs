@@ -61,9 +61,9 @@ public sealed class HeadlessSession
         InstallHeadlessPatches();
 
         HarnessLog.Line("[bringup] application-start");
-        // Registers the Tomlet mapper for KeyBindingValue, which GameSettings holds a dictionary of
-        // and cannot round-trip without it (no parameterless constructor, get-only properties).
-        // LoadFromFile writes the settings file back out.
+        // Registers the Tomlet mapper for BindingValue, which GameSettings.TomlKeyBindings holds. The
+        // settings file stores each binding as a plain key or mouse value that only the mapper reads
+        // and writes, and LoadFromFile writes the file back out.
         Input.OnApplicationStart();
         GameSettings.OnApplicationStart();
         GameSettings.LoadFromFile();
