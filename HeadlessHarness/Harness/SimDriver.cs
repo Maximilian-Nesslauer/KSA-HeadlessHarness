@@ -60,6 +60,16 @@ public sealed class SimDriver
         // pass, like a command issued during a frame's input phase is in the running game.
         InputEvents.ApplyInputEvents();
 
+        // PrepareFrame runs this for every vehicle right after the drain. It is where an auto burn
+        // ends on the main thread: a completed burn is removed from a multi-burn plan, auto-warp
+        // stops, and an interstellar brake can be replanned. Without it a finished auto burn stays
+        // the plan's first executable burn. The alerts it raises only add to TimedAlert's static
+        // list, which nothing draws headless.
+        Program.RefreshVehiclesInFrame();
+        ReadOnlySpan<Vehicle> vehicles = Program.VehiclesInFrame;
+        for (int i = 0; i < vehicles.Length; i++)
+            vehicles[i].FlightComputer.RaisePendingAlerts(vehicles[i]);
+
         // A split, merge or part change only marks the part tree's derived data dirty, and rebuilding
         // that data marks its resource managers dirty. PrepareFrame flushes both here, in that order,
         // so the staging split the drain just made reaches Execute with both already built.
