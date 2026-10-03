@@ -17,7 +17,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 
 ## What it can do
 
-- Load a full star system GPU-free (all bodies including vehicles), with no window or renderer.
+- Load a full star system GPU-free (all bodies including vehicles), with no window or renderer, chosen per run with `KSA_HEADLESS_SYSTEM`.
 - Tick the real vehicle, cloth, and orbit solvers with a deterministic fixed timestep.
 - Drive a vehicle through the real `FlightComputer` and `PhysicsStates` (manual throttle and engine, forced numerical physics) and read back state, mass, and orbit.
 - Spawn a player-built save from the game's Vehicles folder (staged engine state, sequences, and fuel links restored) or copy a live vehicle into an arbitrary orbit, always in a fresh part tree.
@@ -46,6 +46,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 | Variable | Effect |
 | --- | --- |
 | `KSA_HEADLESS_HARNESS=1` | Run the harness and exit before the GPU game starts. Anything else: the mod stays idle. |
+| `KSA_HEADLESS_SYSTEM` | Id of the star system to load (Core: `Sol`, `SolDense`, `SolLite`, `Test`, `SolSystemInterstellar`, `EarthOnlyInterstellar`). Unset: the first system, `Sol` with Core. An unknown id is an infrastructure failure. |
 | `KSA_HEADLESS_VEHICLE` | Name of a save under `Documents\My Games\Kitten Space Agency\Vehicles` for the flight test. Unset: the flight test skips. |
 | `KSA_HEADLESS_VEHICLES` | Comma-separated save list a multi-vehicle test resolves via `TestSupport.ResolveVehicleSaves`, overriding its candidate set. Separate from the singular pin above. Unset: the test uses its own candidates. |
 | `KSA_HEADLESS_TESTS` | Comma-separated test names; only matching discovered tests run, and naming an opt-in test is what runs it. A name matching nothing is an infrastructure failure (a typo must not silently skip a test). |
@@ -55,7 +56,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 
 - `0` - all tests passed.
 - `1` - at least one test failed.
-- `2` - infrastructure failure: bring-up broke, the session did not validate, a consumer assembly failed to load, or the run mutex could not be acquired. Test results are not trustworthy.
+- `2` - infrastructure failure: bring-up broke, an unknown `KSA_HEADLESS_SYSTEM`, the session did not validate, a consumer assembly failed to load, or the run mutex could not be acquired. Test results are not trustworthy.
 
 ## Concurrent runs
 
@@ -78,12 +79,14 @@ A test that is too expensive for the normal suite (a parameter sweep, a soak run
 A measuring test (a calibration sweep, a benchmark) can write machine-readable output with `HarnessData`: `HarnessData.Create("<tag>", "col1,col2")` makes a CSV next to the run log (named for the run so the run script lists it), then `data.AppendRow(cell1, cell2, ...)` appends invariant-culture, CSV-escaped rows. No schema is imposed; the columns are the consumer's. `ExampleSweepTest` in the example consumer writes one.
 
 A test that runs several saves calls `TestSupport.ResolveVehicleSaves("A", "B", ...)`: it returns the candidates that exist in the Vehicles folder (logging a note for any that do not), or the comma-separated `KSA_HEADLESS_VEHICLES` / `run-headless.ps1 -Vehicles` list if set. Iterate the result, spawn each with a per-save log prefix, and add your own SKIP for a save that exists but is unsuitable (missing the parts the test needs). `ExampleMultiVehicleTest` in the example consumer is the worked pattern; because it flies more than one save it is opt-in (`OptIn => true`).
+A test that needs a particular star system checks the loaded system (`Universe.Roots`, the bodies it needs) and logs a SKIP when it does not fit.
 [`examples/HarnessConsumerExample`](examples/HarnessConsumerExample) is a complete worked example.
 
 ## Running the self-tests
 
 `scripts/run-headless.ps1` runs the suite headless: it backs up the game manifest, swaps to a minimal `Core + HeadlessHarness` manifest, launches StarMap with `KSA_HEADLESS_HARNESS=1`, then ALWAYS restores the manifest, prints this run's log, and exits with the harness exit code (`3` = timeout, `4` = run-queue timeout, `5` = build failure). On a failed run it also archives the game's own log next to the run log.
-`-Vehicle <save name>` selects the flight-test vehicle (the default `Test Vehicle 1` is used only if that save exists, otherwise the flight test skips); `-Tests a,b` filters tests; `-Build` builds and deploys harness + example inside the queue first, so a build never races another session's running game; `-TimeoutSec <n>` raises the kill timeout (default 120) for a long run such as an opt-in sweep, and the run-queue wait scales with it so a run queued behind a long run does not give up early.
+`-Vehicle <save name>` selects the flight-test vehicle (the default `Test Vehicle 1` is used only if that save exists, otherwise the flight test skips); `-Tests a,b` filters tests; `-System <id>` loads that star system instead of the default (Core systems only, since the script enables only Core); `-Build` builds and deploys harness + example inside the queue first, so a build never races another session's running game; `-TimeoutSec <n>` raises the kill timeout (default 120) for a long run such as an opt-in sweep, and the run-queue wait scales with it so a run queued behind a long run does not give up early.
+The flight test places the vehicle save around the loaded system's home body, and keeps its determinism baseline per game build, system and save.
 The flight test wants a working staged vehicle: build one in-game (e.g. two stages: engines in sequence 1, the decoupler in sequence 2, the upper engine in sequence 3) and save it in the Vehicles window.
 With the flag unset the mod stays idle and never disrupts a normal launch.
 
@@ -112,6 +115,8 @@ The bring-up mirrors the game's own load sequence, supplies a CPU-only viewport,
 - The Harmony patch targets: `Universe.OnLoaded`, the `Loading` screen stand-in, the `DistantSphereRenderer` and `KittenRenderable` constructors, `Program.GetOceanRenderer`, `Program.GetPlanetRenderer` (the ground clutter collision sync reaches it from the solver path; null headless, so clutter colliders are always cleared and a surface test never sees a clutter collision), and `Decoupler.Decouple` (headless split without audio/particles).
 - The body of the `Decoupler.Decouple` stand-in, which replaces the stock method outright: it must keep resolving the vehicle to split the same way stock does. Stock changes here are invisible to the compiler and show up only as wrong staging results.
 - `VehicleSpawner.SpawnFromSave`, which restores a save the way `VehicleTemplate.CreateInto` does but builds the sequence list (`PartTree.EnsureDerived(DerivedData.Sequences)`) before `SequenceList.SetActiveSequence`, because `SequenceList.Add` advances the active sequence for each sequence it adds at or below it. Re-check that the list is still built lazily and that `Add` still behaves this way.
+- The system selection: `SelectSystem.Systems`, `SystemLibrary.Find` and `Universe.LoadSystem`. `SystemLibrary.Default` must stay null headless, so every system and astronomical template loads.
+- `Universe.WorldSun` stays the first `StellarBody` headless, because only the render path moves it (`Universe.UpdateWorldSun`). Sim code reads `Universe.NearestStar` and is unaffected.
 - The reflection keys: `Vehicle._manualControlInputs`, `Loading._tasks`, `Vehicle._threadWorkerUpdateState` (the vehicle's physics bubble, which the game exposes only as the `Vehicle.HasPhysicsBubble` flag), and the internal `PartTree.FlushDirtyResourceManagers`.
 - The `Program.IsControlledVehicleActive = false` stand-in: `Vehicle.PrepareWorker` reads `ImGui.GetIO()` for the controlled vehicle while it is true, and there is no ImGui context headless. Re-check whether the game still guards that read the same way, and whether the `ClearHeldPlayerInput` it runs instead still leaves the manual throttle alone.
 - The `SimDriver.Step` pipeline, which mirrors `Program.PrepareFrame`: the `InputEvents.ApplyInputEvents` drain sits in the same position (after the solvers apply, before the next execute), followed by `PartTree.FlushDirtyDerived` and `PartTree.FlushDirtyResourceManagers` before the vehicle execute, as in `PrepareFrame`. `Step` runs the two flushes again at its end, so a test reading between steps sees the part trees rebuilt the way the game UI does. The three solver stages plus the schedulers they wait on (`JobSystems.VehicleSolver`, `JobSystems.OrbitSolvers`, `JobSystems.ClothSolvers`) must still be the ones the game frame drives. A stage the game adds belongs here too. The stage ORDER deliberately differs: stock kicks cloth first, off the state the previous frame applied, while `Step` runs vehicle, then orbits, then cloth, so each step poses the canopies from the vehicle state it just produced. `PrepareFrame` also sizes the vehicle worker pool's spin-before-park window from the player frame time; the driver deliberately leaves that at the pool default, because its `dt` is sim seconds with no wall-clock meaning. It also leaves out the `JobSystems.NearestOrbitAndPerformanceWorker` wait and the renderer present wait, because only `Program` queues UI and editor jobs on that worker and headless there is nothing to present. Re-check that skipping these is still harmless.

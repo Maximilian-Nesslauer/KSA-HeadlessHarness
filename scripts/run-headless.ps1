@@ -18,6 +18,10 @@
 #   -Vehicles    optional comma-separated save list (KSA_HEADLESS_VEHICLES) overriding the candidate
 #                set a multi-vehicle consumer test would otherwise resolve; separate from -Vehicle
 #   -Tests       optional comma-separated test-name filter (KSA_HEADLESS_TESTS)
+#   -System      optional star-system id (KSA_HEADLESS_SYSTEM), the Id attribute of a system XML, for
+#                example SolSystemInterstellar. Empty loads the first system template, Sol with Core.
+#                An id that no enabled mod defines fails the run with exit 2. This script enables only
+#                Core, so only the Core systems can be selected here.
 #   -Build       build and deploy the harness (and the example consumer) inside the queue first, so a
 #                build never races another session's running game holding the deployed DLL
 #   -TimeoutSec  seconds before this script kills StarMap and reports a timeout (default 120). Raise
@@ -33,6 +37,7 @@ param(
     [string]$Vehicle = 'Test Vehicle 1',
     [string]$Vehicles = '',
     [string]$Tests = '',
+    [string]$System = '',
     [switch]$Build,
     # Reject 0/negative up front: WaitForExit(0) would return at once and report a spurious timeout.
     [ValidateRange(1, [int]::MaxValue)]
@@ -132,13 +137,16 @@ try {
         Remove-Item Env:\KSA_HEADLESS_VEHICLE -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_VEHICLES -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_TESTS -ErrorAction SilentlyContinue
+        Remove-Item Env:\KSA_HEADLESS_SYSTEM -ErrorAction SilentlyContinue
         $env:KSA_HEADLESS_HARNESS = '1'
         $env:KSA_HEADLESS_LOG = $log
         if ($Vehicle) { $env:KSA_HEADLESS_VEHICLE = $Vehicle }
         if ($Vehicles) { $env:KSA_HEADLESS_VEHICLES = $Vehicles }
         if ($Tests) { $env:KSA_HEADLESS_TESTS = $Tests }
+        if ($System) { $env:KSA_HEADLESS_SYSTEM = $System }
 
-        Write-Host "Launching StarMap headless (timeout ${TimeoutSec}s, log $log)..."
+        $systemNote = if ($System) { "system $System" } else { 'default system' }
+        Write-Host "Launching StarMap headless ($systemNote, timeout ${TimeoutSec}s, log $log)..."
         # StarMap.exe is a console-subsystem app, so Start-Process would give it its own console
         # window that pops to the foreground and steals focus. CreateNoWindow keeps it windowless;
         # UseShellExecute=false lets it inherit this shell's environment (the KSA_HEADLESS_* vars set
@@ -192,6 +200,7 @@ try {
         Remove-Item Env:\KSA_HEADLESS_VEHICLE -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_VEHICLES -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_TESTS -ErrorAction SilentlyContinue
+        Remove-Item Env:\KSA_HEADLESS_SYSTEM -ErrorAction SilentlyContinue
         Write-Host "Manifest restored."
     }
 }

@@ -11,8 +11,9 @@ namespace HeadlessHarness.Harness;
 // plus consumer tests). Returns a process exit code; the process exits before KSA Program.Main.
 //
 // Exit codes: 0 = all tests passed; 1 = at least one test failed; 2 = infrastructure failure
-// (bring-up broke, the session did not validate, a consumer assembly failed to load, or the run
-// mutex could not be acquired), meaning the test results are not trustworthy.
+// (bring-up broke, KSA_HEADLESS_SYSTEM named an unknown system, the session did not validate, a
+// consumer assembly failed to load, or the run mutex could not be acquired), meaning the test
+// results are not trustworthy.
 //
 // Runs are serialized machine-wide through a named mutex, so several sessions can invoke the
 // harness concurrently and simply queue: cross-run state (the determinism signatures in
@@ -69,9 +70,13 @@ internal static class HarnessMain
     private static int RunLocked()
     {
         HeadlessSession session = new HeadlessSession();
+        string? systemId = Environment.GetEnvironmentVariable(HeadlessSession.SystemEnvVar);
+        systemId = string.IsNullOrWhiteSpace(systemId) ? null : systemId.Trim();
+        if (systemId != null)
+            HarnessLog.Line($"[harness] {HeadlessSession.SystemEnvVar} selects system '{systemId}'.");
         try
         {
-            session.BringUp();
+            session.BringUp(systemId);
         }
         catch (Exception e)
         {
@@ -188,6 +193,14 @@ internal static class HarnessMain
 
         HarnessLog.Line($"[smoke] system '{system.Id}' loaded GPU-free: {system.Count} bodies " +
                         $"({vehicles} vehicles), world sun '{Universe.WorldSun?.Id}'.");
+
+        // CelestialSystem..ctor catches an exception per root tree, so a root that failed to build
+        // shows up here only as a missing id.
+        ReadOnlySpan<IIndependentRoot> roots = Universe.Roots;
+        List<string> rootIds = new List<string>(roots.Length);
+        foreach (IIndependentRoot root in roots)
+            rootIds.Add(root is Astronomical a ? a.Id : root.GetType().Name);
+        HarnessLog.Line($"[smoke] {roots.Length} independent root(s): {string.Join(", ", rootIds)}.");
         foreach (KeyValuePair<string, int> kv in histogram)
             HarnessLog.Line($"[smoke]   {kv.Value,3} x {kv.Key}");
     }

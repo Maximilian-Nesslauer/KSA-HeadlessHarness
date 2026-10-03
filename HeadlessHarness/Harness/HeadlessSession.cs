@@ -41,13 +41,20 @@ public sealed class HeadlessSession
     // Null until BringUp has run. Public so a test can reach the cameras the game itself uses.
     public HeadlessViewport? MainViewport { get; private set; }
 
+    // Names the star system a harness run loads, by the Id attribute of its system XML. HarnessMain
+    // reads it and passes it to BringUp. Unset or blank loads the first system template.
+    public const string SystemEnvVar = "KSA_HEADLESS_SYSTEM";
+
     public CelestialSystem System =>
         Universe.CurrentSystem ?? throw new InvalidOperationException(
             IsBroughtUp ? "No system is loaded." : "BringUp has not run.");
 
-    // systemId null => the first loaded system template. SystemLibrary.Default is only ever assigned
-    // from the game's system-select popup, which no headless run reaches, so it stays null here and
-    // the fallback is what actually decides. Name a system explicitly to pin one.
+    // systemId null => the first loaded system template. Program..ctor assigns SystemLibrary.Default
+    // from the system-select popup, the player's last system or the first registered SystemInfo, and
+    // no headless run reaches that code, so Default stays null here. That is also what makes every
+    // system XML and every astronomical template load (Mod.LoadSystems and AssetBundle.OnDataLoad
+    // filter on Default only when it is set), so any registered system can be named, and the
+    // player's last choice never leaks into a run. An unknown id throws before the asset load.
     public void BringUp(string? systemId = null)
     {
         if (IsBroughtUp)
@@ -77,6 +84,10 @@ public sealed class HeadlessSession
 
         HarnessLog.Line("[bringup] cpu asset load");
         ModLibrary.PrepareAll();
+        // Mod.PrepareSystems registered every system XML in SelectSystem.Systems, so an unknown id is
+        // caught here instead of after the long LoadAll.
+        if (systemId != null)
+            RequireKnownSystem(systemId);
         ModLibrary.PreloadAssetBundles();
         ModLibrary.PreloadLanguages();
         ModLibrary.LoadEditorTags();
@@ -107,11 +118,33 @@ public sealed class HeadlessSession
         GrainGeometryLibrary.LoadAll();
 
         string id = systemId ?? SystemLibrary.Default?.Id ?? SystemLibrary.First().Id;
-        HarnessLog.Line($"[bringup] load system '{id}'");
+        // The system XML was registered, but its template can still fail to load. LoadSystem would
+        // then only report that the template does not exist, so name the likely cause here.
+        if (systemId != null && SystemLibrary.Find(systemId) == null)
+            throw new InvalidOperationException(
+                $"[HeadlessHarness] system '{systemId}' is registered, but its system template did not load. " +
+                "Its system XML most likely failed to load.");
+        HarnessLog.Line($"[bringup] load system '{id}' ({(systemId != null ? "named" : "default: first system template")})");
         Universe.LoadSystem(id);
 
         IsBroughtUp = true;
         HarnessLog.Line($"[bringup] complete, system='{Universe.CurrentSystem?.Id}'");
+    }
+
+    private static void RequireKnownSystem(string systemId)
+    {
+        List<SystemInfo> systems = SelectSystem.Systems;
+        foreach (SystemInfo info in systems)
+        {
+            if (string.Equals(info.Id, systemId, StringComparison.Ordinal))
+                return;
+        }
+        List<string> known = new List<string>(systems.Count);
+        foreach (SystemInfo info in systems)
+            known.Add(info.Id);
+        throw new InvalidOperationException(
+            $"[HeadlessHarness] system '{systemId}' is not defined by any enabled mod. " +
+            $"Known systems: {(known.Count > 0 ? string.Join(", ", known) : "none")}.");
     }
 
     public SimDriver CreateDriver()

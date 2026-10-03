@@ -25,9 +25,9 @@ public sealed class Mod
 
         // Only take over when explicitly asked, so an installed harness never hijacks a normal
         // launch. When set, run the harness GPU-free and exit before KSA Program.Main (the GPU game).
-        // Optional: KSA_HEADLESS_VEHICLE names a Vehicles-folder save for the flight test,
-        // KSA_HEADLESS_TESTS filters which discovered tests run (comma-separated names), and
-        // KSA_HEADLESS_LOG overrides the per-run log file path.
+        // Optional: KSA_HEADLESS_SYSTEM names the star system to load, KSA_HEADLESS_VEHICLE names a
+        // Vehicles-folder save for the flight test, KSA_HEADLESS_TESTS filters which discovered tests
+        // run (comma-separated names), and KSA_HEADLESS_LOG overrides the per-run log file path.
         if (Environment.GetEnvironmentVariable("KSA_HEADLESS_HARNESS") == "1")
         {
             int exitCode = HarnessMain.Run();

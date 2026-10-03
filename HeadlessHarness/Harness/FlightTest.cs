@@ -11,7 +11,7 @@ namespace HeadlessHarness.Harness;
 //      the sequence list is spent. Each burn phase must consume propellant at the firing engines'
 //      rated vacuum mass-flow rate.
 //   3. The final state is fingerprinted and compared bit-for-bit against the previous run with the
-//      same build, vehicle and spawn epoch (reported in the log, not asserted).
+//      same build, system, vehicle and spawn epoch (reported in the log, not asserted).
 // Numbers come from the real FlightComputer/PhysicsStates, so the assertions track genuine game
 // behaviour with no separate re-implementation to drift.
 //
@@ -90,7 +90,7 @@ public sealed class FlightTest : IHarnessTest
             TestSupport.DespawnNewVehicles(system, preexisting);
         }
 
-        LogDeterminismSignature(saveId, now, in finalState, finalMass);
+        LogDeterminismSignature(system.Id, saveId, now, in finalState, finalMass);
 
         HarnessLog.Line($"[flight] {TestSupport.Verdict(ok)} (staged flight).");
         return ok ? 0 : 1;
@@ -244,18 +244,19 @@ public sealed class FlightTest : IHarnessTest
         return ok;
     }
 
-    // Exact-bits comparison against the previous run, keyed per game build and vehicle save because
-    // both legitimately change the outcome. So does the spawn epoch, which every SimDriver.Step in
+    // Exact-bits comparison against the previous run, keyed per game build, star system and vehicle
+    // save because each legitimately changes the outcome. So does the spawn epoch, which every SimDriver.Step in
     // the whole run moves: it leads the signature and is compared separately, so filtering the suite
     // or adding a consumer test reads as NOT COMPARABLE rather than a DIFFER that means nothing.
-    private static void LogDeterminismSignature(string saveId, UniverseTime spawnTime,
+    private static void LogDeterminismSignature(string systemId, string saveId, UniverseTime spawnTime,
         in StateVectors finalState, double finalMass)
     {
         string vehicleKey = string.Join("_", saveId.Split(Path.GetInvalidFileNameChars()));
+        string systemKey = string.Join("_", systemId.Split(Path.GetInvalidFileNameChars()));
         // Lives in the shared data directory (not the per-run log dir naming) because the baseline
         // must persist across runs; cross-run access is serialized by the run mutex in HarnessMain.
         string sigFile = Path.Combine(HarnessLog.DataDirectory,
-            $"{VersionInfo.Current.VersionString}.{vehicleKey}.sig");
+            $"{VersionInfo.Current.VersionString}.{systemKey}.{vehicleKey}.sig");
 
         string epoch = Bits(spawnTime.Seconds()).ToString();
         string state = string.Join(",", new[]
