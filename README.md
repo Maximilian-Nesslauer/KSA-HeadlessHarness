@@ -6,14 +6,14 @@ A mod references it as a test dependency and asserts against the real `FlightCom
 
 This is a developer tool, not a gameplay mod. It is env-var gated and does nothing on a normal launch.
 
-Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.9.22.5482 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
+Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). Validated against KSA build version 2026.10.7.5541 (re-verify the bring-up on each game update, see [Maintenance](#maintenance-on-game-update)).
 
 ## How it works
 
 - Packaged as a StarMap mod. The entry is a `[StarMapBeforeMain]` method (`Mod.OnBeforeMain`), which StarMap fires BEFORE it invokes KSA `Program.Main` - so it runs before any GLFW window or Vulkan renderer is created.
 - StarMap loads the mod through its own `CoreAssemblyLoadContext`, which resolves `KSA.dll` and the `Brutal.*` native dependencies from the game folder.
 - `HeadlessSession.BringUp` runs the CPU-only load calls the real `Program` constructor makes, in dependency order, skipping every GPU, window, and ImGui step. Where the game programs against an interface it supplies a CPU-only implementation instead of intercepting callers: `HeadlessViewport` is registered as the game main viewport, which is what makes `Program.MainViewport` and every camera accessor resolve. The remaining render couplings, on a few body and vehicle types and the two renderer accessors, are neutralized by a small set of Harmony patches (see [Maintenance](#maintenance-on-game-update)).
-- `SimDriver` advances the vehicle, cloth, and (optionally) orbit solvers with a hand-built fixed `SimStep`, collapsing the game's double-buffered solver pipeline into a synchronous Execute -> Wait -> Apply, and drains the game's input-event queue at the top of each step. The game's activation APIs (`EngineController.SetIsActive`, `Decoupler.SetIsActive`, `SequenceList.ActivateNextSequence`) only enqueue, so a command issued between steps is included in the very next solver pass, with the same one-frame latency as the running game.
+- `SimDriver` advances the vehicle, cloth, and (optionally) orbit solvers with a hand-built fixed `SimStep`, collapsing the game's double-buffered solver pipeline into a synchronous Execute -> Wait -> Apply, and drains the game's input-event queue at the top of each step. Right after the drain it runs `FlightComputer.RaisePendingAlerts` for every vehicle, as `Program.PrepareFrame` does, so a burn-end flag raised in one step is acted on at the top of the next. The game's activation APIs (`EngineController.SetIsActive`, `Decoupler.SetIsActive`, `SequenceList.ActivateNextSequence`) only enqueue, so a command issued between steps is included in the very next solver pass, with the same one-frame latency as the running game.
 
 ## What it can do
 
