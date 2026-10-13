@@ -101,6 +101,8 @@ public sealed class HeadlessViewport : IGameViewport
 
     public void SetVisible(bool inValue) => State = ViewportEx.Set(State, ViewportStateFlags.Visible, inValue);
 
+    public void SetInsideVehicle(bool inValue) => State = ViewportEx.Set(State, ViewportStateFlags.InsideVehicle, inValue);
+
     public void SetName(string inName) => Name = inName;
 
     public void SetResizeAllowed(bool inValue) => AllowResize = inValue;
