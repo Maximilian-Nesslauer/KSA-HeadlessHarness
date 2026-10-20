@@ -19,16 +19,16 @@
       <HintPath>..\..\..\refs\game\KSA.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Brutal.Core.Numerics">
-      <HintPath>..\..\..\refs\game\Brutal.Core.Numerics.dll</HintPath>
+    <Reference Include="Brutal.Numerics">
+      <HintPath>..\..\..\refs\game\Brutal.Numerics.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Brutal.Core.Logging">
-      <HintPath>..\..\..\refs\game\Brutal.Core.Logging.dll</HintPath>
+    <Reference Include="Brutal.Logging">
+      <HintPath>..\..\..\refs\game\Brutal.Logging.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Brutal.Core.Memory">
-      <HintPath>..\..\..\refs\game\Brutal.Core.Memory.dll</HintPath>
+    <Reference Include="Brutal.Memory">
+      <HintPath>..\..\..\refs\game\Brutal.Memory.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <!-- Named only by HeadlessViewport's render-surface members: Brutal.ImGuiApi.ImTextureRef and
