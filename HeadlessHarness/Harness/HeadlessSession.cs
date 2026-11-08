@@ -122,6 +122,12 @@ public sealed class HeadlessSession
         ModLibrary.AssignRandomHeightmaps();
         ModLibrary.RunPostLoad();
 
+        // LoadAll skips every texture marked Stream="true", which stock uses for the body heightmaps
+        // and normal maps. Program..ctor reads them here; without them every body is a smooth sphere
+        // (HasTerrainHeightmap false, terrain height 0). A null renderer reads the CPU payload only.
+        HarnessLog.Line("[bringup] streamed body textures");
+        KSA.Rendering.CelestialTextureStreamer.LoadStreamed(null, loaded.BodyTemplates(), null);
+
         HarnessLog.Line($"[bringup] load system '{loaded.Id}' ({(systemId != null ? "named" : "default: first listed system")})");
         Universe.LoadSystem(loaded.Id);
 

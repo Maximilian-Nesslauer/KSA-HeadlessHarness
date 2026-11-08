@@ -120,7 +120,7 @@ public static class VehicleSpawner
     {
         foreach (KittenRosterEntryData kitten in Universe.KittenRoster.Kittens)
         {
-            if (!kitten.AssignedToVehicle && !kitten.Retired && !kitten.Kia)
+            if (!kitten.AssignedToVehicle && !kitten.Retired && !kitten.Kia && !kitten.HasRadiationSickness(Universe.GetElapsedTime()))
                 return kitten;
         }
         return null;
