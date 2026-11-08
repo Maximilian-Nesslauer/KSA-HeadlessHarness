@@ -27,6 +27,12 @@ public static class VehicleSpawner
     // Universe.ExecuteNextVehicleSolvers puts it in a PhysicsBubble on the next solver step, joining
     // an overlapping vehicle's bubble or renting a fresh one.
     public static Vehicle SpawnFromSave(string saveId, CelestialSystem system, IParentBody parent, string id, Orbit orbit)
+        => SpawnFromSave(saveId, system, parent, id, orbit, applyTankAssignments: false);
+
+    // applyTankAssignments runs PartTree.ApplyTankAssignments on the loaded tree, as VehicleLaunchMenu.LoadPreview does
+    // before a player launch, so tanks the save left without contents fill with their automatic mix. The overload
+    // without it keeps the restore of VehicleTemplate.CreateInto, which does not fill tanks.
+    public static Vehicle SpawnFromSave(string saveId, CelestialSystem system, IParentBody parent, string id, Orbit orbit, bool applyTankAssignments)
     {
         VehicleSave? save = null;
         foreach (VehicleSave candidate in VehicleSaves.AsSpan())
@@ -64,6 +70,8 @@ public static class VehicleSpawner
                 $"vehicle save '{saveId}' uses parts that are missing or failed to load ({missingParts}). " +
                 "Re-save it in the game, or build it again from the current parts.");
         PartTree tree = PartTree.Deserialize(design);
+        if (applyTankAssignments)
+            tree.ApplyTankAssignments();
         Vehicle vehicle = Vehicle.CreateVehicle(system, doubleQuat.Identity, double3.Zero, parent, id, tree.Root, orbit);
 
         // The sequence list is built lazily. SetActiveSequence on a list that is not built yet

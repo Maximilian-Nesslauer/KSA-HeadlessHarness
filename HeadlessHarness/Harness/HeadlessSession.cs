@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 using Brutal.Numerics;
 using HarmonyLib;
 using HeadlessHarness.Core;
@@ -278,6 +279,13 @@ public sealed class HeadlessSession
             AccessTools.Method(typeof(Decoupler), nameof(Decoupler.Decouple)),
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(HeadlessDecouple)));
 
+        // Vehicle.Teleport (the Set Orbit path) ends with Program.Instance.SchedulePlanetUpdate, a render
+        // request on the null headless Program.Instance. The call fails before any prefix could run, so
+        // the call site is rewritten to skip it when there is no Program.
+        harmony.Patch(
+            AccessTools.Method(typeof(Vehicle), nameof(Vehicle.Teleport)),
+            transpiler: new HarmonyMethod(typeof(HeadlessSession), nameof(SkipPlanetUpdateWithoutProgram)));
+
         // Diagnostic: CelestialSystem..ctor catches per-root-tree exceptions and skips the rest, so a
         // body that throws during construction silently drops itself and its siblings. Surface it for
         // both child bodies (CreateTreeFrom) and root bodies (CreateTreeFromRoot builds the root itself
@@ -289,6 +297,30 @@ public sealed class HeadlessSession
             AccessTools.Method(typeof(CelestialSystem), nameof(CelestialSystem.CreateTreeFromRoot)),
             finalizer: new HarmonyMethod(typeof(HeadlessSession), nameof(LogRootBodyException)));
     }
+
+    private static IEnumerable<CodeInstruction> SkipPlanetUpdateWithoutProgram(IEnumerable<CodeInstruction> instructions)
+    {
+        MethodInfo target = AccessTools.Method(typeof(Program), nameof(Program.SchedulePlanetUpdate));
+        MethodInfo replacement = AccessTools.Method(typeof(HeadlessSession), nameof(SchedulePlanetUpdateIfProgram));
+        int replaced = 0;
+        foreach (CodeInstruction instruction in instructions)
+        {
+            if (instruction.Calls(target))
+            {
+                replaced++;
+                yield return new CodeInstruction(OpCodes.Call, replacement).WithLabels(instruction.labels);
+                continue;
+            }
+            yield return instruction;
+        }
+        if (replaced != 1)
+            throw new InvalidOperationException(
+                $"[HeadlessHarness] expected one Program.SchedulePlanetUpdate call in Vehicle.Teleport, found {replaced} - game version may have changed.");
+    }
+
+    // Takes the instance as its first argument, so it replaces the instance call on the stack as is.
+    private static void SchedulePlanetUpdateIfProgram(Program? program, Celestial? nearbyCelestial)
+        => program?.SchedulePlanetUpdate(nearbyCelestial);
 
     private static ConstructorInfo SoleConstructor(Type type)
     {
