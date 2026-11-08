@@ -55,6 +55,14 @@ public static class VehicleSpawner
 
         PartInstance design = data.RootPartInstance
             ?? throw new InvalidOperationException($"vehicle save '{saveId}' has no root part instance.");
+        // The game refuses such a vehicle the same way (CelestialSystem.DeserializeSave), because
+        // PartTree.Deserialize throws a bare NullReferenceException on the first unknown part. A save
+        // made on an older game build often names parts that were renamed since.
+        string? missingParts = design.FindMissingParts();
+        if (missingParts != null)
+            throw new InvalidOperationException(
+                $"vehicle save '{saveId}' uses parts that are missing or failed to load ({missingParts}). " +
+                "Re-save it in the game, or build it again from the current parts.");
         PartTree tree = PartTree.Deserialize(design);
         Vehicle vehicle = Vehicle.CreateVehicle(system, doubleQuat.Identity, double3.Zero, parent, id, tree.Root, orbit);
 
@@ -71,7 +79,8 @@ public static class VehicleSpawner
     }
 
     // Fills every free seat from the universe roster, mirroring Universe.AssignStartingCrew: mark the
-    // vehicle launched, then take an unassigned, non-KIA kitten, seat it and start its mission.
+    // vehicle launched, then take an unassigned kitten that is neither retired nor KIA, seat it and
+    // start its mission.
     // Universe.LoadSystem seeds the roster with 20 kittens, so EnsureAvailableKitten only tops it up
     // once a run has seated all of them. Which kitten lands in which seat does not affect vehicle
     // mass or the flight test's determinism signature.
@@ -93,8 +102,12 @@ public static class VehicleSpawner
             KittenRosterEntryData? free = FindUnassignedKitten();
             if (free == null)
                 break;
-            if (!vehicle.AddCrewToFirstAvailableSeat(free.NameHash))
+            CrewSeatResult result = vehicle.AddCrewToFirstAvailableSeat(free.NameHash);
+            if (result != CrewSeatResult.Seated)
+            {
+                HarnessLog.Line($"[harness] '{vehicle.Id}' seat {i}: {result}, stop seating.");
                 break;
+            }
             free.StartMission(vehicle.Id);
             seated++;
         }
@@ -107,7 +120,7 @@ public static class VehicleSpawner
     {
         foreach (KittenRosterEntryData kitten in Universe.KittenRoster.Kittens)
         {
-            if (!kitten.AssignedToVehicle && !kitten.Kia)
+            if (!kitten.AssignedToVehicle && !kitten.Retired && !kitten.Kia)
                 return kitten;
         }
         return null;

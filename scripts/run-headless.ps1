@@ -19,7 +19,7 @@
 #                set a multi-vehicle consumer test would otherwise resolve; separate from -Vehicle
 #   -Tests       optional comma-separated test-name filter (KSA_HEADLESS_TESTS)
 #   -System      optional star-system id (KSA_HEADLESS_SYSTEM), the Id attribute of a system XML, for
-#                example SolSystemInterstellar. Empty loads the first system template, Sol with Core.
+#                example SolSystemInterstellar. Empty loads the first system the game lists, Sol with Core.
 #                An id that no enabled mod defines fails the run with exit 2. This script enables only
 #                Core, so only the Core systems can be selected here.
 #   -Build       build and deploy the harness (and the example consumer) inside the queue first, so a

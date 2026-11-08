@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Brutal.Numerics;
 using HarmonyLib;
 using HeadlessHarness.Core;
@@ -42,19 +41,18 @@ public sealed class HeadlessSession
     public HeadlessViewport? MainViewport { get; private set; }
 
     // Names the star system a harness run loads, by the Id attribute of its system XML. HarnessMain
-    // reads it and passes it to BringUp. Unset or blank loads the first system template.
+    // reads it and passes it to BringUp. Unset or blank loads the first system the game lists.
     public const string SystemEnvVar = "KSA_HEADLESS_SYSTEM";
 
     public CelestialSystem System =>
         Universe.CurrentSystem ?? throw new InvalidOperationException(
             IsBroughtUp ? "No system is loaded." : "BringUp has not run.");
 
-    // systemId null => the first loaded system template. Program..ctor assigns SystemLibrary.Default
-    // from the system-select popup, the player's last system or the first registered SystemInfo, and
-    // no headless run reaches that code, so Default stays null here. That is also what makes every
-    // system XML and every astronomical template load (Mod.LoadSystems and AssetBundle.OnDataLoad
-    // filter on Default only when it is set), so any registered system can be named, and the
-    // player's last choice never leaks into a run. An unknown id throws before the asset load.
+    // systemId null => the first system the game would list in its system picker (Core: Sol).
+    // Program..ctor picks SystemLibrary.Default from the system-select popup or the player's last
+    // system; a headless run never reads the player's last choice, so the start system does not
+    // depend on the local settings. The content load itself does not filter on the selected system,
+    // so every registered system can be named. An unknown id throws before the long full load.
     public void BringUp(string? systemId = null)
     {
         if (IsBroughtUp)
@@ -82,69 +80,86 @@ public sealed class HeadlessSession
         LayoutSaves.OnApplicationStart();
         GameAudio.OnApplicationStart();
 
-        HarnessLog.Line("[bringup] cpu asset load");
+        // PrepareAll reads every enabled mod into one content source, and PreloadAssetBundles loads
+        // the tags bound for preload from it, which include the System templates. LoadAll then
+        // resets the content collections and loads every tag. The game warms its XML serializer
+        // cache on worker threads before this (ModLibrary.StartSerializerWarm); the harness leaves
+        // that out, because ContentSerializerCache.Get builds each serializer on demand.
+        HarnessLog.Line("[bringup] read content");
         ModLibrary.PrepareAll();
-        // Mod.PrepareSystems registered every system XML in SelectSystem.Systems, so an unknown id is
-        // caught here instead of after the long LoadAll.
-        if (systemId != null)
-            RequireKnownSystem(systemId);
+        HarnessLog.Line("[bringup] preload");
         ModLibrary.PreloadAssetBundles();
-        ModLibrary.PreloadLanguages();
-        ModLibrary.LoadEditorTags();
+        SystemTemplate start = ChooseStartSystem(systemId);
+        SystemLibrary.Default = start;
+        HarnessLog.Line("[bringup] full content load");
         ModLibrary.LoadAll();
         ModLibrary.AssignDefaults();
+
+        // LoadAll registers new template objects and reselects SystemLibrary.Default by id. When the
+        // selected system failed to load, Reselect falls back to another system with only a log
+        // line, so a named system that did not load is an error here instead.
+        SystemTemplate? loaded = SystemLibrary.Find(start.Id);
+        if (loaded == null || loaded.LoadFailed)
+            throw new InvalidOperationException(
+                $"[HeadlessHarness] system '{start.Id}' is defined, but it failed to load in the full " +
+                "content load. See the content errors in the game log.");
+        SystemLibrary.Default = loaded;
 
         // Program..ctor builds its viewports here, and the registry must hold one before anything
         // loads a system or ticks a solver.
         HarnessLog.Line("[bringup] headless viewport");
         MainViewport = RegisterHeadlessViewport();
 
-        // Program..ctor initializes the job systems here, after the viewports and before the populate
-        // calls. Match that position: if a future game version made any populate/substance call
-        // dispatch parallel work, running Initialize later would leave a null scheduler.
+        // Program..ctor initializes the job systems here, after the viewports and before the post
+        // load steps. Match that position, so that a post load step which dispatches parallel work
+        // finds a scheduler.
         HarnessLog.Line("[bringup] job systems");
         JobSystems.Initialize();
 
-        ModLibrary.PopulateMeshCollections();
-        ModLibrary.PopulateHeightmapCollections();
-        SystemLibrary.PopulateMeshCollections();
-        SystemLibrary.PopulateHeightmapCollections();
-        ModLibrary.AttachGameData();
-        ModLibrary.PopulateSounds();
-        SubstanceLibrary.LoadAll();
-        // Paired with SubstanceLibrary.LoadAll in the game's own bring-up. Without it any part
-        // carrying a SolidGrainSegment throws "No grain geometries loaded" out of its constructor,
-        // so a save with a solid motor cannot be deserialized at all.
-        GrainGeometryLibrary.LoadAll();
+        // Program..ctor runs ModLibrary.Bind (GPU uploads, left out headless) and then these two CPU
+        // steps: the random heightmap assignment of the body templates, and the part template post
+        // load (symmetry groups, consumer feed points) plus the static object resolve.
+        ModLibrary.AssignRandomHeightmaps();
+        ModLibrary.RunPostLoad();
 
-        string id = systemId ?? SystemLibrary.Default?.Id ?? SystemLibrary.First().Id;
-        // The system XML was registered, but its template can still fail to load. LoadSystem would
-        // then only report that the template does not exist, so name the likely cause here.
-        if (systemId != null && SystemLibrary.Find(systemId) == null)
-            throw new InvalidOperationException(
-                $"[HeadlessHarness] system '{systemId}' is registered, but its system template did not load. " +
-                "Its system XML most likely failed to load.");
-        HarnessLog.Line($"[bringup] load system '{id}' ({(systemId != null ? "named" : "default: first system template")})");
-        Universe.LoadSystem(id);
+        HarnessLog.Line($"[bringup] load system '{loaded.Id}' ({(systemId != null ? "named" : "default: first listed system")})");
+        Universe.LoadSystem(loaded.Id);
 
         IsBroughtUp = true;
         HarnessLog.Line($"[bringup] complete, system='{Universe.CurrentSystem?.Id}'");
     }
 
-    private static void RequireKnownSystem(string systemId)
+    // Runs after the preload, which registers the System templates. A named system may be any
+    // registered one, also a test system that the game picker hides. Unnamed, the first system the
+    // picker lists, the same one SystemLibrary.ChooseStart picks when the player has no last system.
+    private static SystemTemplate ChooseStartSystem(string? systemId)
     {
-        List<SystemInfo> systems = SelectSystem.Systems;
-        foreach (SystemInfo info in systems)
+        List<SystemTemplate> listed = SystemLibrary.PickerSystems();
+        if (systemId == null)
         {
-            if (string.Equals(info.Id, systemId, StringComparison.Ordinal))
-                return;
+            if (listed.Count == 0)
+                throw new InvalidOperationException(
+                    "[HeadlessHarness] no system can be started: every system failed to load. " +
+                    "See the content errors in the game log.");
+            return listed[0];
         }
-        List<string> known = new List<string>(systems.Count);
-        foreach (SystemInfo info in systems)
-            known.Add(info.Id);
+
+        SystemTemplate? named = SystemLibrary.Find(systemId);
+        if (named != null && string.Equals(named.Id, systemId, StringComparison.Ordinal))
+        {
+            if (named.LoadFailed)
+                throw new InvalidOperationException(
+                    $"[HeadlessHarness] system '{systemId}' is defined, but it failed to load. " +
+                    "See the content errors in the game log.");
+            return named;
+        }
+
+        List<string> known = new List<string>(listed.Count);
+        foreach (SystemTemplate template in listed)
+            known.Add(template.Id);
         throw new InvalidOperationException(
             $"[HeadlessHarness] system '{systemId}' is not defined by any enabled mod. " +
-            $"Known systems: {(known.Count > 0 ? string.Join(", ", known) : "none")}.");
+            $"Listed systems: {(known.Count > 0 ? string.Join(", ", known) : "none")}.");
     }
 
     public SimDriver CreateDriver()
@@ -222,11 +237,8 @@ public sealed class HeadlessSession
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(Skip)));
 
         // The loading screen is a GPU/ImGui object built only by the Loading ctor (needs a Renderer).
-        // FileReference.Load and friends call Loading.Task, whose LoadTask ctor throws
-        // "LoadWindow not initialized" when Loading.Current is null. Install a headless Loading.Current
-        // (an uninitialized instance with only its task list) and no-op the one GPU method, OnFrame, so
-        // the whole progress-task path (Task/PushTask/State/Pop) works without a renderer.
-        InstallHeadlessLoading(harmony);
+        // It needs no stand-in: Loading.Task, Loading.State, Loading.PopTask and the LoadTask ctor and
+        // Dispose all accept a null Loading.Current, which is the headless state.
 
         // StaticCelestial..ctor (every planet) builds a DistantSphereRenderer, and KittenEva..ctor
         // builds a KittenRenderable - both deref the null headless RendererContext / Program.Instance.
@@ -270,21 +282,6 @@ public sealed class HeadlessSession
         harmony.Patch(
             AccessTools.Method(typeof(CelestialSystem), nameof(CelestialSystem.CreateTreeFromRoot)),
             finalizer: new HarmonyMethod(typeof(HeadlessSession), nameof(LogRootBodyException)));
-    }
-
-    private void InstallHeadlessLoading(Harmony harmony)
-    {
-        Loading headlessLoading = (Loading)RuntimeHelpers.GetUninitializedObject(typeof(Loading));
-        FieldInfo tasksField = AccessTools.Field(typeof(Loading), "_tasks")
-            ?? throw Drift("Loading._tasks");
-        tasksField.SetValue(headlessLoading, new List<LoadTask>());
-        MethodInfo currentSetter = AccessTools.PropertySetter(typeof(Loading), nameof(Loading.Current))
-            ?? throw Drift("Loading.Current setter");
-        currentSetter.Invoke(null, new object[] { headlessLoading });
-
-        harmony.Patch(
-            AccessTools.Method(typeof(Loading), nameof(Loading.OnFrame)),
-            prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(Skip)));
     }
 
     private static ConstructorInfo SoleConstructor(Type type)
@@ -331,20 +328,20 @@ public sealed class HeadlessSession
 
     // The same exception object unwinds through every recursion frame; log it once (the innermost
     // frame fires first and names the failing body). Two finalizers because Harmony injects by
-    // parameter name and the game builds child bodies via CreateTreeFrom(bodyTemplate) and root bodies
-    // via CreateTreeFromRoot(rootTemplate).
-    private static Exception? LogChildBodyException(Exception? __exception, AstronomicalTemplate bodyTemplate) =>
-        LogBody(__exception, bodyTemplate);
+    // parameter name and the game builds child bodies via CreateTreeFrom(node, parent) and root
+    // bodies via CreateTreeFromRoot(rootNode), both from the nodes of a SystemLayout.
+    private static Exception? LogChildBodyException(Exception? __exception, SystemLayout.Node node) =>
+        LogBody(__exception, node);
 
-    private static Exception? LogRootBodyException(Exception? __exception, AstronomicalTemplate rootTemplate) =>
-        LogBody(__exception, rootTemplate);
+    private static Exception? LogRootBodyException(Exception? __exception, SystemLayout.Node rootNode) =>
+        LogBody(__exception, rootNode);
 
-    private static Exception? LogBody(Exception? exception, AstronomicalTemplate template)
+    private static Exception? LogBody(Exception? exception, SystemLayout.Node node)
     {
         if (exception != null && !ReferenceEquals(exception, _lastLoggedBodyException))
         {
             _lastLoggedBodyException = exception;
-            HarnessLog.Line($"[bringup] body '{template.Id}' construction threw:\n{exception}");
+            HarnessLog.Line($"[bringup] body '{node.Template.Id}' construction threw:\n{exception}");
         }
         return exception;
     }
