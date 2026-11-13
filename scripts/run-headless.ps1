@@ -13,7 +13,11 @@
 # this run actually wrote it, which a headless run usually does not.
 #
 # Parameters:
-#   -Vehicle     name of a save in Documents\My Games\Kitten Space Agency\Vehicles for the flight
+#   -InstancePath  optional game profile folder to run in, for example a Borea instance. StarMap gets
+#                it through STARMAP_INSTANCE_PATH, so the game, the harness and every mod use it in place
+#                of Documents\My Games\Kitten Space Agency. The manifest swap and the vehicle saves are
+#                then those of that folder, and the mods under test must be deployed into its mods folder.
+#   -Vehicle     name of a save in the Vehicles folder of the profile for the flight
 #                test (default "Test Vehicle 1"; pass '' to skip the flight test)
 #   -Vehicles    optional comma-separated save list (KSA_HEADLESS_VEHICLES) overriding the candidate
 #                set a multi-vehicle consumer test would otherwise resolve; separate from -Vehicle
@@ -34,6 +38,7 @@
 # Usage: powershell -ExecutionPolicy Bypass -File "F:\Coding\KSA Modding\mods\HeadlessHarness\scripts\run-headless.ps1"
 
 param(
+    [string]$InstancePath = '',
     [string]$Vehicle = 'Test Vehicle 1',
     [string]$Vehicles = '',
     [string]$Tests = '',
@@ -46,7 +51,11 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$docs     = Join-Path $env:USERPROFILE 'Documents\My Games\Kitten Space Agency'
+$docs     = if ($InstancePath) { $InstancePath } else { Join-Path $env:USERPROFILE 'Documents\My Games\Kitten Space Agency' }
+if ($InstancePath -and -not (Test-Path (Join-Path $InstancePath 'mods'))) {
+    Write-Host "The instance folder $InstancePath has no mods folder."
+    exit 2
+}
 $manifest = Join-Path $docs 'manifest.toml'
 $backup   = Join-Path $docs 'manifest.toml.harnessbak'
 $repoRoot = Split-Path $PSScriptRoot
@@ -138,6 +147,8 @@ try {
         Remove-Item Env:\KSA_HEADLESS_VEHICLES -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_TESTS -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_SYSTEM -ErrorAction SilentlyContinue
+        Remove-Item Env:\STARMAP_INSTANCE_PATH -ErrorAction SilentlyContinue
+        if ($InstancePath) { $env:STARMAP_INSTANCE_PATH = $InstancePath }
         $env:KSA_HEADLESS_HARNESS = '1'
         $env:KSA_HEADLESS_LOG = $log
         if ($Vehicle) { $env:KSA_HEADLESS_VEHICLE = $Vehicle }
@@ -201,6 +212,7 @@ try {
         Remove-Item Env:\KSA_HEADLESS_VEHICLES -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_TESTS -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_SYSTEM -ErrorAction SilentlyContinue
+        Remove-Item Env:\STARMAP_INSTANCE_PATH -ErrorAction SilentlyContinue
         Write-Host "Manifest restored."
     }
 }

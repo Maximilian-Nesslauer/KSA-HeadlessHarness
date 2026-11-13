@@ -47,7 +47,7 @@ Written against the [StarMap loader](https://github.com/StarMapLoader/StarMap). 
 | --- | --- |
 | `KSA_HEADLESS_HARNESS=1` | Run the harness and exit before the GPU game starts. Anything else: the mod stays idle. |
 | `KSA_HEADLESS_SYSTEM` | Id of the star system to load (Core: `Sol`, `SolDense`, `SolLite`, `Test`, `SolSystemInterstellar`, `EarthOnlyInterstellar`, and the test system `TestSystem`, which the game picker hides). Unset: the first system the game lists, `Sol` with Core. An unknown id or a system that failed to load is an infrastructure failure. |
-| `KSA_HEADLESS_VEHICLE` | Name of a save under `Documents\My Games\Kitten Space Agency\Vehicles` for the flight test. Unset: the flight test skips. |
+| `KSA_HEADLESS_VEHICLE` | Name of a save in the `Vehicles` folder of the game profile (`Documents\My Games\Kitten Space Agency\Vehicles` by default) for the flight test. Unset: the flight test skips. |
 | `KSA_HEADLESS_VEHICLES` | Comma-separated save list a multi-vehicle test resolves via `TestSupport.ResolveVehicleSaves`, overriding its candidate set. Separate from the singular pin above. Unset: the test uses its own candidates. |
 | `KSA_HEADLESS_TESTS` | Comma-separated test names; only matching discovered tests run, and naming an opt-in test is what runs it. A name matching nothing is an infrastructure failure (a typo must not silently skip a test). |
 | `KSA_HEADLESS_LOG` | Exact path for this run's log file. Unset: a timestamp+pid file under `%TEMP%\ksa-headless-harness\`. |
@@ -69,7 +69,7 @@ Multiple sessions can invoke the harness on one machine at the same time; they q
 ## Writing a consumer test
 
 Reference `HeadlessHarness.dll`, implement `IHarnessTest` on a public class with a parameterless constructor, deploy the DLL to a game mod folder, and declare a `HeadlessHarness` dependency in its `mod.toml`.
-Once the harness is up it loads consumer DLLs into its own load context and runs each discovered `IHarnessTest` that is not opt-in, ordered by `Name` (return 0 on pass, non-zero on failure).
+Once the harness is up it loads the consumer DLLs from the mods folder of the profile the game runs in (`ModLibrary.LocalModsFolderPath`) into its own load context and runs each discovered `IHarnessTest` that is not opt-in, ordered by `Name` (return 0 on pass, non-zero on failure).
 A consumer DLL or test type that fails to load counts as an infrastructure failure, not a pass - that failure mode usually means the consumer references a game type that moved in an update, which is exactly what the harness exists to catch. Native (non-managed) DLLs a consumer ships alongside its assemblies are ignored.
 
 A test that is too expensive for the normal suite (a parameter sweep, a soak run) can override `bool OptIn => true`. It then stays deployed and discoverable but runs only when `KSA_HEADLESS_TESTS` names it, so the default suite keeps its usual runtime. Every default run logs which opt-in tests it skipped, by name.
@@ -85,6 +85,7 @@ A test that needs a particular star system checks the loaded system (`Universe.R
 ## Running the self-tests
 
 `scripts/run-headless.ps1` runs the suite headless: it backs up the game manifest, swaps to a minimal `Core + HeadlessHarness` manifest, launches StarMap with `KSA_HEADLESS_HARNESS=1`, then ALWAYS restores the manifest, prints this run's log, and exits with the harness exit code (`3` = timeout, `4` = run-queue timeout, `5` = build failure). On a failed run it also archives the game's own log next to the run log.
+`-InstancePath <folder>` runs the game in another profile folder, such as a launcher instance: the script passes it to StarMap as `STARMAP_INSTANCE_PATH`, so the game, the harness and every mod read and write that folder instead of `Documents\My Games\Kitten Space Agency`. The manifest swap, the vehicle saves and the consumer mods are then those of that folder, so deploy the mods under test into its `mods` folder first; a folder without a `mods` folder is an infrastructure failure (exit `2`).
 `-Vehicle <save name>` selects the flight-test vehicle (the default `Test Vehicle 1` is used only if that save exists, otherwise the flight test skips); `-Tests a,b` filters tests; `-System <id>` loads that star system instead of the default (Core systems only, since the script enables only Core); `-Build` builds and deploys harness + example inside the queue first, so a build never races another session's running game; `-TimeoutSec <n>` raises the kill timeout (default 120) for a long run such as an opt-in sweep, and the run-queue wait scales with it so a run queued behind a long run does not give up early.
 The flight test places the vehicle save around the loaded system's home body, and keeps its determinism baseline per game build, system and save.
 The flight test wants a working staged vehicle: build one in-game (e.g. two stages: engines in sequence 1, the decoupler in sequence 2, the upper engine in sequence 3) and save it in the Vehicles window.
@@ -96,7 +97,7 @@ Targets **.NET 10**. `dotnet build`, or open `HeadlessHarness.slnx` in Visual St
 
 Game DLLs are provided at runtime by StarMap's load context, so every game reference is `Private=false` (not copied into the output). The built `HeadlessHarness.dll` therefore contains no game code. Building from source needs a local KSA install; the `.csproj` HintPaths point at `refs/game` in this tree, so adjust them to your own install.
 
-The `CopyToMods` target deploys the DLL and `mod.toml` to `Documents\My Games\Kitten Space Agency\mods\HeadlessHarness\` so StarMap discovers it.
+The `CopyToMods` target deploys the DLL and `mod.toml` to `Documents\My Games\Kitten Space Agency\mods\HeadlessHarness\` so StarMap discovers it. For another profile folder, pass `-p:ModDeployDir=<folder>\mods\HeadlessHarness\` to the build.
 
 The example consumer builds separately (`dotnet build examples/HarnessConsumerExample`) and expects the harness to be built first, since it references the harness build output the way a real consumer references the deployed DLL.
 

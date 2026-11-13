@@ -106,9 +106,9 @@ internal static class HarnessRunner
     {
         Assembly self = typeof(HarnessRunner).Assembly;
         string selfName = self.GetName().Name!;
-        string modsRoot = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            "My Games", "Kitten Space Agency", "mods");
+        // The game builds this path from Constants.DocumentsFolderPath, which StarMap redirects to
+        // the instance folder before it loads any mod, so a run in an instance finds its own mods.
+        string modsRoot = ModLibrary.LocalModsFolderPath;
         if (!Directory.Exists(modsRoot))
             return 0;
 
