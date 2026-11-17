@@ -45,6 +45,15 @@ public sealed class HeadlessSession
     // reads it and passes it to BringUp. Unset or blank loads the first system the game lists.
     public const string SystemEnvVar = "KSA_HEADLESS_SYSTEM";
 
+    // Names the game rules a run turns on, comma-separated: "radiation", "lifesupport", or
+    // "settings" to keep what the profile's settings file says. Unset or blank turns every rule off.
+    // Universe.LoadSystem takes the rules from GameSettings.Current.System, so without this the
+    // results would depend on the profile a run uses, and the radiation rule rolls avionics upsets
+    // from an unseeded Random (Vehicle.RollUpset), which no two runs repeat.
+    public const string RulesEnvVar = "KSA_HEADLESS_RULES";
+
+    private static RulesRequest? _rulesRequest;
+
     public CelestialSystem System =>
         Universe.CurrentSystem ?? throw new InvalidOperationException(
             IsBroughtUp ? "No system is loaded." : "BringUp has not run.");
@@ -63,6 +72,9 @@ public sealed class HeadlessSession
                 "[HeadlessHarness] another HeadlessSession has already been brought up in this " +
                 "process, and the game globals it initialized are never torn down. Reuse that one.");
         _broughtUpSession = this;
+
+        // Parsed before the long content load, so a typo fails at once.
+        _rulesRequest = RulesRequest.Parse(Environment.GetEnvironmentVariable(RulesEnvVar));
 
         InstallHeadlessPatches();
 
@@ -131,6 +143,7 @@ public sealed class HeadlessSession
 
         HarnessLog.Line($"[bringup] load system '{loaded.Id}' ({(systemId != null ? "named" : "default: first listed system")})");
         Universe.LoadSystem(loaded.Id);
+        ApplyRules("system load");
 
         IsBroughtUp = true;
         HarnessLog.Line($"[bringup] complete, system='{Universe.CurrentSystem?.Id}'");
@@ -167,6 +180,52 @@ public sealed class HeadlessSession
         throw new InvalidOperationException(
             $"[HeadlessHarness] system '{systemId}' is not defined by any enabled mod. " +
             $"Listed systems: {(known.Count > 0 ? string.Join(", ", known) : "none")}.");
+    }
+
+    // Universe.LoadSystem replaces Universe.Rules from the settings, so the run's choice is applied
+    // after it. GameRules holds public fields, and every game check reads them per call, so a change
+    // takes effect at the next step.
+    private static void ApplyRules(string after)
+    {
+        GameRules rules = Universe.Rules;
+        RulesRequest request = _rulesRequest ?? RulesRequest.AllOff;
+        if (!request.KeepSettings)
+        {
+            rules.Radiation = request.Radiation;
+            rules.LifeSupport = request.LifeSupport;
+        }
+        HarnessLog.Line($"[bringup] game rules after {after}: radiation={(rules.Radiation ? "on" : "off")}, " +
+                        $"life support={(rules.LifeSupport ? "on" : "off")} " +
+                        $"({(request.KeepSettings ? "kept as loaded" : $"set by {RulesEnvVar}")}).");
+    }
+
+    private sealed record RulesRequest(bool KeepSettings, bool Radiation, bool LifeSupport)
+    {
+        public static readonly RulesRequest AllOff = new(false, false, false);
+
+        public static RulesRequest Parse(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return AllOff;
+            bool keep = false, radiation = false, lifeSupport = false;
+            foreach (string token in value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                switch (token.ToLowerInvariant())
+                {
+                    case "settings": keep = true; break;
+                    case "radiation": radiation = true; break;
+                    case "lifesupport": lifeSupport = true; break;
+                    default:
+                        throw new InvalidOperationException(
+                            $"[HeadlessHarness] {RulesEnvVar} names unknown rule '{token}'. " +
+                            "Known: radiation, lifesupport, settings.");
+                }
+            }
+            if (keep && (radiation || lifeSupport))
+                throw new InvalidOperationException(
+                    $"[HeadlessHarness] {RulesEnvVar}: 'settings' keeps the profile's rules and cannot be combined with a rule name.");
+            return new RulesRequest(keep, radiation, lifeSupport);
+        }
     }
 
     public SimDriver CreateDriver()
@@ -254,6 +313,12 @@ public sealed class HeadlessSession
         harmony.Patch(SoleConstructor(typeof(DistantSphereRenderer)),
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(Skip)));
         harmony.Patch(SoleConstructor(typeof(KittenRenderable)),
+            prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(Skip)));
+        // With the constructor skipped, KittenRenderable.Dispose would dereference the null avatar.
+        // Vehicle.Dispose calls it for every Kitten EVA and KittenEva.CreateKittenFromSaveData for a
+        // loaded one, so without this destroying, boarding and loading an EVA throw headless.
+        harmony.Patch(
+            AccessTools.Method(typeof(KittenRenderable), nameof(KittenRenderable.Dispose)),
             prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(Skip)));
 
         // The renderers hang off a null Program.Instance, so the two accessors the sim path reaches

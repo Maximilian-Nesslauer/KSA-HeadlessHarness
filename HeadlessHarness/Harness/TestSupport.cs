@@ -8,7 +8,7 @@ namespace HeadlessHarness.Harness;
 
 // Helpers shared by the harness's own tests and consumer IHarnessTests: manual vehicle control,
 // propellant checks, and spawn bookkeeping. Centralized so the drift-prone game couplings (the
-// _manualControlInputs reflection key, the per-core propellant walk) live in exactly one place and
+// _manualControlInputs reflection key, the per-rocket propellant walk) live in exactly one place and
 // are re-verified once per game update instead of in every consumer.
 public static class TestSupport
 {
@@ -80,14 +80,17 @@ public static class TestSupport
         return false;
     }
 
-    // An engine fires only if fed propellant; the game tracks that per rocket core (RocketCoreState),
-    // read here through the vehicle's core state list the same way the in-game engine debug view does.
+    // An engine fires only if fed propellant. The game tracks that per rocket (RocketState), read here
+    // through the part tree's rocket state list the same way Part.DrawPartInfo does. A tree without
+    // rockets has no such list.
     public static bool EngineHasPropellant(Vehicle vehicle, EngineController engine)
     {
-        var cores = vehicle.Parts.RocketCores.GetModulesAndStates(engine.Cores.AsSpan()).GetEnumerator();
-        while (cores.MoveNext())
+        if (!ModuleStateful<Rocket, RocketState, EmptyStruct, EmptyStruct>.TryGetFrom(vehicle.Parts.States, out var rocketStates)
+            || rocketStates == null)
+            return false;
+        foreach (Rocket rocket in engine.Rockets)
         {
-            if (cores.Current.State.IsPropellantAvailable)
+            if (rocketStates.GetState(rocket).IsPropellantAvailable)
                 return true;
         }
         return false;

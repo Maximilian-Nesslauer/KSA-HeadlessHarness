@@ -26,6 +26,9 @@
 #                example SolSystemInterstellar. Empty loads the first system the game lists, Sol with Core.
 #                An id that no enabled mod defines fails the run with exit 2. This script enables only
 #                Core, so only the Core systems can be selected here.
+#   -Rules       optional game rules to turn on (KSA_HEADLESS_RULES), comma-separated: radiation,
+#                lifesupport, or settings to keep the rules of the profile's settings file. Empty turns
+#                every rule off, so a run does not depend on the profile and has no random avionics upsets.
 #   -Build       build and deploy the harness (and the example consumer) inside the queue first, so a
 #                build never races another session's running game holding the deployed DLL
 #   -TimeoutSec  seconds before this script kills StarMap and reports a timeout (default 120). Raise
@@ -43,6 +46,7 @@ param(
     [string]$Vehicles = '',
     [string]$Tests = '',
     [string]$System = '',
+    [string]$Rules = '',
     [switch]$Build,
     # Reject 0/negative up front: WaitForExit(0) would return at once and report a spurious timeout.
     [ValidateRange(1, [int]::MaxValue)]
@@ -147,6 +151,7 @@ try {
         Remove-Item Env:\KSA_HEADLESS_VEHICLES -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_TESTS -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_SYSTEM -ErrorAction SilentlyContinue
+        Remove-Item Env:\KSA_HEADLESS_RULES -ErrorAction SilentlyContinue
         Remove-Item Env:\STARMAP_INSTANCE_PATH -ErrorAction SilentlyContinue
         if ($InstancePath) { $env:STARMAP_INSTANCE_PATH = $InstancePath }
         $env:KSA_HEADLESS_HARNESS = '1'
@@ -155,6 +160,7 @@ try {
         if ($Vehicles) { $env:KSA_HEADLESS_VEHICLES = $Vehicles }
         if ($Tests) { $env:KSA_HEADLESS_TESTS = $Tests }
         if ($System) { $env:KSA_HEADLESS_SYSTEM = $System }
+        if ($Rules) { $env:KSA_HEADLESS_RULES = $Rules }
 
         $systemNote = if ($System) { "system $System" } else { 'default system' }
         Write-Host "Launching StarMap headless ($systemNote, timeout ${TimeoutSec}s, log $log)..."
@@ -212,6 +218,7 @@ try {
         Remove-Item Env:\KSA_HEADLESS_VEHICLES -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_TESTS -ErrorAction SilentlyContinue
         Remove-Item Env:\KSA_HEADLESS_SYSTEM -ErrorAction SilentlyContinue
+        Remove-Item Env:\KSA_HEADLESS_RULES -ErrorAction SilentlyContinue
         Remove-Item Env:\STARMAP_INSTANCE_PATH -ErrorAction SilentlyContinue
         Write-Host "Manifest restored."
     }

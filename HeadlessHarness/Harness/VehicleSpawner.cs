@@ -69,6 +69,12 @@ public static class VehicleSpawner
             throw new InvalidOperationException(
                 $"vehicle save '{saveId}' uses parts that are missing or failed to load ({missingParts}). " +
                 "Re-save it in the game, or build it again from the current parts.");
+        // A save made before a part lost connectors names connector indices the part no longer has,
+        // and PartTree.Deserialize indexes past the end on them. UncompressedVehicleSave.Load drops
+        // them the same way first.
+        int dropped = design.DropStaleConnectors();
+        if (dropped > 0)
+            HarnessLog.Line($"[harness] vehicle save '{saveId}': dropped {dropped} connector(s) its parts no longer have.");
         PartTree tree = PartTree.Deserialize(design);
         if (applyTankAssignments)
             tree.ApplyTankAssignments();
@@ -81,6 +87,8 @@ public static class VehicleSpawner
         vehicle.Parts.SequenceList.SetActiveSequence(data.ActiveSequence);
         vehicle.Parts.SequenceList.ApplyEnvironments(data.SequenceEnvironments);
         vehicle.Parts.FuelLinks.ApplySaveData(data.FuelLinks, design);
+        // VehicleTemplate.CreateInto has no mission; this restores it as PartTree.Deserialize(PartTreeData) does.
+        vehicle.Parts.Mission = data.Mission?.Clone();
         parent.Children.Add(vehicle);
         SeatRandomCrew(vehicle);
         return vehicle;
@@ -93,14 +101,19 @@ public static class VehicleSpawner
     // once a run has seated all of them. Which kitten lands in which seat does not affect vehicle
     // mass or the flight test's determinism signature.
     //
-    // Seats the save already assigned are left alone. Their hashes name kittens of the save's own
-    // roster, which this run does not have, so the count below reports fewer crewed seats than the
-    // vehicle has rather than silently reseating an occupied seat.
+    // A seat keeps its kitten only when that kitten is in this run's roster and assigned to this
+    // vehicle. A save names kittens of its own roster, and a copy names the kittens of its source.
+    // Such a seat counts as occupied but holds no crew, and Vehicle.ComputeControl gives a pod with
+    // no crew no control (NoCrew), so the seat is cleared and filled again.
     public static int SeatRandomCrew(Vehicle vehicle)
     {
         int seats = vehicle.SeatCount;
         if (seats <= 0)
             return 0;
+
+        int cleared = ClearForeignSeats(vehicle);
+        if (cleared > 0)
+            HarnessLog.Line($"[harness] '{vehicle.Id}' cleared {cleared} seat(s) that named a kitten not crewing this vehicle.");
 
         vehicle.MarkLaunched();
         int seated = 0;
@@ -122,6 +135,22 @@ public static class VehicleSpawner
 
         HarnessLog.Line($"[harness] '{vehicle.Id}' crewed {seated}/{seats} seat(s) from the kitten roster.");
         return seated;
+    }
+
+    private static int ClearForeignSeats(Vehicle vehicle)
+    {
+        int cleared = 0;
+        foreach (IVASeat seat in vehicle.Parts.Modules.Get<IVASeat>())
+        {
+            if (seat.AssignedKittenHash == KeyHash.Zero)
+                continue;
+            KittenRosterEntryData? kitten = Universe.KittenRoster.Find(seat.AssignedKittenHash);
+            if (kitten != null && string.Equals(kitten.AssignedVehicleId, vehicle.Id, StringComparison.Ordinal))
+                continue;
+            seat.AssignedKittenHash = KeyHash.Zero;
+            cleared++;
+        }
+        return cleared;
     }
 
     private static KittenRosterEntryData? FindUnassignedKitten()
@@ -154,15 +183,21 @@ public static class VehicleSpawner
     // immediately and satisfies Vehicle.Split's PhysicsBubble requirement). Vehicle.CreateVehicle
     // covers only the CelestialSystem registration, which Astronomical's constructor does; without
     // these two steps the copy would neither tick nor be splittable.
+    //
+    // The copy takes the source's mission, as Vehicle.Split gives a stage its parent's, and crew of
+    // its own: the serialized seats name the source's kittens, and one kitten in two vehicles would
+    // be credited twice and leave both when either is despawned.
     public static Vehicle SpawnCopy(Vehicle source, IParentBody parent, string id, Orbit orbit)
     {
         PartInstance design = source.SerializeSave().RootPartInstance
             ?? throw new InvalidOperationException($"source vehicle '{source.Id}' has no part instance to copy.");
         PartTree freshTree = PartTree.Deserialize(design);
+        freshTree.Mission = source.Parts.Mission?.Clone();
         Vehicle copy = Vehicle.CreateVehicle(source.System, source.Body2Cce, source.BodyRates, parent, id, freshTree.Root, orbit);
         parent.Children.Add(copy);
         if (FindPhysicsBubble(source) is PhysicsBubble bubble)
             copy.AddToBubble(bubble);
+        SeatRandomCrew(copy);
         return copy;
     }
 
