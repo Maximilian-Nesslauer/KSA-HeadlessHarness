@@ -10,8 +10,10 @@ namespace HeadlessHarness.Harness;
 //      activate the next sequence (decouple / ignite via the game's own SequenceList), repeat until
 //      the sequence list is spent. Each burn phase must consume propellant at the firing engines'
 //      rated vacuum mass-flow rate.
-//   3. The final state is fingerprinted and compared bit-for-bit against the previous run with the
-//      same build, system, vehicle and spawn epoch (reported in the log, not asserted).
+//   3. The final state is fingerprinted (Fingerprint.Of: the vehicle's save record and its state
+//      bits) and compared bit-for-bit against the previous run with the same build, system, vehicle,
+//      profile folder, rules and spawn epoch. A difference is reported in the log, and fails the test
+//      only with KSA_HEADLESS_STRICT_DETERMINISM=1.
 // Numbers come from the real FlightComputer/PhysicsStates, so the assertions track genuine game
 // behaviour with no separate re-implementation to drift.
 //
@@ -26,6 +28,9 @@ public sealed class FlightTest : IHarnessTest
     private const int WarmupSeconds = 2;              // let engines reach steady thrust before measuring
     private const int MeasureSeconds = 10;            // mass-flow assertion window per burn phase
     private const int MaxFlightSeconds = 3600;        // runaway guard for the whole staged flight
+
+    // "1" turns a determinism DIFFER at the same spawn epoch into a test failure.
+    public const string StrictDeterminismEnvVar = "KSA_HEADLESS_STRICT_DETERMINISM";
 
     public string Name => "flight";
 
@@ -55,6 +60,8 @@ public sealed class FlightTest : IHarnessTest
         // happens to leave the orbit chain and mass props readable.
         StateVectors finalState = default;
         double finalMass = 0.0;
+        Fingerprint? finalPrint = null;
+        string finalXml = string.Empty;
         // The spawn runs inside the cleanup scope on purpose: Vehicle.CreateVehicle registers with
         // the CelestialSystem inside Astronomical's constructor, so a spawn helper that throws after
         // that point has already put a live vehicle in the system, and it would keep ticking through
@@ -81,6 +88,7 @@ public sealed class FlightTest : IHarnessTest
 
             finalState = vehicle.Orbit.StateVectors;
             finalMass = vehicle.TotalMass;
+            finalPrint = Fingerprint.Of(vehicle, out finalXml);
         }
         finally
         {
@@ -90,7 +98,8 @@ public sealed class FlightTest : IHarnessTest
             TestSupport.DespawnNewVehicles(system, preexisting);
         }
 
-        LogDeterminismSignature(system.Id, saveId, now, in finalState, finalMass);
+        if (finalPrint != null)
+            ok &= CheckDeterminismSignature(system.Id, saveId, now, in finalState, finalMass, finalPrint, finalXml);
 
         HarnessLog.Line($"[flight] {TestSupport.Verdict(ok)} (staged flight).");
         return ok ? 0 : 1;
@@ -138,6 +147,7 @@ public sealed class FlightTest : IHarnessTest
         bool ok = true;
         int attempted = 0;
         int measured = 0;
+        int solidPhases = 0;
         bool measuredThisPhase = false;
         while (elapsed < MaxFlightSeconds)
         {
@@ -145,7 +155,7 @@ public sealed class FlightTest : IHarnessTest
             {
                 if (!measuredThisPhase)
                 {
-                    ok &= MeasureBurnPhase(vehicle, driver, ref elapsed, ref attempted, ref measured);
+                    ok &= MeasureBurnPhase(vehicle, driver, ref elapsed, ref attempted, ref measured, ref solidPhases);
                     measuredThisPhase = true;
                 }
                 else
@@ -171,7 +181,11 @@ public sealed class FlightTest : IHarnessTest
             HarnessLog.Line($"[flight] FAIL: flight guard hit after {MaxFlightSeconds}s of sim time with propellant still burning.");
             ok = false;
         }
-        if (measured == 0)
+        if (measured == 0 && solidPhases > 0 && solidPhases == attempted)
+        {
+            HarnessLog.Line($"[flight] every burn phase had a solid rocket firing ({solidPhases}), so no mass flow was measured.");
+        }
+        else if (measured == 0)
         {
             HarnessLog.Line(attempted > 0
                 ? "[flight] FAIL: burn phases ran but every stage went dry before completing a measurement window."
@@ -192,7 +206,8 @@ public sealed class FlightTest : IHarnessTest
     // Asserts one burn phase: after a short warmup, the vehicle must lose mass at the rated vacuum
     // mass-flow rate of the engines that are active and fed at steady state. The warmup exists
     // because per-core propellant availability bootstraps a step late, which would skew the window.
-    private static bool MeasureBurnPhase(Vehicle vehicle, SimDriver driver, ref int elapsed, ref int attempted, ref int measured)
+    private static bool MeasureBurnPhase(Vehicle vehicle, SimDriver driver, ref int elapsed, ref int attempted, ref int measured,
+        ref int solidPhases)
     {
         driver.Step(1.0, WarmupSeconds);
         elapsed += WarmupSeconds;
@@ -200,14 +215,32 @@ public sealed class FlightTest : IHarnessTest
         double expectedMdot = 0.0;
         double firingThrust = 0.0;
         int firing = 0;
+        int solids = 0;
         foreach (EngineController engine in vehicle.Parts.Modules.Get<EngineController>())
         {
-            if (engine.IsActive && TestSupport.EngineHasPropellant(vehicle, engine))
+            if (!engine.IsActive || !TestSupport.EngineHasPropellant(vehicle, engine))
+                continue;
+            // VacuumData rates a solid motor at the default chamber pressure, while its real burn
+            // follows the grain (SolidRocket.UpdateState through SolidMotor.UpdateBurn), so a solid
+            // has no rated mass flow to hold the burn to.
+            if (HasSolidRocket(engine))
             {
-                expectedMdot += engine.VacuumData.MassFlowRateMax;
-                firingThrust += engine.VacuumData.ThrustMax.Length();
-                firing++;
+                solids++;
+                continue;
             }
+            expectedMdot += engine.VacuumData.MassFlowRateMax;
+            firingThrust += engine.VacuumData.ThrustMax.Length();
+            firing++;
+        }
+        if (solids > 0)
+        {
+            // The vehicle mass falls with the solids' burn too, and the window cannot tell the two
+            // apart, so the phase is not measured.
+            attempted++;
+            solidPhases++;
+            HarnessLog.Line($"[flight] burn phase: {solids} solid rocket engine(s) firing beside {firing} other engine(s); " +
+                            "the burn follows the grain, not the rated mass flow, so the mass-flow assertion is skipped.");
+            return true;
         }
         if (firing == 0)
         {
@@ -244,19 +277,38 @@ public sealed class FlightTest : IHarnessTest
         return ok;
     }
 
-    // Exact-bits comparison against the previous run, keyed per game build, star system and vehicle
-    // save because each legitimately changes the outcome. So does the spawn epoch, which every SimDriver.Step in
-    // the whole run moves: it leads the signature and is compared separately, so filtering the suite
-    // or adding a consumer test reads as NOT COMPARABLE rather than a DIFFER that means nothing.
-    private static void LogDeterminismSignature(string systemId, string saveId, UniverseTime spawnTime,
-        in StateVectors finalState, double finalMass)
+    private static bool HasSolidRocket(EngineController engine)
     {
+        foreach (Rocket rocket in engine.Rockets)
+        {
+            if (rocket is SolidRocket)
+                return true;
+        }
+        return false;
+    }
+
+    // Exact-bits comparison against the previous run, keyed per game build, star system, vehicle
+    // save, profile folder and game rules, because each legitimately changes the outcome (the profile
+    // folder holds the save and the mods, so two profiles never compare). So does the spawn epoch,
+    // which every SimDriver.Step in the whole run moves: it leads the signature and is compared
+    // separately, so filtering the suite or adding a consumer test reads as NOT COMPARABLE rather
+    // than a DIFFER that means nothing. Returns false only for a DIFFER in strict mode. The save record
+    // is kept next to the signature, so a DIFFER in the record names its first difference.
+    private static bool CheckDeterminismSignature(string systemId, string saveId, UniverseTime spawnTime,
+        in StateVectors finalState, double finalMass, Fingerprint print, string saveXml)
+    {
+        bool strict = Environment.GetEnvironmentVariable(StrictDeterminismEnvVar) == "1";
         string vehicleKey = string.Join("_", saveId.Split(Path.GetInvalidFileNameChars()));
         string systemKey = string.Join("_", systemId.Split(Path.GetInvalidFileNameChars()));
+        // Constants.DocumentsFolderPath is the profile folder the game runs in (StarMap points it at
+        // an instance folder). Hashed, because a path does not fit in a file name.
+        string profileKey = Fingerprint.Sha256(Path.GetFullPath(Constants.DocumentsFolderPath).ToUpperInvariant())[..8];
+        GameRules rules = Universe.Rules;
+        string rulesKey = $"rad{(rules.Radiation ? 1 : 0)}ls{(rules.LifeSupport ? 1 : 0)}";
         // Lives in the shared data directory (not the per-run log dir naming) because the baseline
         // must persist across runs; cross-run access is serialized by the run mutex in HarnessMain.
         string sigFile = Path.Combine(HarnessLog.DataDirectory,
-            $"{VersionInfo.Current.VersionString}.{systemKey}.{vehicleKey}.sig");
+            $"{VersionInfo.Current.VersionString}.{systemKey}.{vehicleKey}.{profileKey}.{rulesKey}.sig");
 
         string epoch = Bits(spawnTime.Seconds()).ToString();
         string state = string.Join(",", new[]
@@ -265,7 +317,8 @@ public sealed class FlightTest : IHarnessTest
             Bits(finalState.VelocityCci.X), Bits(finalState.VelocityCci.Y), Bits(finalState.VelocityCci.Z),
             Bits(finalMass),
         });
-        string sig = $"{epoch};{state}";
+        string sig = $"{epoch};{state};{print.Signature}";
+        bool ok = true;
 
         string? prev = null;
         try
@@ -276,7 +329,7 @@ public sealed class FlightTest : IHarnessTest
         catch (Exception e)
         {
             HarnessLog.Line($"[flight] determinism: could not read previous signature ({e.Message}); leaving baseline.");
-            return; // keep the stored baseline rather than clobber it on a transient read error.
+            return true; // keep the stored baseline rather than clobber it on a transient read error.
         }
 
         if (prev == null)
@@ -289,12 +342,38 @@ public sealed class FlightTest : IHarnessTest
             HarnessLog.Line("[flight] determinism: NOT COMPARABLE - the previous run spawned at a different sim time, " +
                             "so a different set of tests ran before this one. Re-run with the same test selection to compare.");
         else
-            HarnessLog.Line($"[flight] determinism: DIFFER from previous run at the same spawn epoch\n  prev={prev}\n  now ={sig}");
+        {
+            ok = !strict;
+            HarnessLog.Line("[flight] determinism: DIFFER from previous run at the same spawn epoch" +
+                            (strict ? $" => FAIL ({StrictDeterminismEnvVar}=1)" : string.Empty) +
+                            $"\n  prev={prev}\n  now ={sig}");
+            LogRecordDifference(sigFile + ".xml", saveXml);
+        }
 
-        try { File.WriteAllText(sigFile, sig); }
+        try
+        {
+            File.WriteAllText(sigFile, sig);
+            File.WriteAllText(sigFile + ".xml", saveXml);
+        }
         catch (Exception e)
         {
             HarnessLog.Line($"[flight] determinism: could not write signature ({e.Message}); next run will not compare.");
+        }
+        return ok;
+    }
+
+    private static void LogRecordDifference(string previousXmlFile, string saveXml)
+    {
+        try
+        {
+            if (!File.Exists(previousXmlFile))
+                return;
+            string? difference = SaveRoundTrip.FirstDifference(File.ReadAllText(previousXmlFile), saveXml);
+            HarnessLog.Line($"[flight] determinism: save record {(difference == null ? "equal" : $"first difference {difference}")}");
+        }
+        catch (Exception e)
+        {
+            HarnessLog.Line($"[flight] determinism: could not compare the save records ({e.Message}).");
         }
     }
 

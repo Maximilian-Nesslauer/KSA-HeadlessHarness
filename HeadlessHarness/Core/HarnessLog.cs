@@ -23,11 +23,11 @@ public static class HarnessLog
 
     public static readonly string FilePath = ResolveFilePath();
 
-    private static string ResolveFilePath()
+    internal static string ResolveFilePath()
     {
         string? overridePath = Environment.GetEnvironmentVariable(LogFileEnvVar);
         if (!string.IsNullOrEmpty(overridePath))
-            return overridePath;
+            return Path.GetFullPath(overridePath);
         return Path.Combine(DataDirectory,
             $"run-{DateTime.Now:yyyyMMdd-HHmmss}-pid{Environment.ProcessId}.log");
     }
@@ -47,9 +47,21 @@ public static class HarnessLog
         catch { }
     }
 
-    public static void Line(string message)
+    // The watchdog thread logs while the test thread may still be logging, so the file append is
+    // serialized; two unsynchronized appends can fail on the sharing violation and lose a line.
+    private static readonly object WriteGate = new();
+
+    public static void Line(string message) => Write(message, observe: true);
+
+    // HarnessChecks logs through here with observe false, because it counts its own checks and skips
+    // and the results must not count its lines a second time.
+    internal static void Write(string message, bool observe)
     {
-        try { File.AppendAllText(FilePath, message + Environment.NewLine); } catch { }
+        HarnessResults.ObserveLine(message, fromChecks: !observe);
+        lock (WriteGate)
+        {
+            try { File.AppendAllText(FilePath, message + Environment.NewLine); } catch { }
+        }
         try { Console.WriteLine(message); } catch { }
         try { DefaultCategory.Log.Info(message); } catch { }
     }

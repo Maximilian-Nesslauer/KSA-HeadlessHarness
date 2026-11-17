@@ -1,102 +1,34 @@
-using System.Reflection;
 using Brutal.Numerics;
-using HarmonyLib;
 using HeadlessHarness.Core;
 using KSA;
 
 namespace HeadlessHarness.Harness;
 
-// Spawns a controllable test vehicle into the loaded system in an arbitrary orbit, either from a
-// player-built save in the game's Vehicles folder or as a copy of a live vehicle. Copies always go
-// through serialize -> PartTree.Deserialize into a FRESH part tree, so the spawned vehicle shares no
-// Part instances with any source - the public Vehicle.CreateVehicle(..., Part root, ...) overload
-// otherwise does Parts = root.Tree, which would alias a live vehicle's tree.
-public static class VehicleSpawner
+// Spawns a controllable test vehicle into the loaded system, from a vehicle save (bundled with the
+// harness or a consumer, or in the game's Vehicles folder), from a part tree built in code, or as a
+// copy of a live vehicle. Copies always go through serialize -> PartTree.Deserialize into a FRESH
+// part tree, so the spawned vehicle shares no Part instances with any source - the public
+// Vehicle.CreateVehicle(..., Part root, ...) overload otherwise does Parts = root.Tree, which would
+// alias a live vehicle's tree.
+public static partial class VehicleSpawner
 {
     // Cosmetic orbit-line color required by Orbit.CreateFromStateCci. The harness never renders, so the
     // value is a placeholder; shared so the orbit helpers and tests do not each carry their own copy.
     public static readonly byte4 OrbitLineColor = new byte4(255, 255, 255, 255);
 
-    // Spawns a vehicle from a save in the game's Vehicles folder (the saves VehicleSaves.
-    // OnApplicationStart indexed during bring-up; the game reads a save's vehicle file on first use),
-    // the same way VehicleTemplate.CreateInto builds a vehicle from a default save: deserialize the
-    // part tree, then restore the staged state (SetActiveSequence), per-sequence performance
-    // environments, and fuel links. Engine active flags round-trip through the part tree itself
-    // (EngineController.ApplySaveData), so a properly staged save spawns with the correct engines
-    // already active. The vehicle is registered into the parent's child list;
-    // Universe.ExecuteNextVehicleSolvers puts it in a PhysicsBubble on the next solver step, joining
-    // an overlapping vehicle's bubble or renting a fresh one.
+    // Spawns a vehicle save by name (ResolveVehicleSave: the bundled vehicles first, then the
+    // game's Vehicles folder) through SpawnFromSaveData, with crew and without filling tanks.
     public static Vehicle SpawnFromSave(string saveId, CelestialSystem system, IParentBody parent, string id, Orbit orbit)
-        => SpawnFromSave(saveId, system, parent, id, orbit, applyTankAssignments: false);
+        => SpawnFromSave(saveId, system, parent, id, orbit, SpawnOptions.Default);
 
-    // applyTankAssignments runs PartTree.ApplyTankAssignments on the loaded tree, as VehicleLaunchMenu.LoadPreview does
-    // before a player launch, so tanks the save left without contents fill with their automatic mix. The overload
-    // without it keeps the restore of VehicleTemplate.CreateInto, which does not fill tanks.
+    // applyTankAssignments is SpawnOptions.FillTanks. Without it the restore matches
+    // VehicleTemplate.CreateInto, which does not fill tanks.
     public static Vehicle SpawnFromSave(string saveId, CelestialSystem system, IParentBody parent, string id, Orbit orbit, bool applyTankAssignments)
-    {
-        VehicleSave? save = null;
-        foreach (VehicleSave candidate in VehicleSaves.AsSpan())
-        {
-            if (string.Equals(candidate.Id, saveId, StringComparison.Ordinal))
-            {
-                save = candidate;
-                break;
-            }
-        }
-        if (save == null)
-            throw new InvalidOperationException(
-                $"vehicle save '{saveId}' not found in the game's Vehicles folder ({VehicleSaves.SaveFolderPath}).");
-
-        // The game catches a broken vehicle file only in its own load UI. The rethrow names the save,
-        // so a caller can skip or fail that one save instead of aborting the run.
-        VehicleSaveData data;
-        try
-        {
-            data = save.VehicleSaveData;
-        }
-        catch (Exception e)
-        {
-            throw new InvalidOperationException($"vehicle save '{saveId}' could not be read: {e.Message}", e);
-        }
-
-        PartInstance design = data.RootPartInstance
-            ?? throw new InvalidOperationException($"vehicle save '{saveId}' has no root part instance.");
-        // The game refuses such a vehicle the same way (CelestialSystem.DeserializeSave), because
-        // PartTree.Deserialize throws a bare NullReferenceException on the first unknown part. A save
-        // made on an older game build often names parts that were renamed since.
-        string? missingParts = design.FindMissingParts();
-        if (missingParts != null)
-            throw new InvalidOperationException(
-                $"vehicle save '{saveId}' uses parts that are missing or failed to load ({missingParts}). " +
-                "Re-save it in the game, or build it again from the current parts.");
-        // A save made before a part lost connectors names connector indices the part no longer has,
-        // and PartTree.Deserialize indexes past the end on them. UncompressedVehicleSave.Load drops
-        // them the same way first.
-        int dropped = design.DropStaleConnectors();
-        if (dropped > 0)
-            HarnessLog.Line($"[harness] vehicle save '{saveId}': dropped {dropped} connector(s) its parts no longer have.");
-        PartTree tree = PartTree.Deserialize(design);
-        if (applyTankAssignments)
-            tree.ApplyTankAssignments();
-        Vehicle vehicle = Vehicle.CreateVehicle(system, doubleQuat.Identity, double3.Zero, parent, id, tree.Root, orbit);
-
-        // The sequence list is built lazily. SetActiveSequence on a list that is not built yet
-        // advances the active sequence once more for every sequence the build then adds at or below
-        // it, so the list is built first, while the active sequence is still 0.
-        vehicle.Parts.EnsureDerived(DerivedData.Sequences);
-        vehicle.Parts.SequenceList.SetActiveSequence(data.ActiveSequence);
-        vehicle.Parts.SequenceList.ApplyEnvironments(data.SequenceEnvironments);
-        vehicle.Parts.FuelLinks.ApplySaveData(data.FuelLinks, design);
-        // VehicleTemplate.CreateInto has no mission; this restores it as PartTree.Deserialize(PartTreeData) does.
-        vehicle.Parts.Mission = data.Mission?.Clone();
-        parent.Children.Add(vehicle);
-        SeatRandomCrew(vehicle);
-        return vehicle;
-    }
+        => SpawnFromSave(saveId, system, parent, id, orbit, SpawnOptions.Default with { FillTanks = applyTankAssignments });
 
     // Fills every free seat from the universe roster, mirroring Universe.AssignStartingCrew: mark the
-    // vehicle launched, then take an unassigned kitten that is neither retired nor KIA, seat it and
-    // start its mission.
+    // vehicle launched, then take an unassigned kitten that is neither retired nor KIA. Seating it
+    // through Vehicle.SetSeatCrew starts its mission.
     // Universe.LoadSystem seeds the roster with 20 kittens, so EnsureAvailableKitten only tops it up
     // once a run has seated all of them. Which kitten lands in which seat does not affect vehicle
     // mass or the flight test's determinism signature.
@@ -129,7 +61,6 @@ public static class VehicleSpawner
                 HarnessLog.Line($"[harness] '{vehicle.Id}' seat {i}: {result}, stop seating.");
                 break;
             }
-            free.StartMission(vehicle.Id);
             seated++;
         }
 
@@ -163,20 +94,8 @@ public static class VehicleSpawner
         return null;
     }
 
-    // The bubble a vehicle belongs to. The game exposes only whether there is one
-    // (Vehicle.HasPhysicsBubble), not which, so this reads the private update state that holds it.
-    // Direct cast, not 'as': a retyped field must throw here rather than read as "no bubble" and
-    // leave the caller silently skipping its bubble join. Only Bubble is legitimately null.
-    // Read between solver steps only, because the game writes it from the solver path.
-    private static FieldInfo? _updateStateField;
-
     private static PhysicsBubble? FindPhysicsBubble(Vehicle vehicle)
-    {
-        _updateStateField ??= AccessTools.Field(typeof(Vehicle), "_threadWorkerUpdateState")
-            ?? throw new InvalidOperationException(
-                "[HeadlessHarness] Vehicle._threadWorkerUpdateState not found - game version may have changed.");
-        return ((VehicleUpdateState?)_updateStateField.GetValue(vehicle))?.Bubble;
-    }
+        => TestSupport.GetPhysicsBubble(vehicle);
 
     // Registers the copy the same way the game registers a decoupled stage: into the parent's child
     // list (so the solvers discover and tick it) and into the source's physics bubble (so it ticks
@@ -191,14 +110,24 @@ public static class VehicleSpawner
     {
         PartInstance design = source.SerializeSave().RootPartInstance
             ?? throw new InvalidOperationException($"source vehicle '{source.Id}' has no part instance to copy.");
+        EnsureIdAvailable(source.System, id);
         PartTree freshTree = PartTree.Deserialize(design);
         freshTree.Mission = source.Parts.Mission?.Clone();
-        Vehicle copy = Vehicle.CreateVehicle(source.System, source.Body2Cce, source.BodyRates, parent, id, freshTree.Root, orbit);
-        parent.Children.Add(copy);
-        if (FindPhysicsBubble(source) is PhysicsBubble bubble)
-            copy.AddToBubble(bubble);
-        SeatRandomCrew(copy);
-        return copy;
+        Vehicle? copy = null;
+        try
+        {
+            copy = Vehicle.CreateVehicle(source.System, source.Body2Cce, source.BodyRates, parent, id, freshTree.Root, orbit);
+            parent.Children.Add(copy);
+            if (FindPhysicsBubble(source) is PhysicsBubble bubble)
+                copy.AddToBubble(bubble);
+            SeatRandomCrew(copy);
+            return copy;
+        }
+        catch
+        {
+            RollBackSpawn(source.System, id, copy, freshTree);
+            throw;
+        }
     }
 
     // Tears a spawned vehicle back out through the game's own destroy path: settles the crew, hands
@@ -210,8 +139,18 @@ public static class VehicleSpawner
     // EndMission is spelled out so a change to the parameter default cannot silently start killing
     // this run's crew: Kill marks the kittens KIA for the rest of the process, starving later
     // spawns of seatable crew.
+    //
+    // A Kitten EVA holds no seat, so Vehicle.EndAllCrewMissions does not release its kitten, which
+    // EVADoor.CreateKittenEva assigned to the vehicle id "EVA" (KittenRosterEntryData.TransferToVehicle).
+    // Its mission is ended here, so the kitten can crew a later spawn again.
     public static void Despawn(Vehicle vehicle)
     {
+        if (vehicle is KittenEva kitten && !kitten.IsDisposed)
+        {
+            KittenRosterEntryData? entry = Universe.KittenRoster.Find(kitten.Id);
+            if (entry != null && string.Equals(entry.AssignedVehicleId, Eva.EvaVehicleId, StringComparison.Ordinal))
+                entry.EndMission();
+        }
         Universe.DestroyVehicle(vehicle, CrewDisposition.EndMission);
     }
 

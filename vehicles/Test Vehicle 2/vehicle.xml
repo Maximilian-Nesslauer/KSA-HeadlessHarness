@@ -1,0 +1,1792 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VehicleSaveData Id="Test Vehicle 2" ActiveSequence="0">
+  <RootPartRef InstanceOf="CoreCommandA_Prefab_MediumCapsuleVariantA" LocalInstanceId="1" Stage="2">
+    <Transform>
+      <Position X="-0.7001" Y="0.1181" Z="-0.0171" />
+      <Rotation X="0" Y="0" Z="0" />
+      <Scale X="1" Y="1" Z="1" />
+    </Transform>
+    <PartConnectorRef Index="0" ConnectedLocalInstanceId="1060" />
+    <PartConnectorRef Index="1" ConnectedLocalInstanceId="379" />
+    <PartRef InstanceOf="CoreIVASpaceA_Prefab_MediumCapsuleA" LocalInstanceId="49" Stage="2">
+      <Transform>
+        <Position X="-0.7001" Y="0.1181" Z="-0.0171" />
+        <Rotation X="0" Y="0" Z="0" />
+        <Scale X="1" Y="1" Z="1" />
+      </Transform>
+      <SubPartRef InstanceOf="CoreIVASpaceA_Subpart_TempHatchesA" LocalInstanceId="50" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVASpaceA_Subpart_MediumCapsuleAWindowGlass" LocalInstanceId="51" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVASpaceA_Subpart_MediumCapsuleARayBlocker" LocalInstanceId="52" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVASpaceA_Subpart_MediumCapsuleA" LocalInstanceId="53" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ZiptieA" LocalInstanceId="54" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ZiptieA" LocalInstanceId="55" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ZiptieA" LocalInstanceId="56" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ZiptieA" LocalInstanceId="57" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ZiptieA" LocalInstanceId="58" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ZiptieA" LocalInstanceId="59" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ZiptieA" LocalInstanceId="60" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WrittenNoteE" LocalInstanceId="61" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WrittenNoteD" LocalInstanceId="62" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WrittenNoteC" LocalInstanceId="63" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WrittenNoteB" LocalInstanceId="64" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WrittenNoteA" LocalInstanceId="65" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleC" LocalInstanceId="66" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleC" LocalInstanceId="67" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleC" LocalInstanceId="68" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleC" LocalInstanceId="69" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleC" LocalInstanceId="70" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleC" LocalInstanceId="71" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleC" LocalInstanceId="72" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleB" LocalInstanceId="73" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleB" LocalInstanceId="74" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleB" LocalInstanceId="75" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleB" LocalInstanceId="76" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleA" LocalInstanceId="77" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_WiringBundleA" LocalInstanceId="78" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_UtilityBagA" LocalInstanceId="79" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ToothbrushA" LocalInstanceId="80" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ThrottleARightStick" LocalInstanceId="81" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ThrottleARightStick" LocalInstanceId="82" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ThrottleALeftStick" LocalInstanceId="83" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ThrottleALeftStick" LocalInstanceId="84" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ThrottleABase" LocalInstanceId="85" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ThrottleABase" LocalInstanceId="86" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeC" LocalInstanceId="87" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeC" LocalInstanceId="88" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeB" LocalInstanceId="89" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeB" LocalInstanceId="90" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeB" LocalInstanceId="91" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeB" LocalInstanceId="92" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeB" LocalInstanceId="93" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeB" LocalInstanceId="94" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeA" LocalInstanceId="95" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_TapeA" LocalInstanceId="96" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="97" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="98" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="99" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="100" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="101" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="102" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="103" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="104" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardC" LocalInstanceId="105" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardB" LocalInstanceId="106" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardB" LocalInstanceId="107" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardA" LocalInstanceId="108" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_SwitchGuardA" LocalInstanceId="109" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="110" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="111" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="112" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="113" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="114" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="115" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="116" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="117" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="118" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="119" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="120" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="121" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="122" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="123" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="124" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="125" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="126" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="127" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="128" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="129" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="130" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="131" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="132" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="133" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="134" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="135" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="136" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="137" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="138" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="139" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="140" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="141" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="142" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="143" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="144" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="145" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="146" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="147" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="148" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="149" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="150" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="151" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="152" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="153" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="154" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="155" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="156" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="157" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="158" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="159" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="160" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="161" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="162" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="163" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="164" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewB" LocalInstanceId="165" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="166" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="167" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="168" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="169" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="170" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="171" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="172" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="173" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="174" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="175" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="176" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="177" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="178" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="179" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="180" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="181" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="182" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="183" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="184" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="185" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="186" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="187" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="188" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="189" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="190" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="191" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="192" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="193" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="194" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="195" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="196" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="197" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="198" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ScrewA" LocalInstanceId="199" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_PhotoH" LocalInstanceId="200" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_PhotoG" LocalInstanceId="201" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_PhotoF" LocalInstanceId="202" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_PhotoE" LocalInstanceId="203" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_PhotoD" LocalInstanceId="204" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_PhotoC" LocalInstanceId="205" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_PhotoB" LocalInstanceId="206" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_PhotoA" LocalInstanceId="207" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_MergedLightA" LocalInstanceId="208" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_JoystickA" LocalInstanceId="209" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_JoystickA" LocalInstanceId="210" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_InternalLeverABase" LocalInstanceId="211" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_InternalLeverABase" LocalInstanceId="212" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_InternalLeverA" LocalInstanceId="213" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_InternalLeverA" LocalInstanceId="214" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeACap" LocalInstanceId="215" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeACap" LocalInstanceId="216" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeACap" LocalInstanceId="217" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeACap" LocalInstanceId="218" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeAAxle" LocalInstanceId="219" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeA" LocalInstanceId="220" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeA" LocalInstanceId="221" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeA" LocalInstanceId="222" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeA" LocalInstanceId="223" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeA" LocalInstanceId="224" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_HingeA" LocalInstanceId="225" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="226" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="227" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="228" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="229" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="230" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="231" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="232" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="233" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="234" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="235" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="236" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="237" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="238" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="239" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="240" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="241" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="242" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="243" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="244" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="245" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="246" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="247" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="248" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="249" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="250" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="251" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="252" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="253" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="254" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="255" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="256" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="257" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="258" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="259" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="260" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="261" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="262" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="263" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="264" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="265" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="266" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="267" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="268" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAJoinA" LocalInstanceId="269" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateG" LocalInstanceId="270" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateG" LocalInstanceId="271" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateE" LocalInstanceId="272" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateE" LocalInstanceId="273" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateE" LocalInstanceId="274" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateE" LocalInstanceId="275" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateE" LocalInstanceId="276" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateE" LocalInstanceId="277" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateD" LocalInstanceId="278" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateD" LocalInstanceId="279" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateD" LocalInstanceId="280" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateD" LocalInstanceId="281" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateD" LocalInstanceId="282" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateD" LocalInstanceId="283" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateD" LocalInstanceId="284" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateD" LocalInstanceId="285" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateC" LocalInstanceId="286" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateC" LocalInstanceId="287" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateB" LocalInstanceId="288" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateB" LocalInstanceId="289" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateA" LocalInstanceId="290" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateA" LocalInstanceId="291" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateA" LocalInstanceId="292" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateA" LocalInstanceId="293" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorAGrateA" LocalInstanceId="294" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="295" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="296" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="297" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="298" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="299" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="300" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="301" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="302" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="303" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="304" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_FloorACubeA" LocalInstanceId="305" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_DialBBase" LocalInstanceId="306" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_DialB" LocalInstanceId="307" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_DialABase" LocalInstanceId="308" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_DialA" LocalInstanceId="309" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_DeanSardineB" LocalInstanceId="310" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_DeanSardineB" LocalInstanceId="311" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_DeanSardineA" LocalInstanceId="312" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_DeanSardineA" LocalInstanceId="313" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleRunnersA" LocalInstanceId="314" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelF" LocalInstanceId="315" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelE" LocalInstanceId="316" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelD" LocalInstanceId="317" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelC" LocalInstanceId="318" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelC" LocalInstanceId="319" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelB" LocalInstanceId="320" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelB" LocalInstanceId="321" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelA" LocalInstanceId="322" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ConsoleAPanelA" LocalInstanceId="323" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ChairAHeadrest" LocalInstanceId="324" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ChairAHeadrest" LocalInstanceId="325" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ChairAEjectionRunners" LocalInstanceId="326" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ChairAEjectionRunners" LocalInstanceId="327" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ChairABase" LocalInstanceId="328" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ChairABase" LocalInstanceId="329" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ChairA" LocalInstanceId="330" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_ChairA" LocalInstanceId="331" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_CentralConsoleA" LocalInstanceId="332" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_CableHolderA" LocalInstanceId="333" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_CableHolderA" LocalInstanceId="334" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_CableHolderA" LocalInstanceId="335" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_CableHolderA" LocalInstanceId="336" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_CableHolderA" LocalInstanceId="337" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_CableHolderA" LocalInstanceId="338" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="339" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="340" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="341" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="342" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="343" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="344" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="345" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="346" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="347" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="348" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="349" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="350" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="351" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="352" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="353" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="354" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="355" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="356" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="357" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="358" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="359" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="360" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="361" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="362" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="363" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="364" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="365" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="366" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="367" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="368" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="369" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="370" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="371" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="372" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="373" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltB" LocalInstanceId="374" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltA" LocalInstanceId="375" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltA" LocalInstanceId="376" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltA" LocalInstanceId="377" Stage="2" />
+      <SubPartRef InstanceOf="CoreIVAPropA_Subpart_BoltA" LocalInstanceId="378" Stage="2" />
+    </PartRef>
+    <PartRef InstanceOf="CoreServiceModuleA_Prefab_SetA2DoubleA" LocalInstanceId="379" Stage="0" SequenceOrder="1">
+      <Transform>
+        <Position X="-2.581" Y="0.1181" Z="-0.0171" />
+        <Rotation X="1.5708" Y="0" Z="0" />
+        <Scale X="1" Y="1" Z="1" />
+      </Transform>
+      <PartConnectorRef Index="0" ConnectedLocalInstanceId="1" />
+      <PartConnectorRef Index="1" ConnectedLocalInstanceId="427" />
+      <PartConnectorRef Index="4" ConnectedLocalInstanceId="1032" />
+      <PartConnectorRef Index="7" ConnectedLocalInstanceId="1046" />
+      <PartConnectorRef Index="11" ConnectedLocalInstanceId="976" />
+      <PartConnectorRef Index="15" ConnectedLocalInstanceId="990" />
+      <PartConnectorRef Index="19" ConnectedLocalInstanceId="1004" />
+      <PartConnectorRef Index="23" ConnectedLocalInstanceId="1018" />
+      <PartRef InstanceOf="CoreFuelTankA_Prefab_LF3W3HA" LocalInstanceId="427" Stage="0">
+        <Transform>
+          <Position X="-5.0376" Y="0.1181" Z="-0.0171" />
+          <Rotation X="3.1416" Y="0" Z="0" />
+          <Scale X="1" Y="1" Z="1" />
+        </Transform>
+        <PartConnectorRef Index="0" ConnectedLocalInstanceId="379" />
+        <PartConnectorRef Index="1" ConnectedLocalInstanceId="521" />
+        <PartConnectorRef Index="2" ConnectedLocalInstanceId="432" />
+        <PartRef InstanceOf="CorePropulsionA_Prefab_EngineA5" LocalInstanceId="432" Stage="0" SequenceOrder="1">
+          <Transform>
+            <Position X="-7.7891" Y="0.1181" Z="-0.0171" />
+            <Rotation X="0" Y="0" Z="0" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineA2WBase" LocalInstanceId="434" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="FlexiPipe_EndNode" LocalInstanceId="435" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="FlexiPipe_StartNode" LocalInstanceId="436" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAActuatorHousing" LocalInstanceId="437" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAActuatorHousing" LocalInstanceId="438" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="FlexiPipe_EndNode" LocalInstanceId="439" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="FlexiPipe_StartNode" LocalInstanceId="440" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAActuatorShaft" LocalInstanceId="441" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAActuatorShaft" LocalInstanceId="442" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineALargeVacAssembly" LocalInstanceId="443" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAVernierFrameA" LocalInstanceId="444" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAVernierNozzle" LocalInstanceId="445" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAVernierNozzle" LocalInstanceId="446" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAVernierNozzle" LocalInstanceId="447" Stage="0" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAVernierNozzle" LocalInstanceId="448" Stage="0" SequenceOrder="1" />
+          <EngineController InstanceOf="LR91-AJ-3" LocalInstanceId="433" ActiveInStage="false" Sequence="5" />
+        </PartRef>
+        <PartRef InstanceOf="CorePropulsionB_Prefab_RCSSmallOneHornV1A" LocalInstanceId="449" Stage="0">
+          <Transform>
+            <Position X="-4.2331" Y="-0.3012" Z="-1.582" />
+            <Rotation X="0" Y="0.2618" Z="1.5708" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SymmetryRef>
+            <Layer BaseLocalInstanceId="427" Order="2">
+              <PartRef>449</PartRef>
+              <PartRef>454</PartRef>
+            </Layer>
+          </SymmetryRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterSmallA" LocalInstanceId="450" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="451" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverSmallA" LocalInstanceId="452" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetABaseSmallA" LocalInstanceId="453" Stage="0" />
+        </PartRef>
+        <PartRef InstanceOf="CorePropulsionB_Prefab_RCSSmallOneHornV1A" LocalInstanceId="454" Stage="0">
+          <Transform>
+            <Position X="-4.2331" Y="0.5374" Z="1.5478" />
+            <Rotation X="-3.1416" Y="-0.2618" Z="-1.5708" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterSmallA" LocalInstanceId="455" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="456" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverSmallA" LocalInstanceId="457" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetABaseSmallA" LocalInstanceId="458" Stage="0" />
+        </PartRef>
+        <PartRef InstanceOf="CorePropulsionB_Prefab_RCSSmallOneHornV1A" LocalInstanceId="459" Stage="0">
+          <Transform>
+            <Position X="-4.2421" Y="0.5371" Z="-1.581" />
+            <Rotation X="0" Y="0.2618" Z="-1.5708" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SymmetryRef>
+            <Layer BaseLocalInstanceId="427" Order="2">
+              <PartRef>459</PartRef>
+              <PartRef>464</PartRef>
+            </Layer>
+          </SymmetryRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterSmallA" LocalInstanceId="460" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="461" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverSmallA" LocalInstanceId="462" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetABaseSmallA" LocalInstanceId="463" Stage="0" />
+        </PartRef>
+        <PartRef InstanceOf="CorePropulsionB_Prefab_RCSSmallOneHornV1A" LocalInstanceId="464" Stage="0">
+          <Transform>
+            <Position X="-4.2421" Y="-0.3009" Z="1.5468" />
+            <Rotation X="3.1416" Y="-0.2618" Z="1.5708" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterSmallA" LocalInstanceId="465" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="466" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverSmallA" LocalInstanceId="467" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetABaseSmallA" LocalInstanceId="468" Stage="0" />
+        </PartRef>
+        <PartRef InstanceOf="CorePropulsionB_Prefab_RCSMediumFourHornV2A" LocalInstanceId="469" Stage="0">
+          <Transform>
+            <Position X="-4.2267" Y="0.1181" Z="-1.5719" />
+            <Rotation X="0" Y="0" Z="-1.5708" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SymmetryRef>
+            <Layer BaseLocalInstanceId="427" Order="4">
+              <PartRef>469</PartRef>
+              <PartRef>482</PartRef>
+              <PartRef>495</PartRef>
+              <PartRef>508</PartRef>
+            </Layer>
+          </SymmetryRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetABaseLowProfileA" LocalInstanceId="470" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileB" LocalInstanceId="471" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileC" LocalInstanceId="472" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileC" LocalInstanceId="473" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="474" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="475" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="476" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="477" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="478" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="479" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="480" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="481" ActiveInStage="true" />
+          </SubPartRef>
+        </PartRef>
+        <PartRef InstanceOf="CorePropulsionB_Prefab_RCSMediumFourHornV2A" LocalInstanceId="482" Stage="0">
+          <Transform>
+            <Position X="-4.2267" Y="1.6729" Z="-0.0171" />
+            <Rotation X="0" Y="1.5708" Z="-1.5708" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetABaseLowProfileA" LocalInstanceId="483" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileB" LocalInstanceId="484" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileC" LocalInstanceId="485" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileC" LocalInstanceId="486" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="487" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="488" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="489" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="490" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="491" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="492" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="493" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="494" ActiveInStage="true" />
+          </SubPartRef>
+        </PartRef>
+        <PartRef InstanceOf="CorePropulsionB_Prefab_RCSMediumFourHornV2A" LocalInstanceId="495" Stage="0">
+          <Transform>
+            <Position X="-4.2267" Y="0.1181" Z="1.5377" />
+            <Rotation X="3.1416" Y="0" Z="1.5708" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetABaseLowProfileA" LocalInstanceId="496" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileB" LocalInstanceId="497" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileC" LocalInstanceId="498" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileC" LocalInstanceId="499" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="500" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="501" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="502" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="503" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="504" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="505" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="506" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="507" ActiveInStage="true" />
+          </SubPartRef>
+        </PartRef>
+        <PartRef InstanceOf="CorePropulsionB_Prefab_RCSMediumFourHornV2A" LocalInstanceId="508" Stage="0">
+          <Transform>
+            <Position X="-4.2267" Y="-1.4367" Z="-0.0171" />
+            <Rotation X="0" Y="-1.5708" Z="-1.5708" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="427" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetABaseLowProfileA" LocalInstanceId="509" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileB" LocalInstanceId="510" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileC" LocalInstanceId="511" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetACoverLowProfileC" LocalInstanceId="512" Stage="0" />
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="513" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="514" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="515" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="516" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="517" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="518" ActiveInStage="true" />
+          </SubPartRef>
+          <SubPartRef InstanceOf="CorePropulsionB_Subpart_RCSSetAThrusterLargeA" LocalInstanceId="519" Stage="0">
+            <ThrusterController InstanceOf="RD-4" LocalInstanceId="520" ActiveInStage="true" />
+          </SubPartRef>
+        </PartRef>
+        <PartRef InstanceOf="CoreFairingA_Prefab_Interstage3W3HB" LocalInstanceId="521" Stage="1" SequenceOrder="1">
+          <Transform>
+            <Position X="-8.0376" Y="0.1181" Z="-0.0171" />
+            <Rotation X="0" Y="0" Z="0" />
+            <Scale X="1" Y="1" Z="1" />
+          </Transform>
+          <PartConnectorRef Index="0" ConnectedLocalInstanceId="525" />
+          <PartConnectorRef Index="1" ConnectedLocalInstanceId="427" />
+          <PartRef InstanceOf="CoreFuelTankA_Prefab_LF3W6HD" LocalInstanceId="525" Stage="1">
+            <Transform>
+              <Position X="-12.5376" Y="0.1181" Z="-0.0171" />
+              <Rotation X="0" Y="0" Z="0" />
+              <Scale X="1" Y="1" Z="1" />
+            </Transform>
+            <PartConnectorRef Index="0" ConnectedLocalInstanceId="521" />
+            <PartConnectorRef Index="1" ConnectedLocalInstanceId="532" />
+            <PartRef InstanceOf="CoreFuelTankA_Prefab_LF3W6HC" LocalInstanceId="532" Stage="1">
+              <Transform>
+                <Position X="-18.5376" Y="0.118" Z="-0.0171" />
+                <Rotation X="0" Y="0" Z="0" />
+                <Scale X="1" Y="1" Z="1" />
+              </Transform>
+              <PartConnectorRef Index="0" ConnectedLocalInstanceId="525" />
+              <PartConnectorRef Index="1" ConnectedLocalInstanceId="539" />
+              <PartRef InstanceOf="CoreFuelTankA_Prefab_LF3W3HB" LocalInstanceId="539" Stage="1">
+                <Transform>
+                  <Position X="-23.0376" Y="0.1179" Z="-0.0171" />
+                  <Rotation X="0" Y="0" Z="0" />
+                  <Scale X="1" Y="1" Z="1" />
+                </Transform>
+                <PartConnectorRef Index="0" ConnectedLocalInstanceId="532" />
+                <PartConnectorRef Index="2" ConnectedLocalInstanceId="544" />
+                <PartRef InstanceOf="CorePropulsionA_Prefab_EngineA2" LocalInstanceId="544" Stage="1">
+                  <Transform>
+                    <Position X="-25.4629" Y="0.1179" Z="-0.0171" />
+                    <Rotation X="0" Y="0" Z="0" />
+                    <Scale X="1" Y="1" Z="1" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="539" />
+                  <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineA1WBase" LocalInstanceId="546" Stage="1" />
+                  <SubPartRef InstanceOf="FlexiPipe_EndNode" LocalInstanceId="547" Stage="1" />
+                  <SubPartRef InstanceOf="FlexiPipe_StartNode" LocalInstanceId="548" Stage="1" />
+                  <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAActuatorShaft" LocalInstanceId="549" Stage="1" />
+                  <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAActuatorHousing" LocalInstanceId="550" Stage="1" />
+                  <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAActuatorShaft" LocalInstanceId="551" Stage="1" />
+                  <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAActuatorHousing" LocalInstanceId="552" Stage="1" />
+                  <SubPartRef InstanceOf="FlexiPipe_StartNode" LocalInstanceId="553" Stage="1" />
+                  <SubPartRef InstanceOf="FlexiPipe_EndNode" LocalInstanceId="554" Stage="1" />
+                  <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineAMedBoostAssembly" LocalInstanceId="555" Stage="1" />
+                  <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineATurbopumpFrame" LocalInstanceId="556" Stage="1" />
+                  <SubPartRef InstanceOf="CorePropulsionA_Subpart_EngineATurbopumpNozzle" LocalInstanceId="557" Stage="1" />
+                  <EngineController InstanceOf="LR91-AJ-3" LocalInstanceId="545" ActiveInStage="false" Sequence="1" />
+                </PartRef>
+                <PartRef InstanceOf="CoreLandingA_Prefab_MediumLandingLegA" LocalInstanceId="558" Stage="1">
+                  <Transform>
+                    <Position X="-23.8015" Y="1.3885" Z="1.2535" />
+                    <Rotation X="2.3562" Y="0" Z="0" />
+                    <Scale X="1.5" Y="1.5" Z="1.5" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="539" />
+                  <SymmetryRef>
+                    <Layer BaseLocalInstanceId="539" Order="4">
+                      <PartRef>558</PartRef>
+                      <PartRef>565</PartRef>
+                      <PartRef>572</PartRef>
+                      <PartRef>579</PartRef>
+                    </Layer>
+                  </SymmetryRef>
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumBaseA" LocalInstanceId="560" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumStrutsA" LocalInstanceId="561" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumFootA" LocalInstanceId="562" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumPistonA" LocalInstanceId="563" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumBoreA" LocalInstanceId="564" Stage="1" />
+                  <KeyframeAnimationData InstanceOf="LandingLegAnimation" LocalInstanceId="559" TimeGoal="4.9583" TimeCurrent="4.9583" SolarCurrentAngle="0" />
+                </PartRef>
+                <PartRef InstanceOf="CoreLandingA_Prefab_MediumLandingLegA" LocalInstanceId="565" Stage="1">
+                  <Transform>
+                    <Position X="-23.8015" Y="-1.1527" Z="1.2535" />
+                    <Rotation X="-2.3562" Y="0" Z="0" />
+                    <Scale X="1.5" Y="1.5" Z="1.5" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="539" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumBaseA" LocalInstanceId="567" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumStrutsA" LocalInstanceId="568" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumFootA" LocalInstanceId="569" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumPistonA" LocalInstanceId="570" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumBoreA" LocalInstanceId="571" Stage="1" />
+                  <KeyframeAnimationData InstanceOf="LandingLegAnimation" LocalInstanceId="566" TimeGoal="4.9583" TimeCurrent="4.9583" SolarCurrentAngle="0" />
+                </PartRef>
+                <PartRef InstanceOf="CoreLandingA_Prefab_MediumLandingLegA" LocalInstanceId="572" Stage="1">
+                  <Transform>
+                    <Position X="-23.8015" Y="-1.1527" Z="-1.2877" />
+                    <Rotation X="-0.7854" Y="0" Z="0" />
+                    <Scale X="1.5" Y="1.5" Z="1.5" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="539" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumBaseA" LocalInstanceId="574" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumStrutsA" LocalInstanceId="575" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumFootA" LocalInstanceId="576" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumPistonA" LocalInstanceId="577" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumBoreA" LocalInstanceId="578" Stage="1" />
+                  <KeyframeAnimationData InstanceOf="LandingLegAnimation" LocalInstanceId="573" TimeGoal="4.9583" TimeCurrent="4.9583" SolarCurrentAngle="0" />
+                </PartRef>
+                <PartRef InstanceOf="CoreLandingA_Prefab_MediumLandingLegA" LocalInstanceId="579" Stage="1">
+                  <Transform>
+                    <Position X="-23.8015" Y="1.3885" Z="-1.2877" />
+                    <Rotation X="0.7854" Y="0" Z="0" />
+                    <Scale X="1.5" Y="1.5" Z="1.5" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="539" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumBaseA" LocalInstanceId="581" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumStrutsA" LocalInstanceId="582" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumFootA" LocalInstanceId="583" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumPistonA" LocalInstanceId="584" Stage="1" />
+                  <SubPartRef InstanceOf="CoreLandingA_Subpart_MediumBoreA" LocalInstanceId="585" Stage="1" />
+                  <KeyframeAnimationData InstanceOf="LandingLegAnimation" LocalInstanceId="580" TimeGoal="4.9583" TimeCurrent="4.9583" SolarCurrentAngle="0" />
+                </PartRef>
+                <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="541" Stage="1" />
+                <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W3HB" LocalInstanceId="542" Stage="1" />
+                <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="543" Stage="1" />
+                <TankData LocalInstanceId="540">
+                  <RoleAffinity>Engine</RoleAffinity>
+                  <Mole SubstancePhaseId="H2(l)">
+                    <Mass Kg="4259.5317" />
+                    <MassFraction Value="0.1538" />
+                  </Mole>
+                  <Mole SubstancePhaseId="O2(l)">
+                    <Mass Kg="23427.4238" />
+                    <MassFraction Value="0.8462" />
+                  </Mole>
+                </TankData>
+              </PartRef>
+              <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="586" Stage="1" SequenceGroup="5" SequenceOrder="1">
+                <Transform>
+                  <Position X="-18.5693" Y="-1.2683" Z="-0.0025" />
+                  <Rotation X="-1.4399" Y="0" Z="0" />
+                  <Scale X="1" Y="1" Z="1" />
+                </Transform>
+                <PartConnectorRef Index="0" ConnectedLocalInstanceId="532" />
+                <PartConnectorRef Index="1" ConnectedLocalInstanceId="655" />
+                <SymmetryRef>
+                  <Layer BaseLocalInstanceId="532" Order="2">
+                    <PartRef>586</PartRef>
+                    <PartRef>686</PartRef>
+                  </Layer>
+                </SymmetryRef>
+                <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="655" Stage="3">
+                  <Transform>
+                    <Position X="-18.5692" Y="-2.6736" Z="-0.1875" />
+                    <Rotation X="-1.4399" Y="0" Z="0" />
+                    <Scale X="1" Y="1" Z="1" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="676" />
+                  <PartConnectorRef Index="1" ConnectedLocalInstanceId="660" />
+                  <SymmetryRef>
+                    <Layer BaseLocalInstanceId="532" Order="2">
+                      <PartRef>655</PartRef>
+                      <PartRef>755</PartRef>
+                    </Layer>
+                  </SymmetryRef>
+                  <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="660" Stage="3">
+                    <Transform>
+                      <Position X="-21.5684" Y="-2.6736" Z="-0.1875" />
+                      <Rotation X="-1.4399" Y="0" Z="0" />
+                      <Scale X="1" Y="1" Z="1" />
+                    </Transform>
+                    <PartConnectorRef Index="0" ConnectedLocalInstanceId="655" />
+                    <PartConnectorRef Index="1" ConnectedLocalInstanceId="665" />
+                    <SymmetryRef>
+                      <Layer BaseLocalInstanceId="532" Order="2">
+                        <PartRef>660</PartRef>
+                        <PartRef>760</PartRef>
+                      </Layer>
+                    </SymmetryRef>
+                    <PartRef InstanceOf="CorePropulsionC_Prefab_SRBEThrustAssemblyA" LocalInstanceId="665" Stage="3" SequenceGroup="6">
+                      <Transform>
+                        <Position X="-24.5625" Y="-2.6737" Z="-0.1875" />
+                        <Rotation X="-1.4399" Y="0" Z="0" />
+                        <Scale X="1" Y="1" Z="1" />
+                      </Transform>
+                      <PartConnectorRef Index="0" ConnectedLocalInstanceId="660" />
+                      <SymmetryRef>
+                        <Layer BaseLocalInstanceId="532" Order="2">
+                          <PartRef>665</PartRef>
+                          <PartRef>765</PartRef>
+                        </Layer>
+                      </SymmetryRef>
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEThrustAssemblyA" LocalInstanceId="669" Stage="3" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESkirtAssemblyA" LocalInstanceId="670" Stage="3" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="671" Stage="3" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorHousingA" LocalInstanceId="672" Stage="3" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorShaftA" LocalInstanceId="673" Stage="3" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorHousingA" LocalInstanceId="674" Stage="3" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorShaftA" LocalInstanceId="675" Stage="3" SequenceGroup="6" />
+                      <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="666">
+                        <Mole SubstancePhaseId="APCP(s)">
+                          <Mass Kg="36390.8672" />
+                          <MassFraction Value="1" />
+                        </Mole>
+                      </SolidGrainSegmentData>
+                      <SolidMotorData InstanceOf="MotorCore" LocalInstanceId="667" AreaRatio="20" DefaultGrain="Neutral" />
+                      <EngineController InstanceOf="SRBEMotor" LocalInstanceId="668" ActiveInStage="false" Sequence="1" />
+                    </PartRef>
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="662" Stage="3" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="663" Stage="3" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="664" Stage="3" />
+                    <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="661">
+                      <Mole SubstancePhaseId="APCP(s)">
+                        <Mass Kg="54367.3008" />
+                        <MassFraction Value="1" />
+                      </Mole>
+                    </SolidGrainSegmentData>
+                  </PartRef>
+                  <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="676" Stage="3">
+                    <Transform>
+                      <Position X="-15.57" Y="-2.6736" Z="-0.1875" />
+                      <Rotation X="-1.4399" Y="0" Z="0" />
+                      <Scale X="1" Y="1" Z="1" />
+                    </Transform>
+                    <PartConnectorRef Index="0" ConnectedLocalInstanceId="681" />
+                    <PartConnectorRef Index="1" ConnectedLocalInstanceId="655" />
+                    <SymmetryRef>
+                      <Layer BaseLocalInstanceId="532" Order="2">
+                        <PartRef>676</PartRef>
+                        <PartRef>776</PartRef>
+                      </Layer>
+                    </SymmetryRef>
+                    <PartRef InstanceOf="CoreFairingA_Prefab_Nosecone2WCantedA" LocalInstanceId="681" Stage="3">
+                      <Transform>
+                        <Position X="-12.4183" Y="-2.6736" Z="-0.1875" />
+                        <Rotation X="-1.4399" Y="0" Z="0" />
+                        <Scale X="1" Y="1" Z="1" />
+                      </Transform>
+                      <PartConnectorRef Index="0" ConnectedLocalInstanceId="676" />
+                      <SymmetryRef>
+                        <Layer BaseLocalInstanceId="532" Order="2">
+                          <PartRef>681</PartRef>
+                          <PartRef>781</PartRef>
+                        </Layer>
+                      </SymmetryRef>
+                      <SubPartRef InstanceOf="CoreFairingA_Subpart_NoseconeBase2MSkinA" LocalInstanceId="683" Stage="3" />
+                      <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF1WA" LocalInstanceId="684" Stage="3" />
+                      <SubPartRef InstanceOf="CoreFairingA_Subpart_NoseconeCantered2MSkinA" LocalInstanceId="685" Stage="3" />
+                      <TankData LocalInstanceId="682">
+                        <RoleAffinity>Engine</RoleAffinity>
+                      </TankData>
+                    </PartRef>
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="678" Stage="3" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="679" Stage="3" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="680" Stage="3" />
+                    <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="677">
+                      <Mole SubstancePhaseId="APCP(s)">
+                        <Mass Kg="54367.3008" />
+                        <MassFraction Value="1" />
+                      </Mole>
+                    </SolidGrainSegmentData>
+                  </PartRef>
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="657" Stage="3" />
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="658" Stage="3" />
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="659" Stage="3" />
+                  <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="656">
+                    <Mole SubstancePhaseId="APCP(s)">
+                      <Mass Kg="54367.3008" />
+                      <MassFraction Value="1" />
+                    </Mole>
+                  </SolidGrainSegmentData>
+                </PartRef>
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootA" LocalInstanceId="588" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="589" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="590" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeA" LocalInstanceId="591" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutC" LocalInstanceId="592" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="593" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="594" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="595" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="596" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeD" LocalInstanceId="597" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootA" LocalInstanceId="598" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="599" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeA" LocalInstanceId="600" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="601" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="602" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="603" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="604" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="605" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="606" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="607" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="608" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="609" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutC" LocalInstanceId="610" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootC" LocalInstanceId="611" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeD" LocalInstanceId="612" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="613" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="614" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="615" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="616" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="617" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutA" LocalInstanceId="618" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutA" LocalInstanceId="619" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="620" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="621" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="622" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="623" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="624" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="625" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="626" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="627" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="628" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="629" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="630" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="631" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="632" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="633" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="634" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="635" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="636" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="637" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="638" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="639" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="640" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="641" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="642" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="643" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="644" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="645" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="646" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="647" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="648" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="649" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="650" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="651" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="652" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="653" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="654" Stage="1" SequenceGroup="5" SequenceOrder="1" />
+                <DecouplerData LocalInstanceId="587" Sequence="3" />
+              </PartRef>
+              <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="686" Stage="1" SequenceGroup="5" SequenceOrder="2">
+                <Transform>
+                  <Position X="-18.5693" Y="1.5043" Z="-0.0317" />
+                  <Rotation X="1.7017" Y="0" Z="0" />
+                  <Scale X="1" Y="1" Z="1" />
+                </Transform>
+                <PartConnectorRef Index="0" ConnectedLocalInstanceId="532" />
+                <PartConnectorRef Index="1" ConnectedLocalInstanceId="755" />
+                <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="755" Stage="4">
+                  <Transform>
+                    <Position X="-18.5693" Y="2.9096" Z="0.1533" />
+                    <Rotation X="1.7017" Y="0" Z="0" />
+                    <Scale X="1" Y="1" Z="1" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="776" />
+                  <PartConnectorRef Index="1" ConnectedLocalInstanceId="760" />
+                  <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="760" Stage="4">
+                    <Transform>
+                      <Position X="-21.5685" Y="2.9096" Z="0.1533" />
+                      <Rotation X="1.7017" Y="0" Z="0" />
+                      <Scale X="1" Y="1" Z="1" />
+                    </Transform>
+                    <PartConnectorRef Index="0" ConnectedLocalInstanceId="755" />
+                    <PartConnectorRef Index="1" ConnectedLocalInstanceId="765" />
+                    <PartRef InstanceOf="CorePropulsionC_Prefab_SRBEThrustAssemblyA" LocalInstanceId="765" Stage="4" SequenceGroup="6">
+                      <Transform>
+                        <Position X="-24.5626" Y="2.9095" Z="0.1533" />
+                        <Rotation X="1.7017" Y="0" Z="0" />
+                        <Scale X="1" Y="1" Z="1" />
+                      </Transform>
+                      <PartConnectorRef Index="0" ConnectedLocalInstanceId="760" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEThrustAssemblyA" LocalInstanceId="769" Stage="4" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESkirtAssemblyA" LocalInstanceId="770" Stage="4" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="771" Stage="4" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorHousingA" LocalInstanceId="772" Stage="4" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorShaftA" LocalInstanceId="773" Stage="4" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorHousingA" LocalInstanceId="774" Stage="4" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorShaftA" LocalInstanceId="775" Stage="4" SequenceGroup="6" />
+                      <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="766">
+                        <Mole SubstancePhaseId="APCP(s)">
+                          <Mass Kg="36390.8672" />
+                          <MassFraction Value="1" />
+                        </Mole>
+                      </SolidGrainSegmentData>
+                      <SolidMotorData InstanceOf="MotorCore" LocalInstanceId="767" AreaRatio="20" DefaultGrain="Neutral" />
+                      <EngineController InstanceOf="SRBEMotor" LocalInstanceId="768" ActiveInStage="false" Sequence="1" />
+                    </PartRef>
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="762" Stage="4" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="763" Stage="4" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="764" Stage="4" />
+                    <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="761">
+                      <Mole SubstancePhaseId="APCP(s)">
+                        <Mass Kg="54367.3008" />
+                        <MassFraction Value="1" />
+                      </Mole>
+                    </SolidGrainSegmentData>
+                  </PartRef>
+                  <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="776" Stage="4">
+                    <Transform>
+                      <Position X="-15.5701" Y="2.9097" Z="0.1533" />
+                      <Rotation X="1.7017" Y="0" Z="0" />
+                      <Scale X="1" Y="1" Z="1" />
+                    </Transform>
+                    <PartConnectorRef Index="0" ConnectedLocalInstanceId="781" />
+                    <PartConnectorRef Index="1" ConnectedLocalInstanceId="755" />
+                    <PartRef InstanceOf="CoreFairingA_Prefab_Nosecone2WCantedA" LocalInstanceId="781" Stage="4">
+                      <Transform>
+                        <Position X="-12.4184" Y="2.9098" Z="0.1533" />
+                        <Rotation X="1.7017" Y="0" Z="0" />
+                        <Scale X="1" Y="1" Z="1" />
+                      </Transform>
+                      <PartConnectorRef Index="0" ConnectedLocalInstanceId="776" />
+                      <SubPartRef InstanceOf="CoreFairingA_Subpart_NoseconeBase2MSkinA" LocalInstanceId="783" Stage="4" />
+                      <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF1WA" LocalInstanceId="784" Stage="4" />
+                      <SubPartRef InstanceOf="CoreFairingA_Subpart_NoseconeCantered2MSkinA" LocalInstanceId="785" Stage="4" />
+                      <TankData LocalInstanceId="782">
+                        <RoleAffinity>Engine</RoleAffinity>
+                      </TankData>
+                    </PartRef>
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="778" Stage="4" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="779" Stage="4" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="780" Stage="4" />
+                    <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="777">
+                      <Mole SubstancePhaseId="APCP(s)">
+                        <Mass Kg="54367.3008" />
+                        <MassFraction Value="1" />
+                      </Mole>
+                    </SolidGrainSegmentData>
+                  </PartRef>
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="757" Stage="4" />
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="758" Stage="4" />
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="759" Stage="4" />
+                  <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="756">
+                    <Mole SubstancePhaseId="APCP(s)">
+                      <Mass Kg="54367.3008" />
+                      <MassFraction Value="1" />
+                    </Mole>
+                  </SolidGrainSegmentData>
+                </PartRef>
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootA" LocalInstanceId="688" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="689" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="690" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeA" LocalInstanceId="691" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutC" LocalInstanceId="692" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="693" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="694" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="695" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="696" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeD" LocalInstanceId="697" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootA" LocalInstanceId="698" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="699" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeA" LocalInstanceId="700" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="701" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="702" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="703" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="704" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="705" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="706" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="707" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="708" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="709" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutC" LocalInstanceId="710" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootC" LocalInstanceId="711" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeD" LocalInstanceId="712" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="713" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="714" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="715" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="716" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="717" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutA" LocalInstanceId="718" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutA" LocalInstanceId="719" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="720" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="721" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="722" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="723" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="724" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="725" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="726" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="727" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="728" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="729" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="730" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="731" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="732" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="733" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="734" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="735" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="736" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="737" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="738" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="739" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="740" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="741" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="742" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="743" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="744" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="745" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="746" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="747" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="748" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="749" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="750" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="751" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="752" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="753" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="754" Stage="1" SequenceGroup="5" SequenceOrder="2" />
+                <DecouplerData LocalInstanceId="687" Sequence="3" />
+              </PartRef>
+              <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="786" Stage="1" SequenceGroup="7">
+                <Transform>
+                  <Position X="-18.5396" Y="0.118" Z="-1.4896" />
+                  <Rotation X="0" Y="0" Z="0" />
+                  <Scale X="1" Y="1" Z="1" />
+                </Transform>
+                <PartConnectorRef Index="0" ConnectedLocalInstanceId="532" />
+                <PartConnectorRef Index="1" ConnectedLocalInstanceId="855" />
+                <SymmetryRef>
+                  <Layer BaseLocalInstanceId="532" Order="2">
+                    <PartRef>786</PartRef>
+                    <PartRef>881</PartRef>
+                  </Layer>
+                </SymmetryRef>
+                <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="855" Stage="5">
+                  <Transform>
+                    <Position X="-18.5396" Y="0.118" Z="-2.9071" />
+                    <Rotation X="0" Y="0" Z="0" />
+                    <Scale X="1" Y="1" Z="1" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="876" />
+                  <PartConnectorRef Index="1" ConnectedLocalInstanceId="860" />
+                  <SymmetryRef>
+                    <Layer BaseLocalInstanceId="532" Order="2">
+                      <PartRef>855</PartRef>
+                      <PartRef>950</PartRef>
+                    </Layer>
+                  </SymmetryRef>
+                  <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="860" Stage="5">
+                    <Transform>
+                      <Position X="-21.5388" Y="0.118" Z="-2.907" />
+                      <Rotation X="0" Y="0" Z="0" />
+                      <Scale X="1" Y="1" Z="1" />
+                    </Transform>
+                    <PartConnectorRef Index="0" ConnectedLocalInstanceId="855" />
+                    <PartConnectorRef Index="1" ConnectedLocalInstanceId="865" />
+                    <SymmetryRef>
+                      <Layer BaseLocalInstanceId="532" Order="2">
+                        <PartRef>860</PartRef>
+                        <PartRef>955</PartRef>
+                      </Layer>
+                    </SymmetryRef>
+                    <PartRef InstanceOf="CorePropulsionC_Prefab_SRBEThrustAssemblyA" LocalInstanceId="865" Stage="5" SequenceGroup="6">
+                      <Transform>
+                        <Position X="-24.5329" Y="0.1179" Z="-2.907" />
+                        <Rotation X="0" Y="0" Z="0" />
+                        <Scale X="1" Y="1" Z="1" />
+                      </Transform>
+                      <PartConnectorRef Index="0" ConnectedLocalInstanceId="860" />
+                      <SymmetryRef>
+                        <Layer BaseLocalInstanceId="532" Order="2">
+                          <PartRef>865</PartRef>
+                          <PartRef>960</PartRef>
+                        </Layer>
+                      </SymmetryRef>
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEThrustAssemblyA" LocalInstanceId="869" Stage="5" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESkirtAssemblyA" LocalInstanceId="870" Stage="5" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="871" Stage="5" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorHousingA" LocalInstanceId="872" Stage="5" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorShaftA" LocalInstanceId="873" Stage="5" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorHousingA" LocalInstanceId="874" Stage="5" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorShaftA" LocalInstanceId="875" Stage="5" SequenceGroup="6" />
+                      <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="866">
+                        <Mole SubstancePhaseId="APCP(s)">
+                          <Mass Kg="36390.8672" />
+                          <MassFraction Value="1" />
+                        </Mole>
+                      </SolidGrainSegmentData>
+                      <SolidMotorData InstanceOf="MotorCore" LocalInstanceId="867" AreaRatio="35.7" DefaultGrain="Neutral" />
+                      <EngineController InstanceOf="SRBEMotor" LocalInstanceId="868" ActiveInStage="false" Sequence="1" />
+                    </PartRef>
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="862" Stage="5" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="863" Stage="5" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="864" Stage="5" />
+                    <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="861">
+                      <Mole SubstancePhaseId="APCP(s)">
+                        <Mass Kg="54367.3008" />
+                        <MassFraction Value="1" />
+                      </Mole>
+                    </SolidGrainSegmentData>
+                  </PartRef>
+                  <PartRef InstanceOf="CoreFairingA_Prefab_Nosecone2WCantedA" LocalInstanceId="876" Stage="5">
+                    <Transform>
+                      <Position X="-15.3879" Y="0.118" Z="-2.9071" />
+                      <Rotation X="0" Y="0" Z="0" />
+                      <Scale X="1" Y="1" Z="1" />
+                    </Transform>
+                    <PartConnectorRef Index="0" ConnectedLocalInstanceId="855" />
+                    <SymmetryRef>
+                      <Layer BaseLocalInstanceId="532" Order="2">
+                        <PartRef>876</PartRef>
+                        <PartRef>971</PartRef>
+                      </Layer>
+                    </SymmetryRef>
+                    <SubPartRef InstanceOf="CoreFairingA_Subpart_NoseconeBase2MSkinA" LocalInstanceId="878" Stage="5" />
+                    <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF1WA" LocalInstanceId="879" Stage="5" />
+                    <SubPartRef InstanceOf="CoreFairingA_Subpart_NoseconeCantered2MSkinA" LocalInstanceId="880" Stage="5" />
+                    <TankData LocalInstanceId="877">
+                      <RoleAffinity>Engine</RoleAffinity>
+                    </TankData>
+                  </PartRef>
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="857" Stage="5" />
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="858" Stage="5" />
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="859" Stage="5" />
+                  <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="856">
+                    <Mole SubstancePhaseId="APCP(s)">
+                      <Mass Kg="54367.3008" />
+                      <MassFraction Value="1" />
+                    </Mole>
+                  </SolidGrainSegmentData>
+                </PartRef>
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootA" LocalInstanceId="788" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="789" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="790" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeA" LocalInstanceId="791" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutC" LocalInstanceId="792" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="793" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="794" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="795" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="796" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeD" LocalInstanceId="797" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootA" LocalInstanceId="798" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="799" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeA" LocalInstanceId="800" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="801" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="802" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="803" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="804" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="805" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="806" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="807" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="808" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="809" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutC" LocalInstanceId="810" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootC" LocalInstanceId="811" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeD" LocalInstanceId="812" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="813" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="814" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="815" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="816" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="817" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutA" LocalInstanceId="818" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutA" LocalInstanceId="819" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="820" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="821" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="822" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="823" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="824" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="825" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="826" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="827" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="828" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="829" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="830" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="831" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="832" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="833" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="834" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="835" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="836" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="837" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="838" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="839" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="840" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="841" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="842" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="843" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="844" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="845" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="846" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="847" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="848" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="849" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="850" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="851" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="852" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="853" Stage="1" SequenceGroup="7" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="854" Stage="1" SequenceGroup="7" />
+                <DecouplerData LocalInstanceId="787" Sequence="2" />
+              </PartRef>
+              <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="881" Stage="1" SequenceGroup="7" SequenceOrder="1">
+                <Transform>
+                  <Position X="-18.5396" Y="0.118" Z="1.4554" />
+                  <Rotation X="-3.1416" Y="0" Z="0" />
+                  <Scale X="1" Y="1" Z="1" />
+                </Transform>
+                <PartConnectorRef Index="0" ConnectedLocalInstanceId="532" />
+                <PartConnectorRef Index="1" ConnectedLocalInstanceId="950" />
+                <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="950" Stage="6">
+                  <Transform>
+                    <Position X="-18.5396" Y="0.118" Z="2.8729" />
+                    <Rotation X="-3.1416" Y="0" Z="0" />
+                    <Scale X="1" Y="1" Z="1" />
+                  </Transform>
+                  <PartConnectorRef Index="0" ConnectedLocalInstanceId="971" />
+                  <PartConnectorRef Index="1" ConnectedLocalInstanceId="955" />
+                  <PartRef InstanceOf="CorePropulsionC_Prefab_SRBESegmentLargeA" LocalInstanceId="955" Stage="6">
+                    <Transform>
+                      <Position X="-21.5388" Y="0.118" Z="2.8728" />
+                      <Rotation X="-3.1416" Y="0" Z="0" />
+                      <Scale X="1" Y="1" Z="1" />
+                    </Transform>
+                    <PartConnectorRef Index="0" ConnectedLocalInstanceId="950" />
+                    <PartConnectorRef Index="1" ConnectedLocalInstanceId="960" />
+                    <PartRef InstanceOf="CorePropulsionC_Prefab_SRBEThrustAssemblyA" LocalInstanceId="960" Stage="6" SequenceGroup="6">
+                      <Transform>
+                        <Position X="-24.5329" Y="0.118" Z="2.8728" />
+                        <Rotation X="-3.1416" Y="0" Z="0" />
+                        <Scale X="1" Y="1" Z="1" />
+                      </Transform>
+                      <PartConnectorRef Index="0" ConnectedLocalInstanceId="955" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEThrustAssemblyA" LocalInstanceId="964" Stage="6" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESkirtAssemblyA" LocalInstanceId="965" Stage="6" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="966" Stage="6" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorHousingA" LocalInstanceId="967" Stage="6" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorShaftA" LocalInstanceId="968" Stage="6" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorHousingA" LocalInstanceId="969" Stage="6" SequenceGroup="6" />
+                      <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEActuatorShaftA" LocalInstanceId="970" Stage="6" SequenceGroup="6" />
+                      <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="961">
+                        <Mole SubstancePhaseId="APCP(s)">
+                          <Mass Kg="36390.8672" />
+                          <MassFraction Value="1" />
+                        </Mole>
+                      </SolidGrainSegmentData>
+                      <SolidMotorData InstanceOf="MotorCore" LocalInstanceId="962" AreaRatio="35.7" DefaultGrain="Neutral" />
+                      <EngineController InstanceOf="SRBEMotor" LocalInstanceId="963" ActiveInStage="false" Sequence="1" />
+                    </PartRef>
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="957" Stage="6" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="958" Stage="6" />
+                    <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="959" Stage="6" />
+                    <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="956">
+                      <Mole SubstancePhaseId="APCP(s)">
+                        <Mass Kg="54367.3008" />
+                        <MassFraction Value="1" />
+                      </Mole>
+                    </SolidGrainSegmentData>
+                  </PartRef>
+                  <PartRef InstanceOf="CoreFairingA_Prefab_Nosecone2WCantedA" LocalInstanceId="971" Stage="6">
+                    <Transform>
+                      <Position X="-15.3879" Y="0.1181" Z="2.8729" />
+                      <Rotation X="-3.1416" Y="0" Z="0" />
+                      <Scale X="1" Y="1" Z="1" />
+                    </Transform>
+                    <PartConnectorRef Index="0" ConnectedLocalInstanceId="950" />
+                    <SubPartRef InstanceOf="CoreFairingA_Subpart_NoseconeBase2MSkinA" LocalInstanceId="973" Stage="6" />
+                    <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF1WA" LocalInstanceId="974" Stage="6" />
+                    <SubPartRef InstanceOf="CoreFairingA_Subpart_NoseconeCantered2MSkinA" LocalInstanceId="975" Stage="6" />
+                    <TankData LocalInstanceId="972">
+                      <RoleAffinity>Engine</RoleAffinity>
+                    </TankData>
+                  </PartRef>
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeESegmentSkinA" LocalInstanceId="952" Stage="6" />
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="953" Stage="6" />
+                  <SubPartRef InstanceOf="CorePropulsionC_Subpart_SRBSizeEEndcapA" LocalInstanceId="954" Stage="6" />
+                  <SolidGrainSegmentData InstanceOf="Grain" LocalInstanceId="951">
+                    <Mole SubstancePhaseId="APCP(s)">
+                      <Mass Kg="54367.3008" />
+                      <MassFraction Value="1" />
+                    </Mole>
+                  </SolidGrainSegmentData>
+                </PartRef>
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootA" LocalInstanceId="883" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="884" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="885" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeA" LocalInstanceId="886" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutC" LocalInstanceId="887" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="888" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="889" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="890" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="891" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeD" LocalInstanceId="892" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootA" LocalInstanceId="893" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="894" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeA" LocalInstanceId="895" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="896" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="897" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="898" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="899" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="900" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeB" LocalInstanceId="901" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="902" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="903" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_MountA" LocalInstanceId="904" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutC" LocalInstanceId="905" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootC" LocalInstanceId="906" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeD" LocalInstanceId="907" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="908" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="909" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="910" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="911" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="912" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutA" LocalInstanceId="913" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutA" LocalInstanceId="914" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="915" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="916" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="917" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugB" LocalInstanceId="918" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="919" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="920" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="921" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="922" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="923" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="924" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="925" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugA" LocalInstanceId="926" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="927" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="928" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="929" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="930" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="931" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="932" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="933" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_BracketA" LocalInstanceId="934" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="935" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="936" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="937" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="938" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="939" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_LugC" LocalInstanceId="940" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="941" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_TubeC" LocalInstanceId="942" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="943" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="944" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="945" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="946" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="947" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="948" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="949" Stage="1" SequenceGroup="7" SequenceOrder="1" />
+                <DecouplerData LocalInstanceId="882" Sequence="2" />
+              </PartRef>
+              <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W6HC" LocalInstanceId="534" Stage="1" />
+              <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="535" Stage="1" />
+              <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="536" Stage="1" />
+              <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Raceway3W6HB" LocalInstanceId="537" Stage="1" />
+              <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Raceway3W6HB" LocalInstanceId="538" Stage="1" />
+              <TankData LocalInstanceId="533">
+                <RoleAffinity>Engine</RoleAffinity>
+                <Mole SubstancePhaseId="H2(l)">
+                  <Mass Kg="6911.0649" />
+                  <MassFraction Value="0.1538" />
+                </Mole>
+                <Mole SubstancePhaseId="O2(l)">
+                  <Mass Kg="38010.8555" />
+                  <MassFraction Value="0.8462" />
+                </Mole>
+              </TankData>
+            </PartRef>
+            <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W6HD" LocalInstanceId="527" Stage="1" />
+            <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="528" Stage="1" />
+            <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="529" Stage="1" />
+            <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Raceway3W6HA" LocalInstanceId="530" Stage="1" />
+            <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Raceway3W6HA" LocalInstanceId="531" Stage="1" />
+            <TankData LocalInstanceId="526">
+              <RoleAffinity>Engine</RoleAffinity>
+              <Mole SubstancePhaseId="H2(l)">
+                <Mass Kg="6911.0649" />
+                <MassFraction Value="0.1538" />
+              </Mole>
+              <Mole SubstancePhaseId="O2(l)">
+                <Mass Kg="38010.8555" />
+                <MassFraction Value="0.8462" />
+              </Mole>
+            </TankData>
+          </PartRef>
+          <SubPartRef InstanceOf="CoreFairingA_Subpart_Interstage3W3HSkinB" LocalInstanceId="523" Stage="1" SequenceOrder="1" />
+          <SubPartRef InstanceOf="CoreFairingA_Subpart_Interstage3W3HStructureB" LocalInstanceId="524" Stage="1" SequenceOrder="1" />
+          <DecouplerData LocalInstanceId="522" Sequence="4" />
+        </PartRef>
+        <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="429" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W3HA" LocalInstanceId="430" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="431" Stage="0" />
+        <TankData LocalInstanceId="428">
+          <RoleAffinity>Engine</RoleAffinity>
+          <Mole SubstancePhaseId="H2(l)">
+            <Mass Kg="4259.5322" />
+            <MassFraction Value="0.1538" />
+          </Mole>
+          <Mole SubstancePhaseId="O2(l)">
+            <Mass Kg="23427.4238" />
+            <MassFraction Value="0.8462" />
+          </Mole>
+        </TankData>
+      </PartRef>
+      <PartRef InstanceOf="CoreFuelTankB_Prefab_BaypartTankB" LocalInstanceId="976" Stage="0">
+        <Transform>
+          <Position X="-2.3833" Y="0.1181" Z="-0.6895" />
+          <Rotation X="0" Y="0" Z="0" />
+          <Scale X="1" Y="1" Z="1" />
+        </Transform>
+        <PartConnectorRef Index="0" ConnectedLocalInstanceId="379" />
+        <SymmetryRef>
+          <Layer BaseLocalInstanceId="379" Order="6">
+            <PartRef>976</PartRef>
+            <PartRef>990</PartRef>
+            <PartRef>1004</PartRef>
+            <PartRef>1018</PartRef>
+            <PartRef>1032</PartRef>
+            <PartRef>1046</PartRef>
+          </Layer>
+        </SymmetryRef>
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeA" LocalInstanceId="978" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeB" LocalInstanceId="979" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankA" LocalInstanceId="980" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankPanelA" LocalInstanceId="981" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAPipingB" LocalInstanceId="982" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="983" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="984" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTrussB" LocalInstanceId="985" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="986" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="987" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="988" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="989" Stage="0" />
+        <TankData LocalInstanceId="977">
+          <RoleAffinity>Thruster</RoleAffinity>
+          <Mole SubstancePhaseId="MMH(l)">
+            <Mass Kg="166.2318" />
+            <MassFraction Value="0.3846" />
+          </Mole>
+          <Mole SubstancePhaseId="N2O4(l)">
+            <Mass Kg="265.9708" />
+            <MassFraction Value="0.6154" />
+          </Mole>
+        </TankData>
+      </PartRef>
+      <PartRef InstanceOf="CoreFuelTankB_Prefab_BaypartTankB" LocalInstanceId="990" Stage="0">
+        <Transform>
+          <Position X="-2.3833" Y="0.7004" Z="-0.3533" />
+          <Rotation X="1.0472" Y="0" Z="0" />
+          <Scale X="1" Y="1" Z="1" />
+        </Transform>
+        <PartConnectorRef Index="0" ConnectedLocalInstanceId="379" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeA" LocalInstanceId="992" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeB" LocalInstanceId="993" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankA" LocalInstanceId="994" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankPanelA" LocalInstanceId="995" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAPipingB" LocalInstanceId="996" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="997" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="998" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTrussB" LocalInstanceId="999" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1000" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1001" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1002" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1003" Stage="0" />
+        <TankData LocalInstanceId="991">
+          <RoleAffinity>Thruster</RoleAffinity>
+          <Mole SubstancePhaseId="MMH(l)">
+            <Mass Kg="166.2318" />
+            <MassFraction Value="0.3846" />
+          </Mole>
+          <Mole SubstancePhaseId="N2O4(l)">
+            <Mass Kg="265.9708" />
+            <MassFraction Value="0.6154" />
+          </Mole>
+        </TankData>
+      </PartRef>
+      <PartRef InstanceOf="CoreFuelTankB_Prefab_BaypartTankB" LocalInstanceId="1004" Stage="0">
+        <Transform>
+          <Position X="-2.3833" Y="0.7004" Z="0.3191" />
+          <Rotation X="2.0944" Y="0" Z="0" />
+          <Scale X="1" Y="1" Z="1" />
+        </Transform>
+        <PartConnectorRef Index="0" ConnectedLocalInstanceId="379" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeA" LocalInstanceId="1006" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeB" LocalInstanceId="1007" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankA" LocalInstanceId="1008" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankPanelA" LocalInstanceId="1009" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAPipingB" LocalInstanceId="1010" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1011" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1012" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTrussB" LocalInstanceId="1013" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1014" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1015" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1016" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1017" Stage="0" />
+        <TankData LocalInstanceId="1005">
+          <RoleAffinity>Thruster</RoleAffinity>
+          <Mole SubstancePhaseId="MMH(l)">
+            <Mass Kg="166.2318" />
+            <MassFraction Value="0.3846" />
+          </Mole>
+          <Mole SubstancePhaseId="N2O4(l)">
+            <Mass Kg="265.9708" />
+            <MassFraction Value="0.6154" />
+          </Mole>
+        </TankData>
+      </PartRef>
+      <PartRef InstanceOf="CoreFuelTankB_Prefab_BaypartTankB" LocalInstanceId="1018" Stage="0">
+        <Transform>
+          <Position X="-2.3833" Y="0.1181" Z="0.6553" />
+          <Rotation X="-3.1416" Y="0" Z="0" />
+          <Scale X="1" Y="1" Z="1" />
+        </Transform>
+        <PartConnectorRef Index="0" ConnectedLocalInstanceId="379" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeA" LocalInstanceId="1020" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeB" LocalInstanceId="1021" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankA" LocalInstanceId="1022" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankPanelA" LocalInstanceId="1023" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAPipingB" LocalInstanceId="1024" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1025" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1026" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTrussB" LocalInstanceId="1027" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1028" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1029" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1030" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1031" Stage="0" />
+        <TankData LocalInstanceId="1019">
+          <RoleAffinity>Thruster</RoleAffinity>
+          <Mole SubstancePhaseId="MMH(l)">
+            <Mass Kg="166.2318" />
+            <MassFraction Value="0.3846" />
+          </Mole>
+          <Mole SubstancePhaseId="N2O4(l)">
+            <Mass Kg="265.9708" />
+            <MassFraction Value="0.6154" />
+          </Mole>
+        </TankData>
+      </PartRef>
+      <PartRef InstanceOf="CoreFuelTankB_Prefab_BaypartTankB" LocalInstanceId="1032" Stage="0">
+        <Transform>
+          <Position X="-2.3833" Y="-0.4642" Z="0.3191" />
+          <Rotation X="-2.0944" Y="0" Z="0" />
+          <Scale X="1" Y="1" Z="1" />
+        </Transform>
+        <PartConnectorRef Index="0" ConnectedLocalInstanceId="379" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeA" LocalInstanceId="1034" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeB" LocalInstanceId="1035" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankA" LocalInstanceId="1036" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankPanelA" LocalInstanceId="1037" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAPipingB" LocalInstanceId="1038" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1039" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1040" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTrussB" LocalInstanceId="1041" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1042" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1043" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1044" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1045" Stage="0" />
+        <TankData LocalInstanceId="1033">
+          <RoleAffinity>Thruster</RoleAffinity>
+          <Mole SubstancePhaseId="MMH(l)">
+            <Mass Kg="166.2318" />
+            <MassFraction Value="0.3846" />
+          </Mole>
+          <Mole SubstancePhaseId="N2O4(l)">
+            <Mass Kg="265.9708" />
+            <MassFraction Value="0.6154" />
+          </Mole>
+        </TankData>
+      </PartRef>
+      <PartRef InstanceOf="CoreFuelTankB_Prefab_BaypartTankB" LocalInstanceId="1046" Stage="0">
+        <Transform>
+          <Position X="-2.3833" Y="-0.4642" Z="-0.3533" />
+          <Rotation X="-1.0472" Y="0" Z="0" />
+          <Scale X="1" Y="1" Z="1" />
+        </Transform>
+        <PartConnectorRef Index="0" ConnectedLocalInstanceId="379" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeA" LocalInstanceId="1048" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankADomeB" LocalInstanceId="1049" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankA" LocalInstanceId="1050" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAIntertankPanelA" LocalInstanceId="1051" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankAPipingB" LocalInstanceId="1052" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1053" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1054" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTrussB" LocalInstanceId="1055" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankARingA" LocalInstanceId="1056" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1057" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1058" Stage="0" />
+        <SubPartRef InstanceOf="CoreFuelTankB_Subpart_BayTankSupportA" LocalInstanceId="1059" Stage="0" />
+        <TankData LocalInstanceId="1047">
+          <RoleAffinity>Thruster</RoleAffinity>
+          <Mole SubstancePhaseId="MMH(l)">
+            <Mass Kg="166.2318" />
+            <MassFraction Value="0.3846" />
+          </Mole>
+          <Mole SubstancePhaseId="N2O4(l)">
+            <Mass Kg="265.9708" />
+            <MassFraction Value="0.6154" />
+          </Mole>
+        </TankData>
+      </PartRef>
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketB" LocalInstanceId="382" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketB" LocalInstanceId="383" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketB" LocalInstanceId="384" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketB" LocalInstanceId="385" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketB" LocalInstanceId="386" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketB" LocalInstanceId="387" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_FoilTruss3WA" LocalInstanceId="388" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_FoilTrussCap1WA" LocalInstanceId="389" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_HeatshieldSocket25W" LocalInstanceId="390" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetABaseringA" LocalInstanceId="391" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetADoorC" LocalInstanceId="392" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetADoorC" LocalInstanceId="393" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetADoorD" LocalInstanceId="394" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetADoorD" LocalInstanceId="395" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetAGirderB" LocalInstanceId="396" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetAGirderB" LocalInstanceId="397" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetAGirderB" LocalInstanceId="398" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetAGirderB" LocalInstanceId="399" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetAGirderB" LocalInstanceId="400" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_SetAGirderB" LocalInstanceId="401" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_StructuralTube1WB" LocalInstanceId="402" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="403" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="404" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="405" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="406" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="407" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="408" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="409" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="410" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="411" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="412" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="413" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="414" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="415" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="416" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="417" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="418" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="419" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="420" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="421" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="422" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="423" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="424" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="425" Stage="0" SequenceOrder="1" />
+      <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="426" Stage="0" SequenceOrder="1" />
+      <DecouplerData LocalInstanceId="380" Sequence="6" />
+      <KeyframeAnimationData InstanceOf="CoreServiceModuleA_Prefab_SetA2DoubleA_Anim" LocalInstanceId="381" TimeGoal="0" TimeCurrent="0" SolarCurrentAngle="0" />
+    </PartRef>
+    <PartRef InstanceOf="CoreFuelTankA_Prefab_LF1WHalfHB" LocalInstanceId="1060" Stage="2">
+      <Transform>
+        <Position X="0.5824" Y="0.1181" Z="-0.0171" />
+        <Rotation X="0" Y="0" Z="0" />
+        <Scale X="1" Y="1" Z="1" />
+      </Transform>
+      <PartConnectorRef Index="0" ConnectedLocalInstanceId="1065" />
+      <PartConnectorRef Index="1" ConnectedLocalInstanceId="1" />
+      <PartRef InstanceOf="CoreUtilityA_Prefab_ParachuteBayA" LocalInstanceId="1065" Stage="2" SequenceOrder="1">
+        <Transform>
+          <Position X="0.9294" Y="0.1181" Z="-0.0171" />
+          <Rotation X="0" Y="0" Z="0" />
+          <Scale X="1" Y="1" Z="1" />
+        </Transform>
+        <PartConnectorRef Index="0" ConnectedLocalInstanceId="1060" />
+        <SubPartRef InstanceOf="CoreUtilityA_Subpart_ParachuteBayAStructureA" LocalInstanceId="1067" Stage="2" SequenceOrder="1" />
+        <SubPartRef InstanceOf="CoreUtilityA_Subpart_ParachuteBayADoorA" LocalInstanceId="1068" Stage="2" SequenceOrder="1" />
+        <SubPartRef InstanceOf="CoreUtilityA_Subpart_ParachuteBayABaseA" LocalInstanceId="1069" Stage="2" SequenceOrder="1" />
+        <SubPartRef InstanceOf="CoreUtilityA_Subpart_ParachuteBayADoorA" LocalInstanceId="1070" Stage="2" SequenceOrder="1" />
+        <SubPartRef InstanceOf="CoreUtilityA_Subpart_ParachuteBayADoorA" LocalInstanceId="1071" Stage="2" SequenceOrder="1" />
+        <SubPartRef InstanceOf="CoreUtilityA_Subpart_ParachuteBayADoorA" LocalInstanceId="1072" Stage="2" SequenceOrder="1" />
+        <SubPartRef InstanceOf="CoreUtilityA_Subpart_StandaloneParachuteA" LocalInstanceId="1073" Stage="2" SequenceOrder="1">
+          <ParachuteDeployData InstanceOf="ParachuteDeploy" LocalInstanceId="1074" Sequence="7" />
+          <ParachuteCutData InstanceOf="ParachuteCut" LocalInstanceId="1075" Sequence="8" />
+        </SubPartRef>
+        <SubPartRef InstanceOf="CoreUtilityA_Subpart_StandaloneParachuteB" LocalInstanceId="1076" Stage="2" SequenceOrder="1">
+          <ParachuteDeployData InstanceOf="ParachuteDeploy" LocalInstanceId="1077" Sequence="8" />
+          <ParachuteCutData InstanceOf="ParachuteCut" LocalInstanceId="1078" Sequence="9" />
+        </SubPartRef>
+        <KeyframeAnimationData InstanceOf="ParachuteBayDoorAnimation" LocalInstanceId="1066" TimeGoal="0" TimeCurrent="0" SolarCurrentAngle="0" />
+      </PartRef>
+      <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF1WB" LocalInstanceId="1062" Stage="2" />
+      <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin1WHalfHB" LocalInstanceId="1063" Stage="2" />
+      <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF1WB" LocalInstanceId="1064" Stage="2" />
+      <TankData LocalInstanceId="1061">
+        <RoleAffinity>Thruster</RoleAffinity>
+        <Mole SubstancePhaseId="MMH(l)">
+          <Mass Kg="949.6251" />
+          <MassFraction Value="0.3846" />
+        </Mole>
+        <Mole SubstancePhaseId="N2O4(l)">
+          <Mass Kg="1519.3999" />
+          <MassFraction Value="0.6154" />
+        </Mole>
+      </TankData>
+    </PartRef>
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleSkinA" LocalInstanceId="4" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleStructure" LocalInstanceId="5" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleUtilityPanelA" LocalInstanceId="6" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleUtilityPanelB" LocalInstanceId="7" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleUtilityPanelC" LocalInstanceId="8" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleUtilityPanelD" LocalInstanceId="9" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleUtilityPanelE" LocalInstanceId="10" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleServiceDoor" LocalInstanceId="11" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleServiceDoor" LocalInstanceId="12" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleServiceDoor" LocalInstanceId="13" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchALock" LocalInstanceId="14" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchAHatchway" LocalInstanceId="15" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchAHandrailsA" LocalInstanceId="16" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchAHatchway" LocalInstanceId="17" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchAHandrailsB" LocalInstanceId="18" Stage="2" />
+    <SubPartRef InstanceOf="CoreUtilityA_Subpart_SmallHandle" LocalInstanceId="19" Stage="2" />
+    <SubPartRef InstanceOf="CoreUtilityA_Subpart_SmallHandle" LocalInstanceId="20" Stage="2" />
+    <SubPartRef InstanceOf="CoreUtilityA_Subpart_SmallHandle" LocalInstanceId="21" Stage="2" />
+    <SubPartRef InstanceOf="CoreUtilityA_Subpart_SmallHandle" LocalInstanceId="22" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleWindowB" LocalInstanceId="23" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBWindowFrameA" LocalInstanceId="24" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBPlateFrontA" LocalInstanceId="25" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBHingeCapA" LocalInstanceId="26" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBHandleB" LocalInstanceId="27" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBHandleA" LocalInstanceId="28" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBGlassA" LocalInstanceId="29" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBPlateRearA" LocalInstanceId="30" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBHandleA" LocalInstanceId="31" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBLockingLugA" LocalInstanceId="32" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBLockingLugA" LocalInstanceId="33" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBWindowFrameA" LocalInstanceId="34" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBPlateFrontA" LocalInstanceId="35" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBHingeCapA" LocalInstanceId="36" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBHandleB" LocalInstanceId="37" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBHandleA" LocalInstanceId="38" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBGlassA" LocalInstanceId="39" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBPlateRearA" LocalInstanceId="40" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBHandleA" LocalInstanceId="41" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBLockingLugA" LocalInstanceId="42" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBLockingLugA" LocalInstanceId="43" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBLockingLugA" LocalInstanceId="44" Stage="2" />
+    <SubPartRef InstanceOf="CorePassageA_Subpart_HatchBLockingLugA" LocalInstanceId="45" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleWindowA" LocalInstanceId="46" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleCrewDoorB" LocalInstanceId="47" Stage="2" />
+    <SubPartRef InstanceOf="CoreCommandA_Subpart_MediumCapsuleCrewDoorA" LocalInstanceId="48" Stage="2" />
+    <BatteryData InstanceOf="CoreCommandA_Prefab_MediumCapsuleVariantA" LocalInstanceId="2">
+      <Charge J="20000" />
+    </BatteryData>
+    <ControlData LocalInstanceId="0" VehicleName="Rocket" />
+    <PowerConsumerData InstanceOf="CoreCommandA_Prefab_MediumCapsuleVariantA" LocalInstanceId="3" Active="false" />
+  </RootPartRef>
+  <SequenceEnvironment Number="1" Environment="Atmospheric" />
+  <LaunchGameTime />
+</VehicleSaveData>

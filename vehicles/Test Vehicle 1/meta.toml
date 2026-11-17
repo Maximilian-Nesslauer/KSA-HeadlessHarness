@@ -1,0 +1,5 @@
+name = "Test Vehicle 1"
+created = 2026-09-25T16:33:24.4857519
+updated = 2026-09-25T16:33:24.4953177
+version = "v2026.9.22.5482"
+systems = [ "Sol", ]

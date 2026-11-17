@@ -28,6 +28,8 @@ public sealed class Mod
         // Optional: KSA_HEADLESS_SYSTEM names the star system to load, KSA_HEADLESS_VEHICLE names a
         // Vehicles-folder save for the flight test, KSA_HEADLESS_TESTS filters which discovered tests
         // run (comma-separated names), and KSA_HEADLESS_LOG overrides the per-run log file path.
+        // KSA_HEADLESS_PARAMS, KSA_HEADLESS_SEED, KSA_HEADLESS_TEST_TIMEOUT and KSA_HEADLESS_RUN_TIMEOUT
+        // are the run settings of docs/runner.md.
         if (Environment.GetEnvironmentVariable("KSA_HEADLESS_HARNESS") == "1")
         {
             int exitCode = HarnessMain.Run();

@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,6 +45,11 @@
       <HintPath>..\..\..\refs\game\Brutal.Concurrency.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <!-- AeroProbe builds its own AeroSurfaceFlow, whose constructor takes a BepuUtilities BufferPool. -->
+    <Reference Include="BepuUtilities">
+      <HintPath>..\..\..\refs\game\BepuUtilities.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -51,6 +57,19 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <!-- The bundled vehicle saves of the repo's vehicles folder ship next to the DLL, where
+       VehicleSpawner looks them up first. -->
+  <ItemGroup>
+    <BundledVehicle Include="..\vehicles\**\*" Exclude="..\vehicles\README.md" />
+    <None Include="@(BundledVehicle)" Link="vehicles\%(RecursiveDir)%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="DeployBundledVehicles" AfterTargets="CopyToMods" Condition="'$(DeployToMods)' == 'true'">
+    <Copy SourceFiles="@(BundledVehicle)" DestinationFiles="@(BundledVehicle->'$(ModDeployDir)vehicles\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 
   <!--
     Deploy the built DLL and mod.toml so StarMap discovers the harness, with the worktree-safety
