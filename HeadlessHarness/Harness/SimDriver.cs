@@ -58,6 +58,9 @@ public sealed class SimDriver
         // the next Execute; draining at the top of Step keeps that pipeline position AND the
         // game's latency: a command issued between Steps is included in the very next solver
         // pass, like a command issued during a frame's input phase is in the running game.
+        // PrepareFrame lets the kFS vessel computers queue their commands right before the drain.
+        // It does nothing while KfsPrototype.Enabled is false.
+        KSA.Kfs.KfsIntegration.BeforeInputEvents();
         InputEvents.ApplyInputEvents();
 
         // PrepareFrame runs this for every vehicle right after the drain. It is where an auto burn
@@ -116,9 +119,30 @@ public sealed class SimDriver
             Step(dt);
     }
 
+    // Rebuilding the derived data of a part tree starts its aerodynamics build on
+    // JobSystems.VehicleWorkerPool (PartTree.RefreshAerodynamics), which no solver wait joins. Physics
+    // awaits that build only in an atmosphere (PhysicsStates.ComputeDerivatives). In vacuum the build
+    // can still run, or be finished but not yet taken, when the next one starts, and
+    // AerodynamicsBuilder.FindReusableWidth then picks a different panel width than after a published
+    // build, so the forces of a later atmospheric pass would depend on thread timing. AwaitAerodynamics
+    // waits for a running build and publishes a finished one, so every step leaves each tree in the
+    // same state.
     private static void FlushDirtyPartTrees()
     {
         PartTree.FlushDirtyDerived();
         _flushDirtyResourceManagers!();
+        AwaitAerodynamicsBuilds();
+    }
+
+    private static void AwaitAerodynamicsBuilds()
+    {
+        CelestialSystem? system = Universe.CurrentSystem;
+        if (system == null)
+            return;
+        for (int i = 0; i < system.Count; i++)
+        {
+            if (system.GetIndex(i) is Vehicle { IsDisposed: false } vehicle)
+                vehicle.Parts.AwaitAerodynamics();
+        }
     }
 }
