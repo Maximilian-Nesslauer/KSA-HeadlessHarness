@@ -33,12 +33,9 @@ internal static class SteppingSelfTestSupport
             HarnessLog.Line($"[{testName}] SKIP: {TestSupport.VehicleEnvVar} is not set (name a save in the game's Vehicles folder).");
             return null;
         }
-        foreach (VehicleSave save in VehicleSaves.AsSpan())
-        {
-            if (string.Equals(save.Id, saveId, StringComparison.Ordinal))
-                return saveId;
-        }
-        HarnessLog.Line($"[{testName}] SKIP: vehicle save '{saveId}' is not in {VehicleSaves.SaveFolderPath}.");
+        if (VehicleSpawner.FindVehicleSave(saveId) != null)
+            return saveId;
+        HarnessLog.Line($"[{testName}] SKIP: vehicle save '{saveId}' is not in a bundle or {VehicleSaves.SaveFolderPath}.");
         return null;
     }
 
