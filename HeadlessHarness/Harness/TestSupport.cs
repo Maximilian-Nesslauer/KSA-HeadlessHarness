@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Reflection;
-using HarmonyLib;
 using HeadlessHarness.Core;
 using KSA;
 
@@ -10,7 +8,7 @@ namespace HeadlessHarness.Harness;
 // propellant checks, and spawn bookkeeping. Centralized so the drift-prone game couplings (the
 // _manualControlInputs reflection key, the per-rocket propellant walk) live in exactly one place and
 // are re-verified once per game update instead of in every consumer.
-public static class TestSupport
+public static partial class TestSupport
 {
     // Names a save in the game's Vehicles folder for tests that fly a real vehicle; the harness's
     // own flight test and consumer flight tests share it. Unset: those tests skip.
@@ -22,13 +20,13 @@ public static class TestSupport
     // not collapse a consumer's list onto that one pin.
     public const string VehiclesEnvVar = "KSA_HEADLESS_VEHICLES";
 
-    private static FieldInfo? _manualInputsField;
-
-    // Resolves which Vehicles-folder saves a multi-vehicle test should run: the comma-separated
-    // KSA_HEADLESS_VEHICLES if set, otherwise the given candidates. Only saves that actually exist
-    // are returned (which saves a machine has is machine-specific), and a requested-but-missing save
-    // is logged so a run that dropped one is not silent. The caller iterates the result and adds its
-    // own per-save skips for saves that exist but are unsuitable (e.g. lacking the parts it needs).
+    // Resolves which vehicle saves a multi-vehicle test should run: the comma-separated
+    // KSA_HEADLESS_VEHICLES if set, otherwise the given candidates. A name resolves against the
+    // vehicles bundled with the harness and with the consumer mods first, then against the game's
+    // Vehicles folder (VehicleSpawner.FindVehicleSave), and the log says where each one came from.
+    // A requested save that exists nowhere is logged and left out, so a run that dropped one is not
+    // silent. The caller iterates the result and adds its own per-save skips for saves that exist
+    // but are unsuitable (e.g. lacking the parts it needs).
     public static IReadOnlyList<string> ResolveVehicleSaves(params string[] candidates)
     {
         string? overrideList = Environment.GetEnvironmentVariable(VehiclesEnvVar);
@@ -39,22 +37,18 @@ public static class TestSupport
         List<string> resolved = new();
         foreach (string id in requested)
         {
-            if (VehicleSaveExists(id))
+            VehicleSaveSource? source = VehicleSpawner.FindVehicleSave(id);
+            if (source != null)
+            {
                 resolved.Add(id);
+                HarnessLog.Line($"[harness] vehicle save '{id}' resolves to {source.Describe()}.");
+            }
             else
-                HarnessLog.Line($"[harness] vehicle save '{id}' not found in {VehicleSaves.SaveFolderPath}; skipping it.");
+            {
+                HarnessLog.Line($"[harness] vehicle save '{id}' not found in the bundled vehicles or in {VehicleSaves.SaveFolderPath}; skipping it.");
+            }
         }
         return resolved;
-    }
-
-    private static bool VehicleSaveExists(string saveId)
-    {
-        foreach (VehicleSave save in VehicleSaves.AsSpan())
-        {
-            if (string.Equals(save.Id, saveId, StringComparison.Ordinal))
-                return true;
-        }
-        return false;
     }
 
     // The game reads manual throttle/engine state from this private per-vehicle struct and exposes
@@ -64,10 +58,7 @@ public static class TestSupport
     // TypeInitializationException.
     public static void SetManualControlInputs(Vehicle vehicle, float throttle, bool engineOn)
     {
-        _manualInputsField ??= AccessTools.Field(typeof(Vehicle), "_manualControlInputs")
-            ?? throw new InvalidOperationException(
-                "[HeadlessHarness] Vehicle._manualControlInputs not found - game version may have changed.");
-        _manualInputsField.SetValue(vehicle, new ManualControlInputs { EngineThrottle = throttle, EngineOn = engineOn });
+        GetManualControlInputs(vehicle) = new ManualControlInputs { EngineThrottle = throttle, EngineOn = engineOn };
     }
 
     public static bool AnyActiveEngineFed(Vehicle vehicle)

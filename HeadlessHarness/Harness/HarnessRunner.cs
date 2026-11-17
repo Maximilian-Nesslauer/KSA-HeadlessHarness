@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using HeadlessHarness.Core;
 using KSA;
+using KSA.Kfs;
 
 namespace HeadlessHarness.Harness;
 
@@ -23,7 +25,11 @@ namespace HeadlessHarness.Harness;
 // pass - it usually means the consumer references a renamed/moved game type, which is exactly the
 // drift the harness exists to catch. Only a discovered test returning non-zero (or throwing) counts
 // as a test failure.
-internal static class HarnessRunner
+//
+// Each test runs under the watchdog with its own budget, and after it the runner puts back what the
+// test may have left behind (CleanUpAfterTest), so a test cannot change the start state of the next.
+// HarnessResults records every test for the results and JUnit files.
+internal static partial class HarnessRunner
 {
     // Comma-separated list of test names to run; unset runs every test that is not opt-in. A filter
     // entry that matches no discovered test is an infrastructure failure, as is a filter that names
@@ -32,13 +38,21 @@ internal static class HarnessRunner
 
     public readonly record struct RunResult(int TestFailures, int InfrastructureFailures);
 
+    // The per-test budget of a test that names none (IHarnessTest.TimeoutSeconds null), from
+    // KSA_HEADLESS_TEST_TIMEOUT. HarnessMain parses it before the bring-up.
+    internal static double? DefaultTestTimeoutSeconds { get; set; }
+
+    // The globals a test may change and the runner puts back after it, as they were before the
+    // first test.
+    private sealed record RunBaseline(double SimulationSpeed, bool KfsEnabled);
+
     public static RunResult RunDiscovered(HeadlessSession session)
     {
-        int infrastructureFailures = LoadConsumerAssemblies();
+        int runInfrastructureFailures = LoadConsumerAssemblies();
 
-        List<IHarnessTest> tests = Discover(ref infrastructureFailures);
+        List<IHarnessTest> tests = Discover(ref runInfrastructureFailures);
         HashSet<string>? wanted = ParseTestFilter();
-        infrastructureFailures += ApplyTestFilter(tests, wanted);
+        runInfrastructureFailures += ApplyTestFilter(tests, wanted);
         // A filter is the only way to run an opt-in test, so a filtered run has already kept exactly
         // what was named and nothing is left to skip.
         if (wanted == null)
@@ -46,47 +60,183 @@ internal static class HarnessRunner
         if (tests.Count == 0)
         {
             HarnessLog.Line("[harness] no tests left to run.");
-            return new RunResult(0, infrastructureFailures);
+            HarnessResults.RunInfrastructureFailures = runInfrastructureFailures;
+            return new RunResult(0, runInfrastructureFailures);
         }
 
         HarnessLog.Line($"[harness] running {tests.Count} discovered test(s): {string.Join(", ", tests.Select(t => t.Name))}");
+        RunBaseline baseline = new(Universe.SimulationSpeed, KfsPrototype.Enabled);
+        HeadlessSession.CaptureRunRules();
         int testFailures = 0;
+        int testInfrastructureFailures = 0;
         foreach (IHarnessTest test in tests)
         {
-            // Sim seconds is read as the delta of the universe's sim clock across the test: every
-            // SimDriver.Step advances Universe.GetElapsedTime by its dt, so a stepping test reports
-            // its flown time and a non-stepping test reports 0, with no IHarnessTest surface.
-            UniverseTime simBefore = Universe.GetElapsedTime();
-            long startTicks = Stopwatch.GetTimestamp();
-            string outcome;
-            try
-            {
-                bool pass = test.Run(session) == 0;
-                outcome = pass ? "PASS" : "FAIL";
-                if (!pass)
-                    testFailures++;
-            }
-            catch (Exception e) when (IsGameApiDrift(e))
-            {
-                // A renamed or removed game member surfaces here, not at Discover's GetTypes call: the
-                // type loaded, but .NET resolves member references when the calling method JITs, so a
-                // game API rename throws inside test.Run. That is exactly the drift the harness exists
-                // to catch, so it is an infrastructure failure (results untrustworthy), not a test bug.
-                HarnessLog.Line($"[{test.Name}] INFRA FAIL: game API drift:\n{e}");
-                infrastructureFailures++;
-                outcome = "INFRA FAIL";
-            }
-            catch (Exception e)
-            {
-                HarnessLog.Line($"[{test.Name}] FAIL: exception:\n{e}");
+            string outcome = RunOne(session, test, baseline, ref runInfrastructureFailures);
+            if (outcome == HarnessResults.OutcomeFail)
                 testFailures++;
-                outcome = "FAIL";
-            }
-            double wallMs = Stopwatch.GetElapsedTime(startTicks).TotalMilliseconds;
-            double simSeconds = (Universe.GetElapsedTime() - simBefore).Seconds();
-            HarnessLog.Line($"[harness] {test.Name}: {outcome} in {wallMs:F0}ms wall, {simSeconds:F1}s sim");
+            else if (outcome == HarnessResults.OutcomeInfra)
+                testInfrastructureFailures++;
         }
-        return new RunResult(testFailures, infrastructureFailures);
+
+        runInfrastructureFailures += HarnessMods.UnloadAll();
+        IReadOnlyList<string> unread = TestSupport.UnreadParams();
+        if (unread.Count > 0)
+            HarnessLog.Line($"[harness] WARNING: {TestSupport.ParamsEnvVar} names {string.Join(", ", unread)}, which no test read " +
+                            "(a typo, or the test that reads it did not run).");
+        HarnessResults.RunInfrastructureFailures = runInfrastructureFailures;
+        return new RunResult(testFailures, runInfrastructureFailures + testInfrastructureFailures);
+    }
+
+    // Returns the outcome as the results file records it: pass, fail, skip or infra.
+    private static string RunOne(HeadlessSession session, IHarnessTest test, RunBaseline baseline, ref int runInfrastructureFailures)
+    {
+        HashSet<string> vehiclesBefore = TestSupport.CollectVehicleIds(session.System);
+        // Sim seconds is read as the delta of the universe's sim clock across the test: every
+        // SimDriver.Step advances Universe.GetElapsedTime by its dt, so a stepping test reports
+        // its flown time and a non-stepping test reports 0, with no IHarnessTest surface.
+        UniverseTime simBefore = Universe.GetElapsedTime();
+        (double? budget, string budgetSource) = TestBudget(test);
+        HarnessWatchdog.EnterPhase($"test {test.Name}", budget, budgetSource, () =>
+        {
+            HarnessResults.BeginTest(test.Name, test.GetType().Assembly.GetName().Name ?? "unknown",
+                simBefore.Seconds(), simBefore.Nanoseconds.ToString(CultureInfo.InvariantCulture));
+            HarnessRun.CurrentTest = test.Name;
+        });
+        string budgetText = budget is double b ? $"budget {b:0.###} s from {budgetSource}" : "no time budget";
+        HarnessLog.Line($"[harness] start {test.Name} (sim epoch {simBefore.Seconds():F3} s, {budgetText})");
+
+        long startTicks = Stopwatch.GetTimestamp();
+        string outcome;
+        string? detail = null;
+        try
+        {
+            int code = test.Run(session);
+            outcome = code == 0 ? HarnessResults.OutcomePass : HarnessResults.OutcomeFail;
+            if (code != 0)
+                detail = $"returned {code}";
+        }
+        catch (Exception e) when (IsGameApiDrift(e))
+        {
+            // A renamed or removed game member surfaces here, not at Discover's GetTypes call: the
+            // type loaded, but .NET resolves member references when the calling method JITs, so a
+            // game API rename throws inside test.Run. That is exactly the drift the harness exists
+            // to catch, so it is an infrastructure failure (results untrustworthy), not a test bug.
+            HarnessLog.Line($"[{test.Name}] INFRA FAIL: game API drift:\n{e}");
+            outcome = HarnessResults.OutcomeInfra;
+            detail = $"game API drift: {e.GetType().Name}: {e.Message}";
+        }
+        catch (Exception e)
+        {
+            HarnessLog.Line($"[{test.Name}] FAIL: exception:\n{e}");
+            outcome = HarnessResults.OutcomeFail;
+            detail = $"exception: {e.GetType().Name}: {e.Message}";
+        }
+        double wallMs = Stopwatch.GetElapsedTime(startTicks).TotalMilliseconds;
+        double simSeconds = (Universe.GetElapsedTime() - simBefore).Seconds();
+
+        HarnessWatchdog.EnterPhase($"cleanup after {test.Name}", budget, budgetSource);
+        runInfrastructureFailures += CleanUpAfterTest(test.Name, vehiclesBefore, baseline);
+        HarnessRun.CurrentTest = null;
+        HarnessWatchdog.ExitPhase($"between tests, after {test.Name}");
+
+        HarnessResults.TestRecord? record = HarnessResults.EndTest(outcome, wallMs, simSeconds, detail);
+        string final = record?.Outcome ?? outcome;
+        if (record != null && outcome == HarnessResults.OutcomePass && final == HarnessResults.OutcomeFail)
+            HarnessLog.Line($"[harness] {test.Name} returned 0 but recorded {record.FailedChecks} failed check(s); counted as a failure.");
+        string label = final == HarnessResults.OutcomeInfra ? "INFRA FAIL" : final.ToUpperInvariant();
+        HarnessLog.Line($"[harness] {test.Name}: {label} in {wallMs:F0}ms wall, {simSeconds:F1}s sim");
+        return final;
+    }
+
+    // A positive IHarnessTest.TimeoutSeconds is the test's own budget, zero or less means no budget
+    // for this test, and null takes the run default.
+    private static (double? Seconds, string Source) TestBudget(IHarnessTest test)
+    {
+        int? own = test.TimeoutSeconds;
+        if (own is int seconds)
+            return seconds > 0 ? (seconds, $"{test.GetType().Name}.TimeoutSeconds") : (null, string.Empty);
+        return DefaultTestTimeoutSeconds is double d ? (d, HarnessRun.TestTimeoutEnvVar) : (null, string.Empty);
+    }
+
+    // Puts back what a test may leave behind, so the next test starts from the same state: vehicles
+    // it spawned and did not despawn (each logged as a LEAK), auto warp and the simulation speed, the
+    // run's game rules, PhysicsBubble._forceOffRails, the kFS switch, and the alert list. A loss of
+    // control calls Universe.SetSimulationSpeed(1.0), and every alert lands in TimedAlert's static
+    // list, which only the UI drains (TimedAlert.DrawList). Returns the number of cleanup steps that
+    // threw, each an infrastructure failure, because the tests after it no longer start clean.
+    private static int CleanUpAfterTest(string name, HashSet<string> vehiclesBefore, RunBaseline baseline)
+    {
+        int failures = 0;
+        failures += Attempt(name, "discard pending inputs", TestSupport.DiscardPendingInputs);
+        CelestialSystem? system = Universe.CurrentSystem;
+        if (system != null)
+        {
+            List<Vehicle> leaked = new();
+            for (int i = 0; i < system.Count; i++)
+            {
+                if (system.GetIndex(i) is Vehicle v && !vehiclesBefore.Contains(v.Id))
+                    leaked.Add(v);
+            }
+            foreach (Vehicle v in leaked)
+            {
+                HarnessLog.Line($"[harness] LEAK: test '{name}' left vehicle '{v.Id}' behind; despawning it.");
+                HarnessResults.AddLeak(v.Id);
+                failures += Attempt(name, $"despawn leaked vehicle '{v.Id}'", () => VehicleSpawner.Despawn(v));
+            }
+        }
+
+        failures += Attempt(name, "reset the simulation speed", () =>
+        {
+            if (Universe.IsAutoWarpActive)
+            {
+                HarnessLog.Line($"[harness] test '{name}' left auto warp active; stopping it.");
+                Universe.AutoWarpStop(resetSimulationSpeed: false);
+            }
+            if (Universe.SimulationSpeed != baseline.SimulationSpeed)
+            {
+                HarnessLog.Line($"[harness] test '{name}' left the simulation speed at {Universe.SimulationSpeed:G6}; " +
+                                $"putting back {baseline.SimulationSpeed:G6}.");
+                Universe.SetSimulationSpeed(baseline.SimulationSpeed, alert: false);
+            }
+        });
+        failures += Attempt(name, "restore the game rules", () => HeadlessSession.RestoreRunRules($"test {name}"));
+        failures += Attempt(name, "reset PhysicsBubble._forceOffRails", () =>
+        {
+            if (PhysicsBubble._forceOffRails)
+            {
+                HarnessLog.Line($"[harness] test '{name}' left PhysicsBubble._forceOffRails on; turning it off.");
+                PhysicsBubble._forceOffRails = false;
+            }
+        });
+        failures += Attempt(name, "restore the kFS switch", () =>
+        {
+            if (KfsPrototype.Enabled != baseline.KfsEnabled)
+            {
+                HarnessLog.Line($"[harness] test '{name}' left KfsPrototype.Enabled {(KfsPrototype.Enabled ? "on" : "off")}; putting it back.");
+                KfsPrototype.Enabled = baseline.KfsEnabled;
+            }
+        });
+        failures += Attempt(name, "clear the alerts", TimedAlert.ClearAll);
+        failures += Attempt(name, "discard cleanup inputs", TestSupport.DiscardPendingInputs);
+
+        IReadOnlyList<string> mods = HarnessMods.Describe();
+        if (mods.Count > 0)
+            HarnessLog.Line($"[harness] mods still loaded after '{name}': {string.Join(", ", mods)}.");
+        return failures;
+    }
+
+    private static int Attempt(string test, string step, Action action)
+    {
+        try
+        {
+            action();
+            return 0;
+        }
+        catch (Exception e)
+        {
+            HarnessLog.Line($"[harness] INFRA FAIL: could not {step} after test '{test}':\n{e}");
+            return 1;
+        }
     }
 
     // Member-resolution drift can arrive wrapped, e.g. a TypeInitializationException around a
@@ -301,6 +451,7 @@ internal static class HarnessRunner
             skipped.Add(test.Name);
             return true;
         });
+        HarnessResults.AddOptInSkipped(skipped);
         if (skipped.Count > 0)
             HarnessLog.Line($"[harness] skipping {skipped.Count} opt-in test(s): {string.Join(", ", skipped)} " +
                             $"(name one in {TestFilterEnvVar} to run it).");

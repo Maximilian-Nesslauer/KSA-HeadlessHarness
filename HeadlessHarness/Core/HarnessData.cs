@@ -45,6 +45,34 @@ public sealed class HarnessData
         return new HarnessData(path);
     }
 
+    // A free-form report file <run-log-basename>-<tag>.<extension> next to the run log, created empty
+    // (truncating any leftover), for output that is not a table: a text report, a JSON dump, an OBJ
+    // mesh. Write it with AppendLine. The tags "results" and "junit" name the run's own result files
+    // and are refused.
+    public static HarnessData CreateText(string tag, string extension)
+    {
+        string safeTag = string.Join("_", tag.Split(Path.GetInvalidFileNameChars()));
+        if (safeTag is "results" or "junit")
+            throw new ArgumentException($"The tag '{tag}' is reserved for the run's result files.", nameof(tag));
+        string safeExtension = string.Join("_", extension.TrimStart('.').Split(Path.GetInvalidFileNameChars()));
+        if (safeExtension.Length == 0)
+            throw new ArgumentException("The extension is empty.", nameof(extension));
+        string dir = Path.GetDirectoryName(HarnessLog.FilePath) ?? HarnessLog.DataDirectory;
+        string baseName = Path.GetFileNameWithoutExtension(HarnessLog.FilePath);
+        string path = Path.Combine(dir, $"{baseName}-{safeTag}.{safeExtension}");
+        try
+        {
+            Directory.CreateDirectory(dir);
+            File.WriteAllText(path, string.Empty);
+            HarnessLog.Line($"[harness] report file: {path}");
+        }
+        catch (Exception e)
+        {
+            HarnessLog.Line($"[harness] data: could not create report file '{path}': {e.Message}");
+        }
+        return new HarnessData(path);
+    }
+
     // Append one row; each cell is invariant-culture formatted and CSV-escaped (AppendLine does neither).
     public void AppendRow(params object?[] cells)
     {

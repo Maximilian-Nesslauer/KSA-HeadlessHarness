@@ -25,7 +25,7 @@ namespace HeadlessHarness.Harness;
 // One-shot per process: the game globals initialized here are never torn down, a second BringUp is
 // not supported, and the patches stay installed until the process exits (which the harness does
 // right after the suite).
-public sealed class HeadlessSession
+public sealed partial class HeadlessSession
 {
     private const string HarmonyId = "com.maxi.headlessharness.session";
 
@@ -143,7 +143,6 @@ public sealed class HeadlessSession
 
         HarnessLog.Line($"[bringup] load system '{loaded.Id}' ({(systemId != null ? "named" : "default: first listed system")})");
         Universe.LoadSystem(loaded.Id);
-        ApplyRules("system load");
 
         IsBroughtUp = true;
         HarnessLog.Line($"[bringup] complete, system='{Universe.CurrentSystem?.Id}'");
@@ -194,9 +193,20 @@ public sealed class HeadlessSession
             rules.Radiation = request.Radiation;
             rules.LifeSupport = request.LifeSupport;
         }
+        else
+        {
+            rules.Radiation = GameSettings.Current.System.StartRadiation;
+            rules.LifeSupport = GameSettings.Current.System.StartLifeSupport;
+        }
         HarnessLog.Line($"[bringup] game rules after {after}: radiation={(rules.Radiation ? "on" : "off")}, " +
                         $"life support={(rules.LifeSupport ? "on" : "off")} " +
                         $"({(request.KeepSettings ? "kept as loaded" : $"set by {RulesEnvVar}")}).");
+    }
+
+    private static bool OnLoadedHeadless()
+    {
+        ApplyRules("system load");
+        return false;
     }
 
     private sealed record RulesRequest(bool KeepSettings, bool Radiation, bool LifeSupport)
@@ -283,9 +293,28 @@ public sealed class HeadlessSession
         return typed;
     }
 
+    // Each feature file of this partial class installs its own patches through one of these.
+    static partial void InstallControlPatches(Harmony harmony);
+
+    static partial void InstallPropulsionPatches(Harmony harmony);
+
+    static partial void InstallSpawnPatches(Harmony harmony);
+
+    static partial void InstallRunnerPatches(Harmony harmony);
+
+    static partial void InstallContentPatches(Harmony harmony);
+
+    static partial void InstallSteppingPatches(Harmony harmony);
+
     private void InstallHeadlessPatches()
     {
         Harmony harmony = new Harmony(HarmonyId);
+        InstallControlPatches(harmony);
+        InstallPropulsionPatches(harmony);
+        InstallSpawnPatches(harmony);
+        InstallRunnerPatches(harmony);
+        InstallContentPatches(harmony);
+        InstallSteppingPatches(harmony);
 
         // Vehicle.PrepareWorker reads ImGui.GetIO().WantCaptureKeyboard for the
         // controlled vehicle while this is true, and headless there is no ImGui
@@ -300,7 +329,7 @@ public sealed class HeadlessSession
         // OnLoaded; LoadSystem still sets CurrentSystem/WorldSun before calling it.
         harmony.Patch(
             AccessTools.Method(typeof(Universe), nameof(Universe.OnLoaded)),
-            prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(Skip)));
+            prefix: new HarmonyMethod(typeof(HeadlessSession), nameof(OnLoadedHeadless)));
 
         // The loading screen is a GPU/ImGui object built only by the Loading ctor (needs a Renderer).
         // It needs no stand-in: Loading.Task, Loading.State, Loading.PopTask and the LoadTask ctor and

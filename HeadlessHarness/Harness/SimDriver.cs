@@ -13,7 +13,7 @@ namespace HeadlessHarness.Harness;
 // PrepareFrame also waits on JobSystems.NearestOrbitAndPerformanceWorker and on the renderer's
 // previous present. Neither is mirrored, because only Program queues UI and editor jobs on that
 // worker and headless there is nothing to present.
-public sealed class SimDriver
+public sealed partial class SimDriver
 {
     // Internal in the game, so it is bound by name. HarnessMain.ValidateSession creates a driver right
     // after bring-up, which makes a rename fail the run before any test starts.
@@ -43,6 +43,7 @@ public sealed class SimDriver
 
     public void Step(double dt)
     {
+        BeforeStep(ref dt);
         SimStep step = new SimStep
         {
             PreviousTime = Elapsed,
@@ -88,7 +89,6 @@ public sealed class SimDriver
         // pool's own default keeps workers hot between back-to-back steps.
         Universe.ExecuteNextVehicleSolvers(dt, step);
         JobSystems.VehicleSolver.Wait();
-        Universe.ApplyVehicleSolvers();
 
         if (StepOrbits)
         {
@@ -96,6 +96,9 @@ public sealed class SimDriver
             JobSystems.OrbitSolvers.Wait();
             Universe.ApplyOrbitSolvers();
         }
+
+        // ApplyVehicleSolvers refreshes celestial frame caches, so it must see the new orbit state.
+        Universe.ApplyVehicleSolvers();
 
         // Last, so canopies are posed from the vehicle state this step just produced. PrepareFrame
         // puts cloth first for the same reason: it kicks off the previous frame's applied state.
@@ -111,7 +114,13 @@ public sealed class SimDriver
         FlushDirtyPartTrees();
 
         Elapsed = step.NextTime;
+        AfterStep(dt);
     }
+
+    // Extension points for the feature files of this partial class. BeforeStep may shorten dt.
+    partial void BeforeStep(ref double dt);
+
+    partial void AfterStep(double dt);
 
     public void Step(double dt, int count)
     {
