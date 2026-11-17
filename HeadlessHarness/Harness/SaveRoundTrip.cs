@@ -17,14 +17,13 @@ namespace HeadlessHarness.Harness;
 // quaternion from them on load, so an angle of pi can come back as -pi. The comparison counts such a
 // full turn as equal and reports how many it saw.
 //
-// The position and velocity of KinematicState are not compared. The game saves them in the frame of
-// the vehicle's physics bubble, whose origin the save does not hold, and a load rebuilds them from
-// the AnalyticState orbit (Vehicle.DeserializeSave calls UpdateVehicleConfiguration, which reaches
-// PhysicsStates.UpdateFromAnalytic through Vehicle.UpdateAfterPartTreeModification). The orbit state
-// they come from is compared.
+// The bubble-frame position, velocity, orientation and angular velocity are rebuilt from the saved
+// AnalyticState by PhysicsStates.UpdateFromAnalytic and SetBodyRates during Vehicle.DeserializeSave.
+// Its rounded inertial state remains compared; the redundant KinematicState fields are excluded
+// because recomputing them can change their last saved decimal without losing persisted state.
 public static class SaveRoundTrip
 {
-    // Equal: no difference besides full-turn angles. FullTurnAngles: how many angle attributes
+    // Equal: no difference in the compared state. FullTurnAngles: how many angle attributes
     // differed by a full turn. Module: the first part module whose save data differs, when the first
     // difference lies in one.
     public sealed record Result(bool Equal, string? FirstDifference, string? Module, int FullTurnAngles, string BeforeXml, string AfterXml);
@@ -38,7 +37,7 @@ public static class SaveRoundTrip
 
     private static readonly HashSet<string> RebuiltKinematics = new HashSet<string>(StringComparer.Ordinal)
     {
-        "PositionPhys", "VelocityPhys",
+        "PositionPhys", "VelocityPhys", "Body2Phys", "BodyRates",
     };
 
     // Serializes the vehicle (Vehicle.SerializeSave), writes the record to XML and reads it back,

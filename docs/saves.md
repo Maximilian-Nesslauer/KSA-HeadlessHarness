@@ -18,7 +18,7 @@ The result (`SaveRoundTrip.Result`) holds `Equal`, `FirstDifference` (an element
 Two differences are part of how the game saves and are not counted:
 
 - Orientations are saved as XYZ angles in radians (`TransformReference.RotationValue`, and `Body2Cce` and `Body2Phys` of the vehicle record, through `doubleQuat.ToXyzRadians`) and turned back into a quaternion on load, so an angle of pi can come back as -pi. An angle attribute of a `Rotation`, `Body2Cce` or `Body2Phys` element that differs by a full turn counts as equal; `FullTurnAngles` says how many there were.
-- `KinematicState/PositionPhys` and `VelocityPhys` are saved in the frame of the vehicle's physics bubble, whose origin the save does not hold. A load rebuilds them from the `AnalyticState` orbit (`Vehicle.DeserializeSave` calls `UpdateVehicleConfiguration`, which reaches `PhysicsStates.UpdateFromAnalytic`), so they are left out of the comparison. The orbit state they come from is compared.
+- The bubble-frame `KinematicState` fields `PositionPhys`, `VelocityPhys`, `Body2Phys` and `BodyRates` are rebuilt from the saved inertial state during `Vehicle.DeserializeSave` (`PhysicsStates.UpdateFromAnalytic` and `SetBodyRates`). The save does not hold the bubble origin, and the inertial orientation is rounded, so these derived fields can differ after loading. They are left out; the authoritative `AnalyticState` position, velocity, orientation and body rates remain compared, as do the part and module states.
 
 `SaveRoundTrip.FirstDifference(beforeXml, afterXml)` is public, so a test can compare any two save records with the same rules. `SaveRoundTrip.LogXmlPair` is internal.
 

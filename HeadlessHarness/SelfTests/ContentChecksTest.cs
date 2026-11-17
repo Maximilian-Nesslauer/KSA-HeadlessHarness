@@ -29,17 +29,19 @@ public sealed class ContentChecksTest : IHarnessTest
         HashSet<ContentError> headless = ContentCheck.HeadlessOnly(errors);
         bool classified = headless.SetEquals(new[] { shader, material, consumer });
 
-        const string before = "<VehicleData><AnalyticState><Body2Cce X='3.1416'/><PositionCci X='1'/></AnalyticState>"
-            + "<KinematicState><PositionPhys X='4'/><VelocityPhys X='5'/></KinematicState>"
+        const string before = "<VehicleData><AnalyticState><Body2Cce X='3.1416'/><PositionCci X='1'/><BodyRates X='0.25'/></AnalyticState>"
+            + "<KinematicState><PositionPhys X='4'/><VelocityPhys X='5'/><Body2Phys X='2.4'/><BodyRates X='0.1234'/></KinematicState>"
             + "<Components><TankState Mass='12.5'/></Components></VehicleData>";
         string equivalent = before.Replace("3.1416", "-3.1416").Replace("X='4'", "X='40'").Replace("X='5'", "X='50'");
+        equivalent = equivalent.Replace("X='2.4'", "X='2.4001'").Replace("X='0.1234'", "X='0.1235'");
         bool fullTurn = SaveRoundTrip.FirstDifference(before, equivalent, out int turns) == null && turns == 1;
         string? difference = SaveRoundTrip.FirstDifference(before, before.Replace("12.5", "12.25"));
         bool named = difference != null && difference.Contains("/Components[0]/TankState[0]@Mass", StringComparison.Ordinal);
         bool orbit = SaveRoundTrip.FirstDifference(before, before.Replace("X='1'", "X='2'")) != null;
         bool angle = SaveRoundTrip.FirstDifference(before, before.Replace("3.1416", "3.1415")) != null;
+        bool rates = SaveRoundTrip.FirstDifference(before, before.Replace("X='0.25'", "X='0.3'")) != null;
         bool structure = SaveRoundTrip.FirstDifference(before, before.Replace("<TankState Mass='12.5'/>", "")) != null;
-        bool ok = classified && fullTurn && named && orbit && angle && structure;
+        bool ok = classified && fullTurn && named && orbit && angle && rates && structure;
         HarnessLog.Line($"[{Name}] typed shader dependencies={classified}, full-turn angles={fullTurn}, "
             + $"module path={named}, orbit changes={orbit}, angle changes={angle}, missing modules={structure} => {TestSupport.Verdict(ok)}");
         return ok ? 0 : 1;

@@ -61,6 +61,11 @@ public sealed class EvaTest : IHarnessTest
             ok &= outOk;
 
             SaveRoundTrip.Result savedEva = SaveRoundTrip.Vehicle(eva);
+            if (!savedEva.Equal)
+            {
+                SaveRoundTrip.LogXmlPair("eva", savedEva);
+                HarnessLog.Line($"[eva] save difference: {savedEva.FirstDifference}");
+            }
             bool evaRecord = savedEva.Equal && !string.IsNullOrEmpty(Fingerprint.ReadSaveXml(savedEva.BeforeXml).Character);
             ok &= evaRecord;
             HarnessLog.Line($"[eva] EVA save round trip retains its character => {TestSupport.Verdict(evaRecord)}");
