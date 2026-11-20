@@ -133,7 +133,7 @@ Targets **.NET 10**. `dotnet build`, or open `HeadlessHarness.slnx` in Visual St
 
 Game DLLs are provided at runtime by StarMap's load context, so every game reference is `Private=false` (not copied into the output). The built `HeadlessHarness.dll` therefore contains no game code. Building from source needs a local KSA install; the `.csproj` HintPaths point at `refs/game` in this tree, so adjust them to your own install.
 
-The `CopyToMods` target deploys the DLL and `mod.toml` to `Documents\My Games\Kitten Space Agency\mods\HeadlessHarness\` so StarMap discovers it. For another profile folder, pass `-p:ModDeployDir=<folder>\mods\HeadlessHarness\` to the build.
+The `CopyToMods` target deploys the DLL and `mod.toml` so StarMap discovers it: into `<folder>\mods\HeadlessHarness\` when the build gets `-p:ModDeployDir=<folder>\mods\HeadlessHarness\` (as `run-headless.ps1 -Build` does), and into `Documents\My Games\Kitten Space Agency\mods\HeadlessHarness\` for a build inside Visual Studio or with `-p:DeployToMods=true`. Any other command-line build only compiles.
 
 The example consumer builds separately (`dotnet build examples/HarnessConsumerExample`) and expects the harness to be built first, since it references the harness build output the way a real consumer references the deployed DLL.
 
