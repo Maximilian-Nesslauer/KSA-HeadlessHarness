@@ -131,7 +131,7 @@ public sealed class SpawnSurfaceTest : IHarnessTest
         double heightAboveTerrain = p1.Length() - terrain;
         bool ok = alive && drift < DriftTol && Math.Abs(carried - expectedCarried) < 0.01 * expectedCarried + DriftTol;
         HarnessLog.Line($"[spawn-surface] {label}: settled {p1.Length() - startRadius:+0.000;-0.000} m from the spawn radius, " +
-                        $"drift {drift:F4} m over {HoldSeconds:F0} s (carried {carried:F1} m by the rotation, expect about {expectedCarried:F1} m), centre of mass {heightAboveTerrain:F3} m above the plain terrain, " +
+                        $"drift {drift:F4} m over {HoldSeconds:F0} s (carried {carried:F1} m by the rotation, expect about {expectedCarried:F1} m), centre of mass {heightAboveTerrain:F3} m above the terrain, " +
                         $"situation {(alive ? vehicle.Situation.ToString() : "disposed")} => {TestSupport.Verdict(ok)}");
         VehicleSpawner.Despawn(vehicle);
         return ok;

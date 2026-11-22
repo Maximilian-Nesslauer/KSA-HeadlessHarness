@@ -75,6 +75,7 @@ public sealed partial class HeadlessSession
 
         // Parsed before the long content load, so a typo fails at once.
         _rulesRequest = RulesRequest.Parse(Environment.GetEnvironmentVariable(RulesEnvVar));
+        HeadlessTerrain.ReadSwitch();
 
         InstallHeadlessPatches();
 
@@ -203,9 +204,11 @@ public sealed partial class HeadlessSession
                         $"({(request.KeepSettings ? "kept as loaded" : $"set by {RulesEnvVar}")}).");
     }
 
+    // The bodies exist from here on, so this is also where they get their terrain modifier data.
     private static bool OnLoadedHeadless()
     {
         ApplyRules("system load");
+        HeadlessTerrain.OnSystemLoaded(Universe.CurrentSystem);
         return false;
     }
 
@@ -315,6 +318,7 @@ public sealed partial class HeadlessSession
         InstallRunnerPatches(harmony);
         InstallContentPatches(harmony);
         InstallSteppingPatches(harmony);
+        HeadlessTerrain.InstallPatches(harmony);
 
         // Vehicle.PrepareWorker reads ImGui.GetIO().WantCaptureKeyboard for the
         // controlled vehicle while this is true, and headless there is no ImGui

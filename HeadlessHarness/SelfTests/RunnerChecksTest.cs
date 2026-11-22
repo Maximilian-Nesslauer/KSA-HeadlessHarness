@@ -65,6 +65,24 @@ public sealed class RunnerChecksTest : IHarnessTest
         t.Check("a pass with a skip returns 0 and reads PASS", passOnly.Finish() == 0 && passLines[^1].EndsWith("=> PASS", StringComparison.Ordinal),
             Join(passLines));
 
+        List<string> infraLines = new();
+        HarnessChecks infra = new("infra", infraLines.Add, feedsResults: false);
+        infra.Check("x", true);
+        infra.Infra("the ground is not the one the test needs");
+        int infraCode = infra.Finish();
+        t.Check("Infra of a context with its own sink leaves the run's results alone", HarnessResults.CurrentInfrastructureFailures == 0,
+            $"{HarnessResults.CurrentInfrastructureFailures}");
+        t.Check("Finish returns 2 after Infra, which is not a check", infraCode == HarnessExit.InfrastructureFailure
+            && infra.CheckCount == 1 && infra.FailureCount == 0 && infra.InfrastructureCount == 1 && !infra.Passed, $"returned {infraCode}");
+        t.Check("infra line format", infraLines.Count == 3 && infraLines[1] == "[infra] INFRA FAIL: the ground is not the one the test needs"
+            && infraLines[2] == "[infra] 1 check(s), 0 failed, 0 skipped, 1 infrastructure failure(s) => INFRA FAIL", Join(infraLines));
+
+        t.Check("a return of 0 is a pass", HarnessRunner.OutcomeOfReturn(0) == HarnessResults.OutcomePass);
+        t.Check("a return of 1 or -1 is a failure", HarnessRunner.OutcomeOfReturn(1) == HarnessResults.OutcomeFail
+            && HarnessRunner.OutcomeOfReturn(-1) == HarnessResults.OutcomeFail);
+        t.Check("a return of 2 is an infrastructure failure", HarnessRunner.OutcomeOfReturn(HarnessExit.InfrastructureFailure) == HarnessResults.OutcomeInfra);
+        t.Check("a return of 3 is a failure, not a timeout", HarnessRunner.OutcomeOfReturn(3) == HarnessResults.OutcomeFail);
+
         t.Check("Near: NaN never matches", !HarnessChecks.Near(double.NaN, double.NaN, 1.0) && !HarnessChecks.NearRel(double.NaN, 1.0, 1.0));
         t.Check("Near: an infinity matches only itself", HarnessChecks.Near(double.PositiveInfinity, double.PositiveInfinity, 0.0)
             && !HarnessChecks.Near(1.0, double.PositiveInfinity, 1e300) && !HarnessChecks.Near(double.NegativeInfinity, double.PositiveInfinity, 0.0));
@@ -77,6 +95,8 @@ public sealed class RunnerChecksTest : IHarnessTest
         t.Check("outcome: checks with a skip", HarnessResults.DecideOutcome(true, 2, 0, 1) == HarnessResults.OutcomePass);
         t.Check("outcome: a failed check overrides a 0 return", HarnessResults.DecideOutcome(true, 1, 1, 0) == HarnessResults.OutcomeFail);
         t.Check("outcome: a non-zero return", HarnessResults.DecideOutcome(false, 0, 0, 1) == HarnessResults.OutcomeFail);
+        t.Check("outcome: a recorded infrastructure failure overrides a 0 return and a failed check",
+            HarnessResults.DecideOutcome(true, 1, 1, 0, infra: 1) == HarnessResults.OutcomeInfra);
 
         // Read before the Check that records it, so the expectation is this context's count so far.
         int expected = t.CheckCount;

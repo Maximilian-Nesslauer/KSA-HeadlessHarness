@@ -32,7 +32,9 @@ public sealed class HarnessChecks
 
     public int SkipCount { get; private set; }
 
-    public bool Passed => FailureCount == 0;
+    public int InfrastructureCount { get; private set; }
+
+    public bool Passed => FailureCount == 0 && InfrastructureCount == 0;
 
     // Returns the verdict so a caller can branch on it; the check is recorded either way.
     public bool Check(string label, bool pass, string? detail = null)
@@ -61,6 +63,18 @@ public sealed class HarnessChecks
         return false;
     }
 
+    // The environment cannot test what the test tests (a game state the test relies on is not there),
+    // so its checks would say nothing about the code under test. Not a check: Finish then returns
+    // HarnessExit.InfrastructureFailure, and the runner records the test as an infrastructure failure
+    // even when it returns 0.
+    public void Infra(string reason)
+    {
+        InfrastructureCount++;
+        if (_feedsResults)
+            HarnessResults.CountInfra();
+        _sink($"[{Name}] INFRA FAIL: {reason}");
+    }
+
     // Not an assertion: measured values, traces, capability dumps.
     public void Info(string message) => _sink($"[{Name}] {message}");
 
@@ -73,12 +87,16 @@ public sealed class HarnessChecks
         _sink($"[{Name}] SKIP: {reason}");
     }
 
-    // 0 when no check failed, 1 otherwise; the value IHarnessTest.Run returns.
+    // The value IHarnessTest.Run returns: 2 after Infra, else 1 when a check failed, else 0.
     public int Finish()
     {
-        _sink($"[{Name}] {CheckCount} check(s), {FailureCount} failed, {SkipCount} skipped => " +
-              $"{(Passed ? (CheckCount == 0 && SkipCount > 0 ? "SKIP" : "PASS") : "FAIL")}");
-        return Passed ? 0 : 1;
+        string verdict = InfrastructureCount > 0 ? "INFRA FAIL"
+            : !Passed ? "FAIL"
+            : CheckCount == 0 && SkipCount > 0 ? "SKIP" : "PASS";
+        string infra = InfrastructureCount > 0 ? $", {InfrastructureCount} infrastructure failure(s)" : "";
+        _sink($"[{Name}] {CheckCount} check(s), {FailureCount} failed, {SkipCount} skipped{infra} => {verdict}");
+        return InfrastructureCount > 0 ? HarnessExit.InfrastructureFailure
+            : FailureCount > 0 ? HarnessExit.TestFailure : HarnessExit.Pass;
     }
 
     // |actual - expected| <= absTol + relTol * |expected|. A non-finite value matches only itself,

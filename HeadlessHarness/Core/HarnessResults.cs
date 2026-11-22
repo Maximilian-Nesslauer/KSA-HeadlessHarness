@@ -34,6 +34,7 @@ internal static class HarnessResults
     private static int _skips;
     private static int _logSkips;
     private static int _logChecks;
+    private static int _infra;
 
     public static string? GameVersion { get; set; }
     public static string? HarnessVersion { get; set; }
@@ -43,6 +44,7 @@ internal static class HarnessResults
     public static string? RulesRequest { get; set; }
     public static bool? Radiation { get; set; }
     public static bool? LifeSupport { get; set; }
+    public static bool? TerrainModifiers { get; set; }
     public static string? Seed { get; set; }
     public static string? Params { get; set; }
     public static string? TestFilter { get; set; }
@@ -98,6 +100,7 @@ internal static class HarnessResults
             Interlocked.Exchange(ref _skips, 0);
             Interlocked.Exchange(ref _logSkips, 0);
             Interlocked.Exchange(ref _logChecks, 0);
+            Interlocked.Exchange(ref _infra, 0);
             _skipPrefix = $"[{name}] SKIP";
             _checkPrefix = $"[{name}] TEST ";
         }
@@ -118,6 +121,14 @@ internal static class HarnessResults
         Interlocked.Increment(ref _checks);
         if (!pass)
             Interlocked.Increment(ref _failedChecks);
+    }
+
+    public static int CurrentInfrastructureFailures => Volatile.Read(ref _infra);
+
+    public static void CountInfra()
+    {
+        if (_skipPrefix != null)
+            Interlocked.Increment(ref _infra);
     }
 
     public static void CountSkip()
@@ -163,14 +174,17 @@ internal static class HarnessResults
             record.Skips = Volatile.Read(ref _skips);
             record.LogSkips = Volatile.Read(ref _logSkips);
             record.LogChecks = Volatile.Read(ref _logChecks);
+            int infra = Volatile.Read(ref _infra);
             record.Outcome = outcome == OutcomePass
-                ? DecideOutcome(true, record.Checks + record.LogChecks, record.FailedChecks, record.Skips + record.LogSkips)
+                ? DecideOutcome(true, record.Checks + record.LogChecks, record.FailedChecks, record.Skips + record.LogSkips, infra)
                 : outcome;
             record.WallMs = wallMs;
             record.SimSeconds = simSeconds;
             record.Detail = detail;
             if (outcome == OutcomePass && record.Outcome == OutcomeFail)
                 record.Detail = $"returned 0 but recorded {record.FailedChecks} failed check(s)";
+            else if (outcome == OutcomePass && record.Outcome == OutcomeInfra)
+                record.Detail = $"returned 0 but recorded {infra} infrastructure failure(s)";
             _current = null;
             _skipPrefix = null;
             _checkPrefix = null;
@@ -178,8 +192,12 @@ internal static class HarnessResults
         }
     }
 
-    internal static string DecideOutcome(bool returnedPass, int checks, int failedChecks, int skips)
+    // A recorded infrastructure failure outweighs a failed check, because it says the checks could
+    // not test what they test.
+    internal static string DecideOutcome(bool returnedPass, int checks, int failedChecks, int skips, int infra = 0)
     {
+        if (returnedPass && infra > 0)
+            return OutcomeInfra;
         if (!returnedPass || failedChecks > 0)
             return OutcomeFail;
         if (checks == 0 && skips > 0)
@@ -272,6 +290,7 @@ internal static class HarnessResults
             WriteNullable(w, "radiation", Radiation);
             WriteNullable(w, "lifeSupport", LifeSupport);
             w.WriteEndObject();
+            WriteNullable(w, "terrainModifiers", TerrainModifiers);
             WriteNullable(w, "seed", Seed);
             WriteNullable(w, "params", Params);
             WriteNullable(w, "testFilter", TestFilter);
@@ -376,6 +395,7 @@ internal static class HarnessResults
             WriteProperty(x, "system", SystemId);
             WriteProperty(x, "profilePath", ProfilePath);
             WriteProperty(x, "rules", RulesRequest);
+            WriteProperty(x, "terrainModifiers", TerrainModifiers is bool terrain ? (terrain ? "true" : "false") : null);
             WriteProperty(x, "seed", Seed);
             WriteProperty(x, "params", Params);
             WriteProperty(x, "exitCode", exitCode.ToString(CultureInfo.InvariantCulture));
