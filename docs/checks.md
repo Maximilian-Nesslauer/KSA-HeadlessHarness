@@ -32,14 +32,18 @@ public int Run(HeadlessSession session)
 | `Fail(label, detail)` | records a failed check for a precondition the test could not meet |
 | `Info(message)` | logs `[name] message`; not a check |
 | `Skip(reason)` | counts a skip and logs `[name] SKIP: reason` |
-| `Finish()` | logs `[name] <n> check(s), <f> failed, <s> skipped => PASS/FAIL/SKIP` and returns 0 when no check failed, else 1 |
-| `CheckCount`, `FailureCount`, `SkipCount`, `Passed` | the counts so far |
+| `Infra(reason)` | the environment cannot test what the test tests (a game state it relies on is not there); logs `[name] INFRA FAIL: reason`, is not a check, and makes `Finish` return 2 |
+| `Finish()` | logs `[name] <n> check(s), <f> failed, <s> skipped => PASS/FAIL/SKIP` (with `, <i> infrastructure failure(s) => INFRA FAIL` after `Infra`) and returns 2 after `Infra`, else 1 when a check failed, else 0 |
+| `CheckCount`, `FailureCount`, `SkipCount`, `InfrastructureCount`, `Passed` | the counts so far; `Passed` is false after a failed check or `Infra` |
+
+The values a test returns are the constants of `HarnessExit`: `Pass` (0), `TestFailure` (1) and `InfrastructureFailure` (2).
 
 The checked values are logged with round-trip precision (`R`). A NaN never passes a tolerance check, and an infinity passes only against the same infinity.
 
 The counts of every context a test creates add up into that test's entry of the results file (`checks.total`, `checks.failed`, `checks.skipped`). From them the runner decides the outcome:
 
-- the test returned non-zero, or recorded a failed check: `fail` (a test that returns 0 after a failed check is a test bug, and the runner logs it),
+- the test returned 2: `infra`,
+- the test returned another non-zero value, or recorded a failed check: `fail` (a test that returns 0 after a failed check is a test bug, and the runner logs it),
 - the test returned 0, recorded no check and reported a skip: `skip`,
 - otherwise: `pass`.
 

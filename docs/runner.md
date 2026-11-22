@@ -12,7 +12,7 @@ How a harness run is driven: the run script, the test loop with its watchdog and
 4. cleans up (see below),
 5. logs `[harness] <name>: PASS|FAIL|SKIP|INFRA FAIL in <n>ms wall, <s>s sim` and closes the test's entry in the results.
 
-A test that returns 0 but recorded a failed check through `HarnessChecks` counts as a failure. A test that returns 0, recorded no check and reported a skip counts as skipped.
+A test that returns 0 but recorded a failed check through `HarnessChecks` counts as a failure. A test that returns 0, recorded no check and reported a skip counts as skipped. A test that returns 2 (`HarnessExit.InfrastructureFailure`, what `HarnessChecks.Finish` returns after `Infra`) counts as an infrastructure failure: it found the environment unfit to test what it tests, so the run exits with 2. Every other non-zero return is a failure.
 
 ### Cleanup after each test
 
@@ -21,6 +21,7 @@ What a test leaves behind is put back before the next test starts:
 - every vehicle that was not there before the test is despawned through `VehicleSpawner.Despawn`, each with a `[harness] LEAK: test '<name>' left vehicle '<id>' behind` line and an entry in the test's `leakedVehicles`,
 - an active auto warp is stopped (`Universe.AutoWarpStop`) and the simulation speed is set back to its value before the first test (`Universe.SetSimulationSpeed(speed, alert: false)`); a loss of control sets it to 1,
 - the run's game rules (`Universe.Rules`) are restored, also when a save load replaced the rules object,
+- the terrain modifier data is put back as the run has it (see [Spawning](spawn.md#terrain)): a body that held it at the system load and lost it gets it again, and in a bare terrain run a body a test gave it loses it again,
 - `PhysicsBubble._forceOffRails` is turned off,
 - the kFS switch `KfsPrototype.Enabled` is set back to its value before the first test,
 - the alert list is cleared (`TimedAlert.ClearAll`), which only the game UI would drain.
@@ -65,6 +66,7 @@ The JSON (schema 1):
 | `system` | the loaded system id |
 | `profilePath`, `instancePath` | the game profile folder (`Constants.DocumentsFolderPath`) and `STARMAP_INSTANCE_PATH` |
 | `rules` | `request` (`KSA_HEADLESS_RULES`), `radiation`, `lifeSupport` after the bring-up |
+| `terrainModifiers` | true when the bodies have their terrain modifiers, false with `KSA_HEADLESS_BARE_TERRAIN=1` |
 | `seed`, `params`, `testFilter` | `KSA_HEADLESS_SEED`, `KSA_HEADLESS_PARAMS`, `KSA_HEADLESS_TESTS` |
 | `totals` | test counts per outcome, plus `runInfrastructureFailures` outside any test |
 | `optInSkipped` | the opt-in tests a default run left out |

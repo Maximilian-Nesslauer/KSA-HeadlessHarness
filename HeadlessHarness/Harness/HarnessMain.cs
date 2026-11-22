@@ -16,7 +16,8 @@ namespace HeadlessHarness.Harness;
 //
 // Exit codes: 0 = all tests passed; 1 = at least one test failed; 2 = infrastructure failure
 // (bring-up broke, KSA_HEADLESS_SYSTEM named an unknown system, the session did not validate, a
-// consumer assembly failed to load, or the run mutex could not be acquired), meaning the test
+// consumer assembly failed to load, a test returned 2 because it found the environment unfit, or
+// the run mutex could not be acquired), meaning the test
 // results are not trustworthy; 3 = the watchdog ended a test or the run that outlived its budget.
 // Every run also writes <log basename>-results.json and <log basename>-junit.xml next to its log.
 //
@@ -27,9 +28,9 @@ namespace HeadlessHarness.Harness;
 // must not share a name or a scripted run would deadlock against its own game process.
 internal static partial class HarnessMain
 {
-    public const int ExitPass = 0;
-    public const int ExitTestFailure = 1;
-    public const int ExitInfrastructureFailure = 2;
+    public const int ExitPass = HarnessExit.Pass;
+    public const int ExitTestFailure = HarnessExit.TestFailure;
+    public const int ExitInfrastructureFailure = HarnessExit.InfrastructureFailure;
 
     private const string RunMutexName = @"Global\KSA-HeadlessHarness";
 
@@ -213,6 +214,7 @@ internal static partial class HarnessMain
         HarnessResults.SystemId = Universe.CurrentSystem?.Id;
         HarnessResults.Radiation = Universe.Rules.Radiation;
         HarnessResults.LifeSupport = Universe.Rules.LifeSupport;
+        HarnessResults.TerrainModifiers = HeadlessTerrain.Enabled;
 
         try
         {

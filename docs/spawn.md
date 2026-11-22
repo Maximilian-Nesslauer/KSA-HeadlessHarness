@@ -43,9 +43,24 @@ Built through `Orbit.CreateFromStateCci` from a state at periapsis. Altitudes ar
 
 `SpawnAtLocation` feeds the tree's mass properties and spawn bounds into `Vehicle.GetInitialKinematicStateForLocation`, as `VehicleLaunchMenu.LaunchVehicle` does. The vehicle stands with its body +X up, its bottom on the highest terrain under its footprint (on the deck of a launch pad when the point lies on one), and moves with the turning body. `headingDeg` turns it about the vertical: the compass direction of body +Z, clockwise from north (heading 0 is the game's orientation, body +Y east). `heightAboveTerrain` lifts it that many meters above the resting point, for a drop or a start above a collider. `ComputeSurfaceState` returns the orbit, attitude and body rates without spawning.
 
-Headless the terrain modifiers of a body are not set up, because `Astronomical.SetupModifierRenderData` needs a renderer, so the terrain is the plain heightmap without a site's flattening. The pad height itself still counts.
+The terrain under the vehicle is the one of a game with a renderer, site decals included (see [Terrain](#terrain)). The pad height itself counts on top.
 
 A landing or splashdown raises `GroundImpactEvent` or `WaterSplashEvent`. Their particle handlers are skipped headless (see Maintenance).
+
+## Terrain
+
+A game with a renderer evaluates the procedural terrain modifiers of each body (craters, noise, erosion, tiling detail, and the flat decals of the launch sites) on top of the heightmap. The game builds their data in `Astronomical.SetupModifierRenderData`, whose `ProceduralModifiersRenderData` constructor makes a GPU texture, so headless that data would never exist and every terrain height would be the bare heightmap. The bring-up therefore gives every body with a `TerrainReference` the CPU part of that data when the system loads (`HeadlessTerrain`), and `Celestial.GetTerrainHeightFromDirCcf` returns the heights of a game with a renderer: launch pads (`ConstraintSim.ResolveLaunchPads`), terrain colliders and landed spawns sit on the real ground. The bring-up log names each body it made the data for; a body whose terrain height throws with its modifiers keeps the bare heightmap, with a warning.
+
+`KSA_HEADLESS_BARE_TERRAIN=1` (`run-headless.ps1 -EnvVars "KSA_HEADLESS_BARE_TERRAIN=1"`) keeps the bare heightmap for the whole run, for a test that relies on it. `0`, `false`, blank or unset gives the modifiers; any other value fails the run at start.
+
+| Member | Effect |
+| --- | --- |
+| `HeadlessTerrain.Enabled` | true unless `KSA_HEADLESS_BARE_TERRAIN` keeps the bare heightmap |
+| `HeadlessTerrain.HasCpuModifiers(body)` | true when the body holds the CPU data of `HeadlessTerrain` |
+| `HeadlessTerrain.Install(body)` | gives a body without modifier data the CPU data and returns what it did; a body that already has data keeps it |
+| `HeadlessTerrain.Release(body)` | puts the null back on a body that holds the CPU data; returns false when it held none |
+
+A test may release or install the data to compare the two grounds; the runner puts the run's state back after each test and releases all of it at the end of the run.
 
 ## Vehicle saves
 
@@ -126,6 +141,7 @@ Both the EVA and the boarding hand the player's control to the new vehicle; the 
 | `spawn-orbits` | yes | Each orbit builder against the elements `Orbit` reports. |
 | `spawn-bundled` | yes | The bundled saves resolve to the harness bundle and spawn crewed; the consumer bundle scan. |
 | `spawn` | yes | `SpawnCopy` keeps the orbit and gives the copy crew of its own. |
+| `spawn-terrain` | yes | At each flat launch site decal of the home body that lies on one of its biomes, the terrain height with the CPU modifier data is the decal's flat, and differs from the bare heightmap; releasing the data gives back the bare heights exactly. Holds with and without `KSA_HEADLESS_BARE_TERRAIN`, and leaves the body as the run setting has it. |
 | `spawn-surface` | opt-in | Landed spawns on the Earth pad, on open ground with a heading, and on the Moon stay put for 30 s. |
 | `eva` | opt-in | A kitten goes out, boards again, goes out again and is despawned. |
 
@@ -142,7 +158,13 @@ Game members and assumptions:
 - The save checks of `UncompressedVehicleSave.Load`: `PartInstance.FindMissingParts` and `PartInstance.DropStaleConnectors`.
 - Reading a save folder: `SaveMetaData.FromDirectory` (the `meta.toml` name), `VehicleSaveData.ExistsIn` and the steps of `VehicleSaveData.LoadFrom` (`VehicleSaves.VehicleSerializer`, then `OnDataLoad(Mod.Empty)`), the file name `vehicle.xml`. `UncompressedVehicleSave.Directory` gives the folder of a game save. Re-check that the save format still has these two files.
 - `ModLibrary.LocalModsFolderPath` for the consumer scan, which marks a consumer the same way `HarnessRunner` does (its `mod.toml` names the harness assembly).
-- Surface placement: `Vehicle.GetInitialKinematicStateForLocation`, `PartTree.ComputeInertMassPropertiesAsmb`, `ComputePropellantMassPropertiesAsmb` and `ComputeSpawnBoundingBoxAsmb`, as `VehicleLaunchMenu.LaunchVehicle` calls them; its body frame (+X up, +Y east, +Z north, from `Vehicle.ComputeBody2Cce`), which the heading turn relies on; `IParentBody.GetAngularVelocityCci` along CCI +Z; `Celestial.GetLocation` and `LocationReference.Latitude` / `Longitude`. `Astronomical.SetupModifierRenderData` is never called headless, because it needs a renderer.
+- Surface placement: `Vehicle.GetInitialKinematicStateForLocation`, `PartTree.ComputeInertMassPropertiesAsmb`, `ComputePropellantMassPropertiesAsmb` and `ComputeSpawnBoundingBoxAsmb`, as `VehicleLaunchMenu.LaunchVehicle` calls them; its body frame (+X up, +Y east, +Z north, from `Vehicle.ComputeBody2Cce`), which the heading turn relies on; `IParentBody.GetAngularVelocityCci` along CCI +Z; `Celestial.GetLocation` and `LocationReference.Latitude` / `Longitude`. `Astronomical.SetupModifierRenderData` is never called headless, because it needs a renderer; with the CPU modifier data in place `Vehicle.GetSituationState` no longer calls it either.
+- The CPU terrain modifier data (`HeadlessTerrain`), made when `Universe.LoadSystem` calls `Universe.OnLoaded` (the harness prefix):
+  - Patch target: `ProceduralModifiersRenderData.Dispose`, skipped for an object of `HeadlessTerrain`, because it has no curve texture, image view or renderer for `StaticCelestial.Dispose` to free.
+  - Reflection keys: the private setter of `Astronomical.TerrainModifiersRenderData`, the readonly fields `ProceduralModifiersRenderData.ModifierCurveData` and `ModifierRenderData` (a missing one fails the bring-up, `KSA_HEADLESS_BARE_TERRAIN=1` runs without them), and the private field `_terrainReference` (optional).
+  - The object is made with `RuntimeHelpers.GetUninitializedObject` and filled as the constructor and `SetupCelestialTerrainMods` fill it: `NumModifiers` from `ProceduralModifiersReference.ModifierCount` (`UpdateModifierCount`), `LutTextureSize` of `NumModifiers * 4` by 128 (4 wide without a modifier, `CreateCurveLut`), `ModifierCurveData` cleared as `ClearLut` and written with `CubicHermiteSpline.WriteValuesToByteArray(..., LutFormat, i * 4 + j, NumModifiers * 4)`, and `ModifierRenderData` from `ModifierReference.ToRenderData(i, textureIndex)` in the order of `TerrainReference.TerrainModifiers`. Re-check that the CPU path (`Celestial.GetTerrainHeightFromDirCcf`, the `Evaluate` methods of the `*ModifierReference` classes, `ProceduralModifiersRenderData.EvaluateLutGrad`) still reads only these members, and that every other reader of `TerrainModifiersRenderData` (`PlanetRenderer`, `GroundClutterRenderer`, `GroundClutterTerrainBaker`, `ClutterEcotypePhysicalData`, `PlanetMapExporter`) is still a renderer that never runs headless.
+  - The modifier textures a CPU `Evaluate` samples (`DecalModifierReference.HeightMapTexture`, `TilingDetailModifierReference.DetailTexture`) are read on the CPU by `TextureReference.DoLoad` in `ModLibrary.LoadAll`; `ModLibrary.Bind` only uploads them.
+  - `spawn-terrain` repeats the biome weight of `Celestial.GetTerrainHeightFromDirCcf` (`SampleBiomeIdMap`, `SampleBiomeControlMap`, `BiomeMaterialsReference.BlendStrength`, `ModifierReference.BiomeMask`) and the flat of `DecalModifierReference.Evaluate` (a non-additive decal sets the height to `AltitudeOffset.Km` where its blend weight is 1).
 - The builder follows `VehicleEditor.SpawnPart` and `Attach`: `new Part(id, template)`, `Part.CreateOwnTree`, `PartTree.ReinitializeDerivedValues`, the `AttachedInternal` children joined with `Part.AddChild` and `Part.Connection.Connect(part, part)`, `Part.Connector.ConnectAndMerge`, `Part.SetAllSubtreeModulesSequence`, `ResourceGroupList.CalculateStages(reconfigureTankContents)` as in `VehicleEditor.FlushDeferredStaging`, and `ModLibrary.Get<PartTemplate>`, which throws `NullReferenceException` for a missing id. The surface mount repeats the pose change of `ConnectAndMerge`; re-check it when that method changes.
 - The canned designs name stock part ids and connector keys (`VehicleBuilder.StockParts`); `spawn-builder` fails with the missing id or key when stock renames one.
 - `VehicleBuilder.Rotate` repeats `Double3Ex.Transform(double3, doubleQuat)`, because calling that extension needs a reference to BepuUtilities.

@@ -43,6 +43,7 @@ internal static class HarnessResults
     public static string? RulesRequest { get; set; }
     public static bool? Radiation { get; set; }
     public static bool? LifeSupport { get; set; }
+    public static bool? TerrainModifiers { get; set; }
     public static string? Seed { get; set; }
     public static string? Params { get; set; }
     public static string? TestFilter { get; set; }
@@ -272,6 +273,7 @@ internal static class HarnessResults
             WriteNullable(w, "radiation", Radiation);
             WriteNullable(w, "lifeSupport", LifeSupport);
             w.WriteEndObject();
+            WriteNullable(w, "terrainModifiers", TerrainModifiers);
             WriteNullable(w, "seed", Seed);
             WriteNullable(w, "params", Params);
             WriteNullable(w, "testFilter", TestFilter);
@@ -376,6 +378,7 @@ internal static class HarnessResults
             WriteProperty(x, "system", SystemId);
             WriteProperty(x, "profilePath", ProfilePath);
             WriteProperty(x, "rules", RulesRequest);
+            WriteProperty(x, "terrainModifiers", TerrainModifiers is bool terrain ? (terrain ? "true" : "false") : null);
             WriteProperty(x, "seed", Seed);
             WriteProperty(x, "params", Params);
             WriteProperty(x, "exitCode", exitCode.ToString(CultureInfo.InvariantCulture));

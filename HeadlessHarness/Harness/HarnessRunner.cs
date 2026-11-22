@@ -79,6 +79,7 @@ internal static partial class HarnessRunner
         }
 
         runInfrastructureFailures += HarnessMods.UnloadAll();
+        runInfrastructureFailures += Attempt("the last test", "release the terrain modifier data", () => HeadlessTerrain.ReleaseAll());
         IReadOnlyList<string> unread = TestSupport.UnreadParams();
         if (unread.Count > 0)
             HarnessLog.Line($"[harness] WARNING: {TestSupport.ParamsEnvVar} names {string.Join(", ", unread)}, which no test read " +
@@ -111,9 +112,16 @@ internal static partial class HarnessRunner
         try
         {
             int code = test.Run(session);
-            outcome = code == 0 ? HarnessResults.OutcomePass : HarnessResults.OutcomeFail;
-            if (code != 0)
+            outcome = OutcomeOfReturn(code);
+            if (code == HarnessExit.InfrastructureFailure)
+            {
+                HarnessLog.Line($"[{test.Name}] INFRA FAIL: the test returned {code}, the environment cannot test what it tests.");
+                detail = $"returned {code} (infrastructure failure)";
+            }
+            else if (code != 0)
+            {
                 detail = $"returned {code}";
+            }
         }
         catch (Exception e) when (IsGameApiDrift(e))
         {
@@ -147,6 +155,14 @@ internal static partial class HarnessRunner
         HarnessLog.Line($"[harness] {test.Name}: {label} in {wallMs:F0}ms wall, {simSeconds:F1}s sim");
         return final;
     }
+
+    // HarnessExit.InfrastructureFailure is the one return besides 0 that is not a test failure.
+    internal static string OutcomeOfReturn(int code) => code switch
+    {
+        HarnessExit.Pass => HarnessResults.OutcomePass,
+        HarnessExit.InfrastructureFailure => HarnessResults.OutcomeInfra,
+        _ => HarnessResults.OutcomeFail,
+    };
 
     // A positive IHarnessTest.TimeoutSeconds is the test's own budget, zero or less means no budget
     // for this test, and null takes the run default.
@@ -200,6 +216,7 @@ internal static partial class HarnessRunner
             }
         });
         failures += Attempt(name, "restore the game rules", () => HeadlessSession.RestoreRunRules($"test {name}"));
+        failures += Attempt(name, "restore the terrain modifier data", () => HeadlessTerrain.RestoreRunState($"test '{name}'"));
         failures += Attempt(name, "reset PhysicsBubble._forceOffRails", () =>
         {
             if (PhysicsBubble._forceOffRails)

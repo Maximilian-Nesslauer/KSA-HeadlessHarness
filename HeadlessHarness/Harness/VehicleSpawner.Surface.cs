@@ -10,10 +10,10 @@ namespace HeadlessHarness.Harness;
 // terrain under its footprint (on the deck when the point lies on a launch pad), moving with the
 // turning body.
 //
-// Headless the terrain modifiers of a body are not set up, because Astronomical.
-// SetupModifierRenderData builds them with a renderer (ProceduralModifiersRenderData). The terrain
-// height is then the plain heightmap, without the flattening a site's modifier applies.
-// Vehicle.GetLaunchPadHeightAtDirCcf still adds the pad's own height.
+// The terrain is the one of a game with a renderer, site decals included, because the bring-up
+// gives every body its terrain modifiers on the CPU (HeadlessTerrain). With
+// KSA_HEADLESS_BARE_TERRAIN=1 it is the bare heightmap instead. Vehicle.GetLaunchPadHeightAtDirCcf
+// adds the pad's own height either way.
 public static partial class VehicleSpawner
 {
     private readonly record struct SurfaceRequest(Celestial Body, double LatitudeDeg, double LongitudeDeg, double HeadingDeg, double? HeightAboveTerrain);
