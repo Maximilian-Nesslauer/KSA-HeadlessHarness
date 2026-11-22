@@ -21,7 +21,7 @@ What a test leaves behind is put back before the next test starts:
 - every vehicle that was not there before the test is despawned through `VehicleSpawner.Despawn`, each with a `[harness] LEAK: test '<name>' left vehicle '<id>' behind` line and an entry in the test's `leakedVehicles`,
 - an active auto warp is stopped (`Universe.AutoWarpStop`) and the simulation speed is set back to its value before the first test (`Universe.SetSimulationSpeed(speed, alert: false)`); a loss of control sets it to 1,
 - the run's game rules (`Universe.Rules`) are restored, also when a save load replaced the rules object,
-- the terrain modifier data is put back as the run has it (see [Spawning](spawn.md#terrain)): a body that held it at the system load and lost it gets it again, and in a bare terrain run a body a test gave it loses it again,
+- the terrain modifier data is put back as the run has it (see [Spawning](spawn.md#terrain)): a body that held it at the system load and lost it gets it again, and in a bare terrain run a body a test gave it loses it again; a body that is still not as the run setting has it after that is an infrastructure failure (the same check runs once before the first test),
 - `PhysicsBubble._forceOffRails` is turned off,
 - the kFS switch `KfsPrototype.Enabled` is set back to its value before the first test,
 - the alert list is cleared (`TimedAlert.ClearAll`), which only the game UI would drain.

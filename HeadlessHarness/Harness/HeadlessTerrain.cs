@@ -54,12 +54,17 @@ public static class HeadlessTerrain
     // a test that released it.
     private static readonly List<Celestial> RunBodies = new();
 
+    // The bodies whose terrain height threw with the data at the system load.
+    private static readonly HashSet<Celestial> LeftBare = new(ReferenceEqualityComparer.Instance);
+
     private static MethodInfo? _setter;
     private static FieldInfo? _curveDataField;
     private static FieldInfo? _renderParamsField;
     private static FieldInfo? _terrainReferenceField;
 
     private static bool? _enabled;
+
+    private static CelestialSystem? _system;
 
     // True when the run gives the bodies their terrain modifiers (the default), false when
     // KSA_HEADLESS_BARE_TERRAIN keeps the bare heightmap.
@@ -160,12 +165,23 @@ public static class HeadlessTerrain
     // data to: Universe.SetupRenderData covers the billboarded ones, and Vehicle.GetSituationState any
     // body a vehicle starts landed on. A body whose terrain height throws with the data is left bare,
     // with a warning, so that one broken modifier does not stop every test that never touches it.
+    // Universe.OnLoaded can run again for the same system (a test may call it directly), and its
+    // bodies then still hold their data, so only a new system starts the bookkeeping over.
     internal static void OnSystemLoaded(CelestialSystem? system)
     {
         lock (Gate)
         {
+            if (system != null && ReferenceEquals(system, _system))
+            {
+                int held = RunBodies.Count(b => Installed.TryGetValue(b, out ProceduralModifiersRenderData? d) && ReferenceEquals(b.TerrainModifiersRenderData, d));
+                HarnessLog.Line($"[bringup] terrain modifiers: system '{system.Id}' loaded again, the run's state is kept " +
+                                $"({held} of {RunBodies.Count} bod{(RunBodies.Count == 1 ? "y holds" : "ies hold")} the CPU data).");
+                return;
+            }
+            _system = system;
             Installed.Clear();
             RunBodies.Clear();
+            LeftBare.Clear();
         }
         if (system == null)
             return;
@@ -197,6 +213,8 @@ public static class HeadlessTerrain
             catch (Exception e)
             {
                 Release(body);
+                lock (Gate)
+                    LeftBare.Add(body);
                 HarnessLog.Line($"[bringup] WARNING: the terrain height of '{body.Id}' throws with its modifiers, so it keeps the bare heightmap:\n{e}");
                 continue;
             }
@@ -235,7 +253,40 @@ public static class HeadlessTerrain
             if (Release(body))
                 HarnessLog.Line($"[harness] {after} left the CPU terrain modifier data on '{body.Id}' in a bare terrain run; released it.");
         }
+        string? error = CheckRunState();
+        if (error != null)
+            throw new InvalidOperationException($"[HeadlessHarness] after {after} the terrain modifier data is not the run's: {error}");
         return restore.Count > 0 || remove.Count > 0;
+    }
+
+    // Null when every body of the loaded system is as the run setting has it: with the modifiers on,
+    // each body with a TerrainReference (except one the load left bare) holds the CPU data of this
+    // class and is tracked as a run body; with the bare heightmap no body holds it. An object of this
+    // class on a body that the bookkeeping does not know is an error either way.
+    public static string? CheckRunState()
+    {
+        CelestialSystem? system = Universe.CurrentSystem;
+        if (system == null)
+            return null;
+        List<string> wrong = new();
+        lock (Gate)
+        {
+            for (int i = 0; i < system.Count; i++)
+            {
+                if (system.GetIndex(i) is not Celestial body || body.BodyTemplate?.TerrainReference == null)
+                    continue;
+                ProceduralModifiersRenderData? data = body.TerrainModifiersRenderData;
+                bool ours = data != null && Made.TryGetValue(data, out _);
+                bool tracked = ours && Installed.TryGetValue(body, out ProceduralModifiersRenderData? known) && ReferenceEquals(known, data);
+                if (ours && !tracked)
+                    wrong.Add($"{body.Id} holds CPU data that is not tracked");
+                else if (Enabled && !LeftBare.Contains(body) && (!tracked || !RunBodies.Contains(body)))
+                    wrong.Add($"{body.Id} has {(data == null ? "no modifier data" : tracked ? "CPU data but is not a run body" : "modifier data of another source")}");
+                else if (!Enabled && ours)
+                    wrong.Add($"{body.Id} holds CPU data in a bare terrain run");
+            }
+        }
+        return wrong.Count == 0 ? null : string.Join("; ", wrong);
     }
 
     // The prefix on ProceduralModifiersRenderData.Dispose: the objects made here have no curve

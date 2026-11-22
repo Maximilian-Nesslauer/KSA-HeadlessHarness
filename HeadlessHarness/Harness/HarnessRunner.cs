@@ -67,6 +67,12 @@ internal static partial class HarnessRunner
         HarnessLog.Line($"[harness] running {tests.Count} discovered test(s): {string.Join(", ", tests.Select(t => t.Name))}");
         RunBaseline baseline = new(Universe.SimulationSpeed, KfsPrototype.Enabled);
         HeadlessSession.CaptureRunRules();
+        // The cleanup after each test checks the terrain state again, so every test starts from it.
+        if (HeadlessTerrain.CheckRunState() is string terrainState)
+        {
+            HarnessLog.Line($"[harness] INFRA FAIL: before the first test the terrain modifier data is not the run's: {terrainState}");
+            runInfrastructureFailures++;
+        }
         int testFailures = 0;
         int testInfrastructureFailures = 0;
         foreach (IHarnessTest test in tests)

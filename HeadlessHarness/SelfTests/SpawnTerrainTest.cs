@@ -61,6 +61,12 @@ public sealed class SpawnTerrainTest : IHarnessTest
             return t.Finish();
         }
 
+        string? before = HeadlessTerrain.CheckRunState();
+        if (before != null)
+        {
+            t.Infra($"the test starts from a terrain state that is not the run's: {before}");
+            return t.Finish();
+        }
         bool runHasData = HeadlessTerrain.HasCpuModifiers(home);
         if (HeadlessTerrain.Enabled && !runHasData)
         {
@@ -120,6 +126,14 @@ public sealed class SpawnTerrainTest : IHarnessTest
                 HeadlessTerrain.Release(home);
         }
         t.Check($"{home.Id} is left as the run setting has it", HeadlessTerrain.HasCpuModifiers(home) == runHasData);
+
+        // Universe.OnLoaded runs again for the same system when a test calls it (as control-truth-table
+        // does for the rules), and the bodies must keep their data and the bookkeeping its state.
+        Universe.OnLoaded();
+        t.Check("a second Universe.OnLoaded keeps the run's terrain state", HeadlessTerrain.HasCpuModifiers(home) == runHasData,
+            $"data {(HeadlessTerrain.HasCpuModifiers(home) ? "present" : "absent")}");
+        string? state = HeadlessTerrain.CheckRunState();
+        t.Check("every body is as the run setting has it", state == null, state);
         return t.Finish();
     }
 

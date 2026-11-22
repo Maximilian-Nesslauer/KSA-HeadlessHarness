@@ -59,8 +59,9 @@ A game with a renderer evaluates the procedural terrain modifiers of each body (
 | `HeadlessTerrain.HasCpuModifiers(body)` | true when the body holds the CPU data of `HeadlessTerrain` |
 | `HeadlessTerrain.Install(body)` | gives a body without modifier data the CPU data and returns what it did; a body that already has data keeps it |
 | `HeadlessTerrain.Release(body)` | puts the null back on a body that holds the CPU data; returns false when it held none |
+| `HeadlessTerrain.CheckRunState()` | null when every body is as the run setting has it, else a description of what differs |
 
-A test may release or install the data to compare the two grounds; the runner puts the run's state back after each test and releases all of it at the end of the run.
+A test may release or install the data to compare the two grounds; the runner puts the run's state back after each test and releases all of it at the end of the run. `HeadlessTerrain.CheckRunState()` returns null when every body is as the run setting has it, else what differs; the runner calls it before the first test and in the cleanup after each test, and a difference that remains after the restore is an infrastructure failure. A second `Universe.OnLoaded` for the same system (a test may call it) keeps the run's state; only a newly loaded system starts it over.
 
 ## Vehicle saves
 
@@ -141,7 +142,7 @@ Both the EVA and the boarding hand the player's control to the new vehicle; the 
 | `spawn-orbits` | yes | Each orbit builder against the elements `Orbit` reports. |
 | `spawn-bundled` | yes | The bundled saves resolve to the harness bundle and spawn crewed; the consumer bundle scan. |
 | `spawn` | yes | `SpawnCopy` keeps the orbit and gives the copy crew of its own. |
-| `spawn-terrain` | yes | At each flat launch site decal of the home body that lies on one of its biomes, the terrain height with the CPU modifier data is the decal's flat, and differs from the bare heightmap; releasing the data gives back the bare heights exactly. Holds with and without `KSA_HEADLESS_BARE_TERRAIN`, and leaves the body as the run setting has it. |
+| `spawn-terrain` | yes | At each flat launch site decal of the home body that lies on one of its biomes, the terrain height with the CPU modifier data is the decal's flat, and differs from the bare heightmap; releasing the data gives back the bare heights exactly. Holds with and without `KSA_HEADLESS_BARE_TERRAIN`, leaves the body as the run setting has it, and a second `Universe.OnLoaded` keeps that state. |
 | `spawn-surface` | opt-in | Landed spawns on the Earth pad, on open ground with a heading, and on the Moon stay put for 30 s. |
 | `eva` | opt-in | A kitten goes out, boards again, goes out again and is despawned. |
 
