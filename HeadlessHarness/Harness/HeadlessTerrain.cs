@@ -39,10 +39,13 @@ public static class HeadlessTerrain
     private const int BytesPerTexel = ProceduralModifiersRenderData.LUT_BPP;
     private const int ColumnsPerModifier = ProceduralModifiersRenderData.NUM_FLOAT_CURVES;
 
+    // The test thread installs and releases between solver steps, but the Dispose prefix runs on
+    // whichever thread disposes a body, so the shared state is locked.
     private static readonly object Gate = new();
 
     // The objects made here, which ProceduralModifiersRenderData.Dispose must not touch.
     private static readonly ConditionalWeakTable<ProceduralModifiersRenderData, object> Made = new();
+    private static readonly object MadeMark = new();
 
     // The bodies that hold an object made here, with that object.
     private static readonly Dictionary<Celestial, ProceduralModifiersRenderData> Installed = new(ReferenceEqualityComparer.Instance);
@@ -116,7 +119,7 @@ public static class HeadlessTerrain
         _terrainReferenceField?.SetValue(data, terrain);
         lock (Gate)
         {
-            Made.AddOrUpdate(data, Made);
+            Made.AddOrUpdate(data, MadeMark);
             _setter!.Invoke(body, new object?[] { data });
             Installed[body] = data;
         }
@@ -152,8 +155,10 @@ public static class HeadlessTerrain
         return released;
     }
 
-    // Called when Universe.LoadSystem made the bodies. Gives every body its modifier data unless the
-    // run keeps the bare heightmap. A body whose terrain height throws with the data is left bare,
+    // Called when Universe.LoadSystem made the bodies. Gives every body with a TerrainReference its
+    // modifier data unless the run keeps the bare heightmap. That is every body the game can give the
+    // data to: Universe.SetupRenderData covers the billboarded ones, and Vehicle.GetSituationState any
+    // body a vehicle starts landed on. A body whose terrain height throws with the data is left bare,
     // with a warning, so that one broken modifier does not stop every test that never touches it.
     internal static void OnSystemLoaded(CelestialSystem? system)
     {
@@ -179,8 +184,15 @@ public static class HeadlessTerrain
             string how = Install(body);
             try
             {
-                // One sample on the CPU path, so a modifier that cannot run headless shows here.
+                // A sample runs only the modifiers whose biomes cover the point, and a decal only near
+                // its centre, so this finds a modifier that throws at one of these points, not every
+                // one that could throw somewhere.
                 body.GetTerrainHeightFromDirCcf(double3.UnitX);
+                foreach (ModifierReference modifier in body.BodyTemplate.TerrainReference.TerrainModifiers)
+                {
+                    if (modifier is DecalModifierReference { Location: not null } decal)
+                        body.GetTerrainHeightFromDirCcf(decal.Location.ForwardCcf);
+                }
             }
             catch (Exception e)
             {

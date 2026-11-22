@@ -151,6 +151,8 @@ internal static partial class HarnessRunner
         string final = record?.Outcome ?? outcome;
         if (record != null && outcome == HarnessResults.OutcomePass && final == HarnessResults.OutcomeFail)
             HarnessLog.Line($"[harness] {test.Name} returned 0 but recorded {record.FailedChecks} failed check(s); counted as a failure.");
+        else if (record != null && outcome == HarnessResults.OutcomePass && final == HarnessResults.OutcomeInfra)
+            HarnessLog.Line($"[harness] {test.Name} returned 0 but recorded an infrastructure failure; counted as one.");
         string label = final == HarnessResults.OutcomeInfra ? "INFRA FAIL" : final.ToUpperInvariant();
         HarnessLog.Line($"[harness] {test.Name}: {label} in {wallMs:F0}ms wall, {simSeconds:F1}s sim");
         return final;

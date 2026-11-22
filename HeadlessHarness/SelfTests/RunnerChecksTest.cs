@@ -70,6 +70,8 @@ public sealed class RunnerChecksTest : IHarnessTest
         infra.Check("x", true);
         infra.Infra("the ground is not the one the test needs");
         int infraCode = infra.Finish();
+        t.Check("Infra of a context with its own sink leaves the run's results alone", HarnessResults.CurrentInfrastructureFailures == 0,
+            $"{HarnessResults.CurrentInfrastructureFailures}");
         t.Check("Finish returns 2 after Infra, which is not a check", infraCode == HarnessExit.InfrastructureFailure
             && infra.CheckCount == 1 && infra.FailureCount == 0 && infra.InfrastructureCount == 1 && !infra.Passed, $"returned {infraCode}");
         t.Check("infra line format", infraLines.Count == 3 && infraLines[1] == "[infra] INFRA FAIL: the ground is not the one the test needs"
@@ -93,6 +95,8 @@ public sealed class RunnerChecksTest : IHarnessTest
         t.Check("outcome: checks with a skip", HarnessResults.DecideOutcome(true, 2, 0, 1) == HarnessResults.OutcomePass);
         t.Check("outcome: a failed check overrides a 0 return", HarnessResults.DecideOutcome(true, 1, 1, 0) == HarnessResults.OutcomeFail);
         t.Check("outcome: a non-zero return", HarnessResults.DecideOutcome(false, 0, 0, 1) == HarnessResults.OutcomeFail);
+        t.Check("outcome: a recorded infrastructure failure overrides a 0 return and a failed check",
+            HarnessResults.DecideOutcome(true, 1, 1, 0, infra: 1) == HarnessResults.OutcomeInfra);
 
         // Read before the Check that records it, so the expectation is this context's count so far.
         int expected = t.CheckCount;

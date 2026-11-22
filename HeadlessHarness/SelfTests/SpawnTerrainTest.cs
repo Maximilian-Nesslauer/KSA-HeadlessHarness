@@ -14,8 +14,8 @@ namespace HeadlessHarness.SelfTests;
 // that the bare heights come back exactly, and leaves the body as the run setting has it.
 public sealed class SpawnTerrainTest : IHarnessTest
 {
-    // DecalModifierReference.Evaluate sets the height to AltitudeOffset.Km where its blend weight is
-    // 1, in float arithmetic on a height of a few hundred metres.
+    // DecalModifierReference.Evaluate sets the height to AltitudeOffset.Km where its feather weight is
+    // 1 (the inner part of the decal), in float arithmetic on a height of a few hundred metres.
     private const double FlatTolerance = 0.02;
 
     // The weight below which Celestial.GetTerrainHeightFromDirCcf skips a modifier.
@@ -37,11 +37,21 @@ public sealed class SpawnTerrainTest : IHarnessTest
             t.Skip($"{home.Id} has no heightmap, terrain reference or biome material, so the game applies no terrain modifier");
             return t.Finish();
         }
+        // Celestial.GetTerrainHeightFromDirCcf returns the bare height before any modifier when the
+        // normal map is not a loaded cubemap. A body with a terrain reference has one in stock, so
+        // when it is not loaded the streamed body textures did not load and the run cannot test the
+        // modifiers. Whether it is a cubemap is a content check of
+        // TextureReference.ReadStreamedPayload, which reports a streamed texture that is not one.
+        if (home.BodyTemplate.NormalReference?.Value?.IsLoaded() != true)
+        {
+            t.Infra($"the normal map of {home.Id} is not loaded, so the game applies no terrain modifier");
+            return t.Finish();
+        }
 
         // A decal that is not additive, follows the curvature and adds no height map flattens its
-        // centre to AltitudeOffset.Km, which is the height in metres there: Celestial.
-        // GetTerrainHeightFromDirCcf passes MeanRadius in metres as the CelestialRadiusKm of the
-        // modifiers, so Km="75" is a flat at 75 m.
+        // centre to AltitudeOffset.Km, which is the height in metres there, because
+        // Celestial.GetTerrainHeightFromDirCcf passes MeanRadius in metres as the CelestialRadiusKm
+        // of the modifiers. Km="75" is a flat at 75 m.
         List<DecalModifierReference> flats = terrain.TerrainModifiers.OfType<DecalModifierReference>()
             .Where(d => !d.Additive.Value && !d.NoCurvature.Value && d.Amplitude.Value == 0.0 && d.HeightMapTexture != null)
             .ToList();
@@ -52,6 +62,11 @@ public sealed class SpawnTerrainTest : IHarnessTest
         }
 
         bool runHasData = HeadlessTerrain.HasCpuModifiers(home);
+        if (HeadlessTerrain.Enabled && !runHasData)
+        {
+            t.Infra($"the run has the terrain modifiers on, but {home.Id} has no CPU modifier data (see the [bringup] terrain lines)");
+            return t.Finish();
+        }
         t.Check($"the run setting decides whether {home.Id} holds the CPU modifier data", runHasData == HeadlessTerrain.Enabled,
             $"{HeadlessTerrain.BareTerrainEnvVar} {(HeadlessTerrain.Enabled ? "unset" : "set")}, data {(runHasData ? "present" : "absent")}");
 

@@ -65,10 +65,13 @@ public sealed class HarnessChecks
 
     // The environment cannot test what the test tests (a game state the test relies on is not there),
     // so its checks would say nothing about the code under test. Not a check: Finish then returns
-    // HarnessExit.InfrastructureFailure, which the runner records as an infrastructure failure.
+    // HarnessExit.InfrastructureFailure, and the runner records the test as an infrastructure failure
+    // even when it returns 0.
     public void Infra(string reason)
     {
         InfrastructureCount++;
+        if (_feedsResults)
+            HarnessResults.CountInfra();
         _sink($"[{Name}] INFRA FAIL: {reason}");
     }
 
