@@ -893,7 +893,7 @@
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="652" Stage="1" SequenceGroup="5" SequenceOrder="1" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="653" Stage="1" SequenceGroup="5" SequenceOrder="1" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="654" Stage="1" SequenceGroup="5" SequenceOrder="1" />
-                <DecouplerData LocalInstanceId="587" Sequence="3" />
+                <DecouplerData InstanceOf="Decoupler" LocalInstanceId="587" Sequence="3" />
               </PartRef>
               <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="686" Stage="1" SequenceGroup="5" SequenceOrder="2">
                 <Transform>
@@ -1061,7 +1061,7 @@
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="752" Stage="1" SequenceGroup="5" SequenceOrder="2" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="753" Stage="1" SequenceGroup="5" SequenceOrder="2" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="754" Stage="1" SequenceGroup="5" SequenceOrder="2" />
-                <DecouplerData LocalInstanceId="687" Sequence="3" />
+                <DecouplerData InstanceOf="Decoupler" LocalInstanceId="687" Sequence="3" />
               </PartRef>
               <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="786" Stage="1" SequenceGroup="7">
                 <Transform>
@@ -1241,7 +1241,7 @@
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="852" Stage="1" SequenceGroup="7" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="853" Stage="1" SequenceGroup="7" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="854" Stage="1" SequenceGroup="7" />
-                <DecouplerData LocalInstanceId="787" Sequence="2" />
+                <DecouplerData InstanceOf="Decoupler" LocalInstanceId="787" Sequence="2" />
               </PartRef>
               <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="881" Stage="1" SequenceGroup="7" SequenceOrder="1">
                 <Transform>
@@ -1391,7 +1391,7 @@
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="947" Stage="1" SequenceGroup="7" SequenceOrder="1" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="948" Stage="1" SequenceGroup="7" SequenceOrder="1" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="949" Stage="1" SequenceGroup="7" SequenceOrder="1" />
-                <DecouplerData LocalInstanceId="882" Sequence="2" />
+                <DecouplerData InstanceOf="Decoupler" LocalInstanceId="882" Sequence="2" />
               </PartRef>
               <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W6HC" LocalInstanceId="534" Stage="1" />
               <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="535" Stage="1" />
@@ -1429,7 +1429,7 @@
           </PartRef>
           <SubPartRef InstanceOf="CoreFairingA_Subpart_Interstage3W3HSkinB" LocalInstanceId="523" Stage="1" SequenceOrder="1" />
           <SubPartRef InstanceOf="CoreFairingA_Subpart_Interstage3W3HStructureB" LocalInstanceId="524" Stage="1" SequenceOrder="1" />
-          <DecouplerData LocalInstanceId="522" Sequence="4" />
+          <DecouplerData InstanceOf="Decoupler" LocalInstanceId="522" Sequence="4" />
         </PartRef>
         <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="429" Stage="0" />
         <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W3HA" LocalInstanceId="430" Stage="0" />
@@ -1687,7 +1687,7 @@
       <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="424" Stage="0" SequenceOrder="1" />
       <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="425" Stage="0" SequenceOrder="1" />
       <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="426" Stage="0" SequenceOrder="1" />
-      <DecouplerData LocalInstanceId="380" Sequence="6" />
+      <DecouplerData InstanceOf="Decoupler" LocalInstanceId="380" Sequence="6" />
       <KeyframeAnimationData InstanceOf="CoreServiceModuleA_Prefab_SetA2DoubleA_Anim" LocalInstanceId="381" TimeGoal="0" TimeCurrent="0" SolarCurrentAngle="0" />
     </PartRef>
     <PartRef InstanceOf="CoreFuelTankA_Prefab_LF1WHalfHB" LocalInstanceId="1060" Stage="2">

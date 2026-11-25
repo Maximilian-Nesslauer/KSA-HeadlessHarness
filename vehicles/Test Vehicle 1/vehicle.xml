@@ -884,7 +884,7 @@
                       </PartRef>
                       <SubPartRef InstanceOf="CoreFairingA_Subpart_BridgeStructure3W2WA" LocalInstanceId="660" Stage="2" SequenceGroup="4" SequenceOrder="7" />
                       <SubPartRef InstanceOf="CoreFairingA_Subpart_Bridge3W2WA" LocalInstanceId="661" Stage="2" SequenceGroup="4" SequenceOrder="7" />
-                      <DecouplerData LocalInstanceId="659" Enabled="false" Sequence="5" />
+                      <DecouplerData InstanceOf="Decoupler" LocalInstanceId="659" Enabled="false" Sequence="5" />
                     </PartRef>
                     <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="655" Stage="8" />
                     <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W3HA" LocalInstanceId="656" Stage="8" />
@@ -1047,7 +1047,7 @@
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="631" Stage="1" SequenceGroup="5" SequenceOrder="1" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="632" Stage="1" SequenceGroup="5" SequenceOrder="1" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="633" Stage="1" SequenceGroup="5" SequenceOrder="1" />
-                <DecouplerData LocalInstanceId="566" Sequence="2" />
+                <DecouplerData InstanceOf="Decoupler" LocalInstanceId="566" Sequence="2" />
               </PartRef>
               <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="694" Stage="1" SequenceGroup="5" SequenceOrder="2">
                 <Transform>
@@ -1173,7 +1173,7 @@
                       </PartRef>
                       <SubPartRef InstanceOf="CoreFairingA_Subpart_BridgeStructure3W2WA" LocalInstanceId="789" Stage="3" SequenceGroup="4" SequenceOrder="7" />
                       <SubPartRef InstanceOf="CoreFairingA_Subpart_Bridge3W2WA" LocalInstanceId="790" Stage="3" SequenceGroup="4" SequenceOrder="7" />
-                      <DecouplerData LocalInstanceId="788" Enabled="false" Sequence="5" />
+                      <DecouplerData InstanceOf="Decoupler" LocalInstanceId="788" Enabled="false" Sequence="5" />
                     </PartRef>
                     <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="784" Stage="10" />
                     <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W3HA" LocalInstanceId="785" Stage="10" />
@@ -1320,7 +1320,7 @@
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="760" Stage="1" SequenceGroup="5" SequenceOrder="2" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="761" Stage="1" SequenceGroup="5" SequenceOrder="2" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="762" Stage="1" SequenceGroup="5" SequenceOrder="2" />
-                <DecouplerData LocalInstanceId="695" Sequence="2" />
+                <DecouplerData InstanceOf="Decoupler" LocalInstanceId="695" Sequence="2" />
               </PartRef>
               <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="823" Stage="1" SequenceGroup="5" SequenceOrder="3">
                 <Transform>
@@ -1446,7 +1446,7 @@
                       </PartRef>
                       <SubPartRef InstanceOf="CoreFairingA_Subpart_BridgeStructure3W2WA" LocalInstanceId="918" Stage="4" SequenceGroup="4" SequenceOrder="7" />
                       <SubPartRef InstanceOf="CoreFairingA_Subpart_Bridge3W2WA" LocalInstanceId="919" Stage="4" SequenceGroup="4" SequenceOrder="7" />
-                      <DecouplerData LocalInstanceId="917" Enabled="false" Sequence="5" />
+                      <DecouplerData InstanceOf="Decoupler" LocalInstanceId="917" Enabled="false" Sequence="5" />
                     </PartRef>
                     <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="913" Stage="12" />
                     <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W3HA" LocalInstanceId="914" Stage="12" />
@@ -1593,7 +1593,7 @@
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="889" Stage="1" SequenceGroup="5" SequenceOrder="3" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="890" Stage="1" SequenceGroup="5" SequenceOrder="3" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="891" Stage="1" SequenceGroup="5" SequenceOrder="3" />
-                <DecouplerData LocalInstanceId="824" Sequence="2" />
+                <DecouplerData InstanceOf="Decoupler" LocalInstanceId="824" Sequence="2" />
               </PartRef>
               <PartRef InstanceOf="CoreStructuralA_Prefab_RadialDecouplerLargeA" LocalInstanceId="952" Stage="1" SequenceGroup="5" SequenceOrder="4">
                 <Transform>
@@ -1719,7 +1719,7 @@
                       </PartRef>
                       <SubPartRef InstanceOf="CoreFairingA_Subpart_BridgeStructure3W2WA" LocalInstanceId="1047" Stage="5" SequenceGroup="4" SequenceOrder="7" />
                       <SubPartRef InstanceOf="CoreFairingA_Subpart_Bridge3W2WA" LocalInstanceId="1048" Stage="5" SequenceGroup="4" SequenceOrder="7" />
-                      <DecouplerData LocalInstanceId="1046" Enabled="false" Sequence="5" />
+                      <DecouplerData InstanceOf="Decoupler" LocalInstanceId="1046" Enabled="false" Sequence="5" />
                     </PartRef>
                     <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="1042" Stage="14" />
                     <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W3HA" LocalInstanceId="1043" Stage="14" />
@@ -1866,7 +1866,7 @@
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_StrutB" LocalInstanceId="1018" Stage="1" SequenceGroup="5" SequenceOrder="4" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="1019" Stage="1" SequenceGroup="5" SequenceOrder="4" />
                 <SubPartRef InstanceOf="CoreStructuralA_Subpart_FootB" LocalInstanceId="1020" Stage="1" SequenceGroup="5" SequenceOrder="4" />
-                <DecouplerData LocalInstanceId="953" Sequence="2" />
+                <DecouplerData InstanceOf="Decoupler" LocalInstanceId="953" Sequence="2" />
               </PartRef>
               <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W6HC" LocalInstanceId="534" Stage="1" />
               <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="535" Stage="1" />
@@ -1904,7 +1904,7 @@
           </PartRef>
           <SubPartRef InstanceOf="CoreFairingA_Subpart_Interstage3W3HSkinB" LocalInstanceId="523" Stage="1" SequenceOrder="1" />
           <SubPartRef InstanceOf="CoreFairingA_Subpart_Interstage3W3HStructureB" LocalInstanceId="524" Stage="1" SequenceOrder="1" />
-          <DecouplerData LocalInstanceId="522" Sequence="3" />
+          <DecouplerData InstanceOf="Decoupler" LocalInstanceId="522" Sequence="3" />
         </PartRef>
         <SubPartRef InstanceOf="CoreFuelTankA_Subpart_EndcapLF3WA" LocalInstanceId="429" Stage="0" />
         <SubPartRef InstanceOf="CoreFuelTankA_Subpart_Skin3W3HA" LocalInstanceId="430" Stage="0" />
@@ -2162,7 +2162,7 @@
       <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="424" Stage="0" SequenceOrder="1" />
       <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="425" Stage="0" SequenceOrder="1" />
       <SubPartRef InstanceOf="CoreServiceModuleA_Subpart_BaySocketConnectorA" LocalInstanceId="426" Stage="0" SequenceOrder="1" />
-      <DecouplerData LocalInstanceId="380" Sequence="5" />
+      <DecouplerData InstanceOf="Decoupler" LocalInstanceId="380" Sequence="5" />
       <KeyframeAnimationData InstanceOf="CoreServiceModuleA_Prefab_SetA2DoubleA_Anim" LocalInstanceId="381" TimeGoal="0" TimeCurrent="0" SolarCurrentAngle="0" />
     </PartRef>
     <PartRef InstanceOf="CoreFuelTankA_Prefab_LF1WHalfHB" LocalInstanceId="1165" Stage="7">
