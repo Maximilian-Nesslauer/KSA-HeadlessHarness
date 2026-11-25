@@ -28,7 +28,7 @@ public readonly record struct GimbalReading(
 public static partial class TestSupport
 {
     // Reads every gimbal that moves a nozzle of the engine. The path is the one Rocket.UpdateRockets
-    // takes: EngineController.Rockets, Rocket.Nozzles, the nozzle's part's GimbalAsmb, and its
+    // takes: EngineController.Rockets, Rocket.AllNozzles, the nozzle's part's GimbalAsmb, and its
     // GimbalController. Several nozzles on one gimbal give one reading. An engine without a gimbal
     // gives an empty list. Read between SimDriver steps only.
     public static IReadOnlyList<GimbalReading> ReadGimbalAngles(Vehicle vehicle, EngineController engine)
@@ -42,7 +42,7 @@ public static partial class TestSupport
         HashSet<GimbalController> seen = new(ReferenceEqualityComparer.Instance);
         foreach (Rocket rocket in engine.Rockets)
         {
-            foreach (RocketNozzle nozzle in rocket.Nozzles)
+            foreach (RocketNozzle nozzle in rocket.AllNozzles)
             {
                 Gimbal? gimbal = nozzle.Parent.GimbalAsmb;
                 if (gimbal == null || !seen.Add(gimbal.Controller))

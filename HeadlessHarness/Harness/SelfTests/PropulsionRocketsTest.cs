@@ -200,7 +200,7 @@ public sealed class PropulsionRocketsTest : IHarnessTest
                 continue;
             HashSet<GimbalController> expectedControllers = new(ReferenceEqualityComparer.Instance);
             foreach (Rocket rocket in engine.Rockets)
-                foreach (RocketNozzle nozzle in rocket.Nozzles)
+                foreach (RocketNozzle nozzle in rocket.AllNozzles)
                     if (nozzle.Parent.GimbalAsmb is Gimbal gimbal)
                         expectedControllers.Add(gimbal.Controller);
             expectedReadings += expectedControllers.Count;
