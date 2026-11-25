@@ -18,6 +18,7 @@ public sealed partial class SimDriver
     // Internal in the game, so it is bound by name. HarnessMain.ValidateSession creates a driver right
     // after bring-up, which makes a rename fail the run before any test starts.
     private static Action? _flushDirtyResourceManagers;
+    private static FrameSpan<Vehicle>? _vehiclesInFrame;
 
     // Off by default: frozen celestials are fine for short vehicle tests, and cheaper.
     public bool StepOrbits { get; set; }
@@ -38,6 +39,10 @@ public sealed partial class SimDriver
             AccessTools.Method(typeof(PartTree), "FlushDirtyResourceManagers", Type.EmptyTypes)?.CreateDelegate<Action>()
             ?? throw new InvalidOperationException(
                 "[HeadlessHarness] PartTree.FlushDirtyResourceManagers not found - game version may have changed.");
+        _vehiclesInFrame ??=
+            AccessTools.Field(typeof(Program), "_vehiclesInFrame")?.GetValue(null) as FrameSpan<Vehicle>
+            ?? throw new InvalidOperationException(
+                "[HeadlessHarness] Program._vehiclesInFrame not found - game version may have changed.");
         Elapsed = start;
     }
 
@@ -112,6 +117,12 @@ public sealed partial class SimDriver
         // The game UI reads only after the flush that follows Apply. A test reads between Steps, so
         // the tree changes Apply made (a docking or a part failure) are flushed here too.
         FlushDirtyPartTrees();
+
+        // The game empties the vehicles of the frame at the end of every frame (Program.PostRender), so
+        // a vehicle that a test removes between Steps is never read from that list again. Without
+        // this, TransferPlanner.PopulateWithTargets and other readers see a removed vehicle whose
+        // lookup index is out of range.
+        _vehiclesInFrame!.Clear();
 
         Elapsed = step.NextTime;
         AfterStep(dt);
