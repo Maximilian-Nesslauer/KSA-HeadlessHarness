@@ -32,6 +32,17 @@ public sealed class SaveVehicleRoundTripTest : IHarnessTest
             vehicle.SetTarget(vehicle.Parent as IOrbiter);
             Part control = vehicle.Parts.Modules.Get<Control>()[0].Parent.FullPart;
             vehicle.SetControlPart(control);
+
+            if ((vehicle.Parent as Astronomical)?.BodyTemplate is not { } body
+                || DestinationRegistry.FindBody(body) is not { } destination)
+            {
+                HarnessLog.Line($"[{Name}] FAIL: the fixture's parent has no registered body destination.");
+                return 1;
+            }
+
+            // ArrivalService delays detection by wall-clock time, so seed the recorded arrival after stepping.
+            List<string> arrivals = new List<string> { destination.Id };
+            system.Arrivals.Restore(vehicle, arrivals);
             string sourceXml = Fingerprint.SaveXml(vehicle.SerializeSave());
             HashSet<string> beforeCopy = TestSupport.CollectVehicleIds(system);
 
@@ -39,8 +50,11 @@ public sealed class SaveVehicleRoundTripTest : IHarnessTest
             VehicleData record = Fingerprint.ReadSaveXml(result.BeforeXml);
             bool controlSaved = record.ControlPartId != 0
                 && record.ControlConnectorId == (vehicle.ControlConnector?.Id ?? string.Empty);
+            bool arrivalSaved = record.ArrivedAt is [var savedDestinationId] && savedDestinationId == destination.Id;
+            system.Arrivals.GetArrived(vehicle, arrivals);
             bool isolated = beforeCopy.SetEquals(TestSupport.CollectVehicleIds(system))
-                && sourceXml == Fingerprint.SaveXml(vehicle.SerializeSave());
+                && sourceXml == Fingerprint.SaveXml(vehicle.SerializeSave())
+                && arrivals is [var sourceDestinationId] && sourceDestinationId == destination.Id;
             if (!isolated)
                 HarnessLog.Line($"[{Name}] FAIL: the round trip changed the source record or left an extra vehicle.");
             if (!result.Equal)
@@ -49,11 +63,13 @@ public sealed class SaveVehicleRoundTripTest : IHarnessTest
                 HarnessLog.Line($"[{Name}] first difference: {result.FirstDifference}");
                 HarnessLog.Line($"[{Name}] module: {result.Module ?? "none, the difference is outside the part modules"}");
             }
-            HarnessLog.Line($"[{Name}] '{vehicle.Id}': {vehicle.Parts.Parts.Length} part(s), record {result.BeforeXml.Length} chars, " +
+            HarnessLog.Line($"[{Name}] '{vehicle.Id}' at '{destination.Id}': {vehicle.Parts.Parts.Length} part(s), record {result.BeforeXml.Length} chars, " +
                             $"{result.FullTurnAngles} angle(s) back a full turn apart => {TestSupport.Verdict(result.Equal)}");
             if (!controlSaved)
                 HarnessLog.Line($"[{Name}] FAIL: the saved record omitted the selected control reference.");
-            return result.Equal && isolated && controlSaved ? 0 : 1;
+            if (!arrivalSaved)
+                HarnessLog.Line($"[{Name}] FAIL: the saved record did not contain the seeded arrival at '{destination.Id}'.");
+            return result.Equal && isolated && controlSaved && arrivalSaved ? 0 : 1;
         }
         finally
         {

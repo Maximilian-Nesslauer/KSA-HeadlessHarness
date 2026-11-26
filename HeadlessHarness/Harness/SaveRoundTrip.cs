@@ -72,6 +72,7 @@ public static class SaveRoundTrip
                 ? KSA.Vehicle.CreateVehicleFromSaveGameData(system, loaded)
                 : KittenEva.CreateKittenFromSaveData(system, loaded);
             parent.Children.Add(copy);
+            system.Arrivals.Restore(copy, loaded.ArrivedAt);
             // CelestialSystem.DeserializeSave restores targets in its second pass, after every
             // vehicle exists. The source's target already exists for this single-vehicle load.
             copy.SetTarget(vehicle.Target, vehicle.TargetPart);
